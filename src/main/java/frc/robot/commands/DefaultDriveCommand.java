@@ -44,10 +44,7 @@ public class DefaultDriveCommand extends Command {
 		double strSpeed = -MathUtil.applyDeadband(m_strafeSpeed.get(), ControllerConstants.kDeadzone) * 0.5;
 		double rotSpeed = MathUtil.applyDeadband(m_rotationAxis.get(), ControllerConstants.kDeadzone) * 0.5;
 
-		ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-		fwdSpeed, strSpeed, rotSpeed, DriveSubsystem.get().getHeading());
-
 		m_driveSubsystem.setSwerveStates(
-				m_driveSubsystem.calculateModuleStates(speeds, false));
+				m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
 	}
 }
