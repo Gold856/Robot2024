@@ -191,20 +191,8 @@ public class DriveSubsystem extends SubsystemBase {
 		m_backRight.setModuleState(moduleStates[3]);
 	}
 
-	/**
-	 * Recalculates the PID output, and uses it to drive our steer motors. Also logs
-	 * wheel rotations, and PID setpoints
-	 */
 	@Override
 	public void periodic() {
-		// For each of our steer motors, feed the current angle of the wheel into its
-		// PID controller, and use it to calculate the duty cycle for its motor, and
-		// spin the motor
-
-		m_frontLeft.getSteerMotor().set(m_frontLeft.getPIDController().calculate(m_frontLeft.getModuleAngle()));
-		m_frontRight.getSteerMotor().set(m_frontRight.getPIDController().calculate(m_frontRight.getModuleAngle()));
-		m_backLeft.getSteerMotor().set(m_backLeft.getPIDController().calculate(m_backLeft.getModuleAngle()));
-		m_backRight.getSteerMotor().set(m_backRight.getPIDController().calculate(m_backRight.getModuleAngle()));
 		SwerveModuleState[] states = {
 				new SwerveModuleState(m_frontLeft.getDriveSpeed(),
 						Rotation2d.fromDegrees(m_frontLeft.getModuleAngle())),

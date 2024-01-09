@@ -87,9 +87,9 @@ public class SwerveModule {
 		// but swap drive speed if that is quicker than normal
 		// TODO: angle should be module angle, not target state angle
 		state = SwerveModuleState.optimize(state, state.angle);
-		// Set drive speed
+		// Set drive and steer speed
 		m_driveMotor.set(state.speedMetersPerSecond * DriveConstants.kDriveScale);
-		m_PIDController.setSetpoint(state.angle.getDegrees());
+		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
 		// Print state to dashboard
 		SmartDashboard.putString("Swerve module " + m_CANCoder.getDeviceID(), state.toString());
 	}
