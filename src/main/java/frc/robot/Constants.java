@@ -1,0 +1,122 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot;
+
+import edu.wpi.first.math.geometry.Translation2d;
+
+/**
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean constants. This class should not be used for any other
+ * purpose. All constants should be declared globally (i.e. public static). Do
+ * not put anything functional in this class.
+ *
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the constants are needed, to reduce verbosity.
+ */
+public final class Constants {
+	public static final class ControllerConstants {
+		public static final int kDriverControllerPort = 0;
+		public static final int kOperatorControllerPort = 1;
+		public static final double kDeadzone = 0.1;
+		public static final double kTriggerDeadzone = .05;
+
+		public static final class Axis {
+			public static final int kLeftX = 0;
+			public static final int kLeftY = 1;
+			public static final int kRightX = 2;
+			public static final int kLeftTrigger = 3;
+			public static final int kRightTrigger = 4;
+			public static final int kRightY = 5;
+		}
+
+		public static final class Button {
+			/** Left middle button */
+			public static final int kSquare = 1;
+			/** Bottom button */
+			public static final int kX = 2;
+			/** Right middle button */
+			public static final int kCircle = 3;
+			/** Top button */
+			public static final int kTriangle = 4;
+			public static final int kLeftBumper = 5;
+			public static final int kRightBumper = 6;
+			public static final int kLeftTrigger = 7;
+			public static final int kRightTrigger = 8;
+			public static final int kShare = 9;
+			public static final int kOptions = 10;
+			public static final int kLeftStick = 11;
+			public static final int kRightStick = 12;
+			public static final int kPS = 13;
+			public static final int kTrackpad = 14;
+		}
+
+		public static final class DPad {
+			public static final int kUp = 0;
+			public static final int kRight = 90;
+			public static final int kDown = 180;
+			public static final int kLeft = 270;
+		}
+	}
+
+	public static final class DriveConstants {
+		// CAN IDs (updated)
+		public static final int kCounterWeightPort = 17;
+		public static final int kFrontRightDrivePort = 3;
+		public static final int kFrontRightSteerPort = 4;
+		public static final int kFrontLeftDrivePort = 1;
+		public static final int kFrontLeftSteerPort = 2;
+		public static final int kBackRightDrivePort = 5;
+		public static final int kBackRightSteerPort = 6;
+		public static final int kBackLeftDrivePort = 7;
+		public static final int kBackLeftSteerPort = 8;
+		public static final int kFrontRightCANCoderPort = 10;
+		public static final int kFrontLeftCANCoderPort = 9;
+		public static final int kBackRightCANCoderPort = 11;
+		public static final int kBackLeftCANCoderPort = 12;
+		public static final double kDriveScale = 0.5;
+		// Drive PID values
+		public static final double kP = 0.005;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kIz = 0;
+		public static final double kFF = 0;
+		public static final double kMinOutput = -1.0;
+		public static final double kMaxOutput = 1.0;
+		/*** Distance between center of front wheel and center of back wheel */
+		public static final double kWheelBase = 21.5;
+		/*** Distance between center of left wheel and center of right wheel */
+		public static final double kTrackWidth = 21.5;
+		public static final double kSteerPeriod = 0.02;
+		public static final boolean kFrontLeftDriveInverted = true;
+		public static final boolean kBackLeftDriveInverted = false;
+		public static final boolean kFrontRightDriveInverted = true;
+		public static final boolean kBackRightDriveInverted = true;
+		// Speed multiplier to make sure the robot doesn't crash into something when
+		// testing, because crashing into people's shins would be bad
+		public static final double kSpeedMultiplier = 0.25;
+	}
+
+	public static final class SwerveConstants {
+		public static final double kModuleResponseTimeSeconds = 0.1;
+		public static final double gearRatio = 8.14;
+		public static final double wheelDiameter = 0.1016; // in meters
+		// public static final double ticksPerAxisRev = 42;
+
+		public static final double kTicksToMeters = (1 / gearRatio) * Math.PI * wheelDiameter;
+		public static final double kMotorRevsPerMeter = gearRatio / (Math.PI * wheelDiameter);
+
+		// These set points resulted in back being front, front is back
+		public static final double kFrontLeftEncoderOffset = -0.139648;
+		public static final double kFrontRightEncoderOffset = -0.336182;
+		public static final double kBackLeftEncoderOffset = 0.262451;
+		public static final double kBackRightEncoderOffset = -0.376709;
+
+		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
+		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
+		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
+		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+	}
+}
