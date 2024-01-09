@@ -166,26 +166,6 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Makes our drive motors spin at the specified speeds
-	 * 
-	 * @param frontLeftSpeed
-	 *                        Speed of the front left wheel in duty cycles [-1, 1]
-	 * @param frontRightSpeed
-	 *                        Speed of the front right wheel in duty cycles [-1, 1]
-	 * @param backLeftSpeed
-	 *                        Speed of the back left wheel in duty cycles [-1, 1]
-	 * @param backRightSpeed
-	 *                        Speed of the back right wheel in duty cycles [-1, 1]
-	 */
-	public void setDriveMotors(double frontLeftSpeed, double frontRightSpeed, double backLeftSpeed,
-			double backRightSpeed) {
-		m_frontLeft.getDriveMotor().set(frontLeftSpeed * kDriveScale);
-		m_frontRight.getDriveMotor().set(frontRightSpeed * kDriveScale);
-		m_backLeft.getDriveMotor().set(backLeftSpeed * kDriveScale);
-		m_backRight.getDriveMotor().set(backRightSpeed * kDriveScale);
-	}
-
-	/**
 	 * Sets the target angles in degrees for each wheel on the robot
 	 * 
 	 * @param frontLeftAngle  The target angle of the front left wheel in degrees
