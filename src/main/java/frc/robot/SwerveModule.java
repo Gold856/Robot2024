@@ -74,10 +74,20 @@ public class SwerveModule {
 		return this.m_steerMotor;
 	}
 
+	/**
+	 * Gets the current drive motor speed.
+	 * 
+	 * @return The motor speed in percent output
+	 */
 	public double getDriveSpeed() {
 		return m_driveMotor.getAppliedOutput();
 	}
 
+	/**
+	 * Returns the module angle in degrees.
+	 * 
+	 * @return The module angle
+	 */
 	public double getModuleAngle() {
 		return m_CANCoder.getAbsolutePosition().getValueAsDouble() * 360;
 	}

@@ -103,14 +103,25 @@ public class DriveSubsystem extends SubsystemBase {
 		return s_subsystem;
 	}
 
+	/**
+	 * Gets the robot's heading from the gyro.
+	 * 
+	 * @return The heading
+	 */
 	public Rotation2d getHeading() {
 		return Rotation2d.fromDegrees(-m_gyro.getYaw());
 	}
 
+	/**
+	 * Resets gyro heading to zero.
+	 */
 	public void resetHeading() {
 		m_gyro.reset();
 	}
 
+	/**
+	 * Resets drive encoders to zero.
+	 */
 	public void resetEncoders() {
 		// Zero drive encoders
 		m_frontLeft.getDriveEncoder().setPosition(0);
@@ -119,10 +130,21 @@ public class DriveSubsystem extends SubsystemBase {
 		m_backRight.getDriveEncoder().setPosition(0);
 	}
 
+	/**
+	 * Sets all modules to zero degrees.
+	 */
 	public void setWheelRotationToZeroDegrees() {
 		setSteerMotors(0, 0, 0, 0);
 	}
 
+	/**
+	 * Calculates the modules states needed for the robot to achieve the target
+	 * chassis speed.
+	 * 
+	 * @param speeds          The target chassis speed
+	 * @param isFieldRelative Whether or not the chassis speeds are field-relative
+	 * @return The module states, in order of FL, FR, BL, BR
+	 */
 	public SwerveModuleState[] calculateModuleStates(ChassisSpeeds speeds, boolean isFieldRelative) {
 		if (isFieldRelative) {
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
