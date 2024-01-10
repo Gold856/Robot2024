@@ -50,28 +50,15 @@ public class SwerveModule {
 		motorController.setSmartCurrentLimit(30);
 	}
 
-	public PIDController getPIDController() {
-		return this.m_PIDController;
-	}
-
-	public CANcoder getCANCoder() {
-		return this.m_CANCoder;
-	}
-
-	public CANSparkMax getDriveMotor() {
-		return this.m_driveMotor;
-	}
-
-	public RelativeEncoder getDriveEncoder() {
-		return this.m_driveEncoder;
-	}
-
 	public double getDriveEncoderPosition() {
 		return this.m_driveEncoder.getPosition();
 	}
 
-	public CANSparkMax getSteerMotor() {
-		return this.m_steerMotor;
+	/**
+	 * Resets drive encoder to zero.
+	 */
+	public void resetDriveEncoder() {
+		m_driveEncoder.setPosition(0);
 	}
 
 	/**
@@ -90,6 +77,15 @@ public class SwerveModule {
 	 */
 	public double getModuleAngle() {
 		return m_CANCoder.getAbsolutePosition().getValueAsDouble() * 360;
+	}
+
+	/**
+	 * Sets the module angle in degrees.
+	 * 
+	 * @param angle The angle in degrees
+	 */
+	public void setModuleAngle(double angle) {
+		m_PIDController.setSetpoint(angle);
 	}
 
 	public void setModuleState(SwerveModuleState state) {

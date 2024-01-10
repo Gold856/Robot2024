@@ -124,10 +124,10 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public void resetEncoders() {
 		// Zero drive encoders
-		m_frontLeft.getDriveEncoder().setPosition(0);
-		m_frontRight.getDriveEncoder().setPosition(0);
-		m_backLeft.getDriveEncoder().setPosition(0);
-		m_backRight.getDriveEncoder().setPosition(0);
+		m_frontLeft.resetDriveEncoder();
+		m_frontRight.resetDriveEncoder();
+		m_backLeft.resetDriveEncoder();
+		m_backRight.resetDriveEncoder();
 	}
 
 	/**
@@ -175,10 +175,10 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public void setSteerMotors(double frontLeftAngle, double frontRightAngle, double backLeftAngle,
 			double backRightAngle) {
-		m_frontLeft.getPIDController().setSetpoint(frontLeftAngle);
-		m_frontRight.getPIDController().setSetpoint(frontRightAngle);
-		m_backLeft.getPIDController().setSetpoint(backLeftAngle);
-		m_backRight.getPIDController().setSetpoint(backRightAngle);
+		m_frontLeft.setModuleAngle(frontLeftAngle);
+		m_frontRight.setModuleAngle(frontRightAngle);
+		m_backLeft.setModuleAngle(backLeftAngle);
+		m_backRight.setModuleAngle(backRightAngle);
 	}
 
 	/**
