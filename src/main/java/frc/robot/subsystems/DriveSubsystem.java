@@ -159,7 +159,7 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Heading", getHeading().getRadians());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, 1);
+		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
 		m_targetModuleStatePublisher.set(states);
 		m_field.setRobotPose(m_pose);
 		return states;
