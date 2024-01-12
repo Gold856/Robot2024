@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
@@ -91,8 +92,7 @@ public class SwerveModule {
 	public void setModuleState(SwerveModuleState state) {
 		// Will allow the module to spin to 180 deg + target angle
 		// but swap drive speed if that is quicker than normal
-		// TODO: angle should be module angle, not target state angle
-		state = SwerveModuleState.optimize(state, state.angle);
+		state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getModuleAngle()));
 		// Set drive and steer speed
 		m_driveMotor.set(state.speedMetersPerSecond);
 		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
