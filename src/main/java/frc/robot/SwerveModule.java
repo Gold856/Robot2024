@@ -89,6 +89,15 @@ public class SwerveModule {
 		m_PIDController.setSetpoint(angle);
 	}
 
+	/**
+	 * Gets the module speed and angle.
+	 * 
+	 * @return The module state
+	 */
+	public SwerveModuleState getModuleState() {
+		return new SwerveModuleState(m_driveMotor.getAppliedOutput(), Rotation2d.fromDegrees(getModuleAngle()));
+	}
+
 	public void setModuleState(SwerveModuleState state) {
 		// Will allow the module to spin to 180 deg + target angle
 		// but swap drive speed if that is quicker than normal

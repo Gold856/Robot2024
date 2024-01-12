@@ -195,14 +195,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		SwerveModuleState[] states = {
-				new SwerveModuleState(m_frontLeft.getDriveSpeed(),
-						Rotation2d.fromDegrees(m_frontLeft.getModuleAngle())),
-				new SwerveModuleState(m_frontRight.getDriveSpeed(),
-						Rotation2d.fromDegrees(m_frontRight.getModuleAngle())),
-				new SwerveModuleState(m_backLeft.getDriveSpeed(), Rotation2d.fromDegrees(m_backLeft.getModuleAngle())),
-				new SwerveModuleState(m_backRight.getDriveSpeed(),
-						Rotation2d.fromDegrees(m_backRight.getModuleAngle())) };
+		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
+				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
 	}
 }
