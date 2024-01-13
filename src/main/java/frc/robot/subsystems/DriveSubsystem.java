@@ -134,13 +134,6 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Sets all modules to zero degrees.
-	 */
-	public void setWheelRotationToZeroDegrees() {
-		setSteerMotors(0, 0, 0, 0);
-	}
-
-	/**
 	 * Calculates the modules states needed for the robot to achieve the target
 	 * chassis speed.
 	 * 
@@ -174,22 +167,6 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Sets the target angles in degrees for each wheel on the robot
-	 * 
-	 * @param frontLeftAngle  The target angle of the front left wheel in degrees
-	 * @param frontRightAngle The target angle of the front right wheel in degrees
-	 * @param backLeftAngle   The target angle of the back left wheel in degrees
-	 * @param backRightAngle  The target angle of the back right wheel in degrees
-	 */
-	public void setSteerMotors(double frontLeftAngle, double frontRightAngle, double backLeftAngle,
-			double backRightAngle) {
-		m_frontLeft.setModuleAngle(frontLeftAngle);
-		m_frontRight.setModuleAngle(frontRightAngle);
-		m_backLeft.setModuleAngle(backLeftAngle);
-		m_backRight.setModuleAngle(backRightAngle);
-	}
-
-	/**
 	 * Sets module states for each swerve module.
 	 * 
 	 * @param moduleStates The module states, in order of FL, FR, BL, BR
@@ -217,6 +194,15 @@ public class DriveSubsystem extends SubsystemBase {
 		return runOnce(() -> {
 			resetEncoders();
 			m_odometry.resetPosition(getHeading(), getModulePositions(), new Pose2d());
+		});
+	}
+
+	public Command alignModulesToZeroComamnd() {
+		return runOnce(() -> {
+			m_frontLeft.setModuleAngle(0);
+			m_frontRight.setModuleAngle(0);
+			m_backLeft.setModuleAngle(0);
+			m_backRight.setModuleAngle(0);
 		});
 	}
 }
