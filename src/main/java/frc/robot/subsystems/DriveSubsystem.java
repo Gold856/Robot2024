@@ -14,6 +14,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.ProtobufPublisher;
@@ -21,6 +23,7 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveModule;
 
@@ -32,6 +35,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
+	private final SwerveDriveOdometry m_odometry;
 	private static DriveSubsystem s_subsystem;
 	private AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
@@ -94,9 +98,9 @@ public class DriveSubsystem extends SubsystemBase {
 					kBackRightEncoderOffset,
 					kBackRightDriveInverted);
 		}
-		m_gyro.reset();
 		m_gyro.zeroYaw();
 		resetEncoders();
+		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
 	}
 
 	public static DriveSubsystem get() {
@@ -153,9 +157,9 @@ public class DriveSubsystem extends SubsystemBase {
 				speeds.vyMetersPerSecond * kModuleResponseTimeSeconds, new Rotation2d(
 						speeds.omegaRadiansPerSecond * kModuleResponseTimeSeconds));
 
-		m_pose = m_pose.plus(transform);
-		m_heading = m_pose.getRotation();
-		m_posePublisher.set(m_pose);
+		// m_pose = m_pose.plus(transform);
+		// m_heading = m_pose.getRotation();
+		// m_posePublisher.set(m_pose);
 		SmartDashboard.putNumber("Heading", getHeading().getRadians());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
@@ -163,6 +167,11 @@ public class DriveSubsystem extends SubsystemBase {
 		m_targetModuleStatePublisher.set(states);
 		m_field.setRobotPose(m_pose);
 		return states;
+	}
+
+	private SwerveModulePosition[] getModulePositions() {
+		return new SwerveModulePosition[] { m_frontLeft.getModulePosition(), m_frontRight.getModulePosition(),
+				m_backLeft.getModulePosition(), m_backRight.getModulePosition() };
 	}
 
 	/**
@@ -195,8 +204,20 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
+		m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
+	}
+
+	public Command resetHeadingCommand() {
+		return runOnce(m_gyro::zeroYaw);
+	}
+
+	public Command resetEncodersCommand() {
+		return runOnce(() -> {
+			resetEncoders();
+			m_odometry.resetPosition(getHeading(), getModulePositions(), new Pose2d());
+		});
 	}
 }
