@@ -6,8 +6,11 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import java.util.function.Supplier;
+
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -24,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -177,6 +181,24 @@ public class DriveSubsystem extends SubsystemBase {
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
+	}
+
+	/**
+	 * Creates a command to drive the robot with joystick input.
+	 * 
+	 * @return A command to drive the robot.
+	 */
+	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
+			Supplier<Double> rotationAxis) {
+		return run(() -> {
+			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
+			// input so slight movements don't move the robot
+			double fwdSpeed = -MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+			double strSpeed = -MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+			double rotSpeed = -MathUtil.applyDeadband(rotationAxis.get(), ControllerConstants.kDeadzone);
+
+			setSwerveStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+		});
 	}
 
 	/**

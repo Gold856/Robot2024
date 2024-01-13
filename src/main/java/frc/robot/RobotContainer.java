@@ -12,9 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.commands.DefaultDriveCommand;
 import frc.robot.commands.DriveDistanceCommand;
-import frc.robot.commands.DriveTimeCommand;
 import frc.robot.commands.TurnRelativeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -44,7 +42,7 @@ public class RobotContainer {
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
-		m_driveSubsystem.setDefaultCommand(new DefaultDriveCommand(m_driveSubsystem,
+		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_controller.getRawAxis(Axis.kLeftY),
 				() -> m_controller.getRawAxis(Axis.kLeftX),
 				() -> m_controller.getRawAxis(Axis.kRightX)));
