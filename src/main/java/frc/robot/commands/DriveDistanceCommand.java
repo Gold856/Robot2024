@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.SwerveModule;
 
 public class DriveDistanceCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
-	double m_distance = 0; // if distance, in meters; if angle, in degrees
+	private double m_target; // if distance, in meters; if angle, in degrees
+	private double m_amount;
 
 	/***
 	 * Autonomous command to drive straight
@@ -17,30 +18,50 @@ public class DriveDistanceCommand extends Command {
 	 */
 	public DriveDistanceCommand(double amount) {
 		m_driveSubsystem = DriveSubsystem.get();
-		m_distance = amount;
+		m_amount = amount;
 		addRequirements(DriveSubsystem.get());
 	}
 
 	@Override
 	public void initialize() {
 		double currentPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
-		m_distance += currentPosition;
+		m_target = currentPosition + m_amount;
 	}
 
 	@Override
 	public void execute() {
-		m_driveSubsystem.setSwerveStates((m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(.1, 0, 0), false)));
+		double sign;
+		if (m_target > m_driveSubsystem.getModulePositions()[0].distanceMeters) {
+			sign = 1;
+		} else {
+			sign = -1;
+		}
+		double speed;
+		if (getDiff() > 2) {
+			speed = 0.2;
+		} else if (getDiff() > 1) {
+			speed = 0.1;
+		} else {
+			speed = getDiff() * 0.1;
+		}
+		var moduleStates = m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(sign * speed, 0, 0), false);
+		m_driveSubsystem.setSwerveStates(moduleStates);
 	}
 
 	@Override
 	public boolean isFinished() {
 		// Determine whether the target distance has been reached
-		double currentPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
-		return ((m_distance - currentPosition) < 0.1);
+		double diff = getDiff();
+		SmartDashboard.putNumber("diff", diff);
+		return diff < 0.2;
 	}
 
 	@Override
 	public void end(boolean interrupted) {
 		m_driveSubsystem.stopDriving();
+	}
+
+	private double getDiff() {
+		return Math.abs(m_target - m_driveSubsystem.getModulePositions()[0].distanceMeters);
 	}
 }
