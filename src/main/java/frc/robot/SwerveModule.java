@@ -31,12 +31,12 @@ public class SwerveModule {
 		m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
 		m_driveEncoder = m_driveMotor.getEncoder();
+		m_driveEncoder.setPositionConversionFactor(1 / kMotorRotationsPerMeter);
 		m_CANCoder.getConfigurator().apply(new MagnetSensorConfigs().withMagnetOffset(-magnetOffset));
 		configMotorController(m_driveMotor);
 		m_driveMotor.setInverted(inverted);
 		configMotorController(m_steerMotor);
 		m_PIDController.enableContinuousInput(0, 360);
-		m_driveEncoder.setPositionConversionFactor(1 / SwerveConstants.kMotorRevsPerMeter);
 	}
 
 	/***

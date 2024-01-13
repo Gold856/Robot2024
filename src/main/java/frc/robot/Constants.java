@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -101,12 +102,10 @@ public final class Constants {
 
 	public static final class SwerveConstants {
 		public static final double kModuleResponseTimeSeconds = 0.1;
-		public static final double gearRatio = 8.14;
-		public static final double wheelDiameter = 0.1016; // in meters
-		// public static final double ticksPerAxisRev = 42;
+		public static final double kGearRatio = 6.12;
+		public static final double kWheelDiameter = Units.inchesToMeters(4);
 
-		public static final double kTicksToMeters = (1 / gearRatio) * Math.PI * wheelDiameter;
-		public static final double kMotorRevsPerMeter = gearRatio / (Math.PI * wheelDiameter);
+		public static final double kMotorRotationsPerMeter = kGearRatio / (Math.PI * kWheelDiameter);
 
 		// These set points resulted in back being front, front is back
 		public static final double kFrontLeftEncoderOffset = -0.139648;
