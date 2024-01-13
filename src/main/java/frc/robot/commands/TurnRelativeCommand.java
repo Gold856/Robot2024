@@ -41,8 +41,7 @@ public class TurnRelativeCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		var moduleStates = m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(0, 0, 0), false);
-		m_driveSubsystem.setSwerveStates(moduleStates);
+		m_driveSubsystem.stopDriving();
 	}
 
 	// Returns true when the command should end.

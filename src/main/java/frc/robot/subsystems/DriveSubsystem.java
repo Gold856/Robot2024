@@ -161,6 +161,13 @@ public class DriveSubsystem extends SubsystemBase {
 		return states;
 	}
 
+	/**
+	 * Stops all the motors.
+	 */
+	public void stopDriving() {
+		setSwerveStates(calculateModuleStates(new ChassisSpeeds(0, 0, 0), true));
+	}
+
 	private SwerveModulePosition[] getModulePositions() {
 		return new SwerveModulePosition[] { m_frontLeft.getModulePosition(), m_frontRight.getModulePosition(),
 				m_backLeft.getModulePosition(), m_backRight.getModulePosition() };
