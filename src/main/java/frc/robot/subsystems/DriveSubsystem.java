@@ -27,23 +27,23 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.SwerveModule;
 
 public class DriveSubsystem extends SubsystemBase {
-	private SwerveModule m_frontLeft;
-	private SwerveModule m_frontRight;
-	private SwerveModule m_backLeft;
-	private SwerveModule m_backRight;
+	private final SwerveModule m_frontLeft;
+	private final SwerveModule m_frontRight;
+	private final SwerveModule m_backLeft;
+	private final SwerveModule m_backRight;
 
-	private SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
 	private final SwerveDriveOdometry m_odometry;
-	private AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+	private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
 	private Pose2d m_pose = new Pose2d(0, 0, new Rotation2d(Math.PI / 2));
 	private Rotation2d m_heading = new Rotation2d(Math.PI / 2);
-	private ProtobufPublisher<Pose2d> m_posePublisher;
 	private final Field2d m_field = new Field2d();
 
-	private StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
-	private StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
+	private final ProtobufPublisher<Pose2d> m_posePublisher;
+	private final StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
+	private final StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {

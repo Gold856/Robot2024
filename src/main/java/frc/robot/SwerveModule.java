@@ -23,11 +23,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * Contains all the hardware and controllers for a swerve module.
  */
 public class SwerveModule {
-	private PIDController m_PIDController = new PIDController(kP, kI, kD);
-	private CANcoder m_CANCoder;
-	private CANSparkMax m_driveMotor;
-	public RelativeEncoder m_driveEncoder;
-	private CANSparkMax m_steerMotor;
+	private final PIDController m_PIDController = new PIDController(kP, kI, kD);
+	private final CANcoder m_CANCoder;
+	private final CANSparkMax m_driveMotor;
+	private final RelativeEncoder m_driveEncoder;
+	private final CANSparkMax m_steerMotor;
 
 	public SwerveModule(int CANport, int drivePort, int steerPort, double magnetOffset, boolean inverted) {
 		m_CANCoder = new CANcoder(CANport);
@@ -46,7 +46,7 @@ public class SwerveModule {
 	 * 
 	 * @param motorController The CANSparkMax to configure
 	 */
-	public static void configMotorController(CANSparkMax motorController) {
+	private void configMotorController(CANSparkMax motorController) {
 		motorController.restoreFactoryDefaults();
 		motorController.setIdleMode(IdleMode.kBrake);
 		motorController.enableVoltageCompensation(12);
