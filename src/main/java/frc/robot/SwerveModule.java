@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.SwerveConstants.*;
+import static frc.robot.Constants.DriveConstants.*;
 
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;

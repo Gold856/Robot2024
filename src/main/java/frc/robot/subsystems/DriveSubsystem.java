@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.DriveConstants.*;
-import static frc.robot.Constants.SwerveConstants.*;
 
 import com.kauailabs.navx.frc.AHRS;
 
