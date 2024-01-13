@@ -16,10 +16,10 @@ public class DriveDistanceCommand extends Command {
 	 * @param amount
 	 *               amount is distance in meters
 	 */
-	public DriveDistanceCommand(double amount) {
-		m_driveSubsystem = DriveSubsystem.get();
+	public DriveDistanceCommand(DriveSubsystem subsystem, double amount) {
+		m_driveSubsystem = subsystem;
 		m_amount = amount;
-		addRequirements(DriveSubsystem.get());
+		addRequirements(subsystem);
 	}
 
 	@Override

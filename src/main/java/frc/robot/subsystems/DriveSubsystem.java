@@ -35,7 +35,6 @@ public class DriveSubsystem extends SubsystemBase {
 	private SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
 	private final SwerveDriveOdometry m_odometry;
-	private static DriveSubsystem s_subsystem;
 	private AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
 	private Pose2d m_pose = new Pose2d(0, 0, new Rotation2d(Math.PI / 2));
@@ -48,16 +47,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
-		// Singleton
-		if (s_subsystem != null) {
-			try {
-				throw new Exception("Motor subsystem already initialized!");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		s_subsystem = this;
-
 		SmartDashboard.putData("Field", m_field);
 		m_posePublisher = NetworkTableInstance.getDefault().getProtobufTopic("/SmartDashboard/Pose", Pose2d.proto)
 				.publish();
@@ -100,10 +89,6 @@ public class DriveSubsystem extends SubsystemBase {
 		m_gyro.zeroYaw();
 		resetEncoders();
 		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
-	}
-
-	public static DriveSubsystem get() {
-		return s_subsystem;
 	}
 
 	/**
