@@ -18,13 +18,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.DriveConstants;
 
 /**
  * Contains all the hardware and controllers for a swerve module.
  */
 public class SwerveModule {
-	private PIDController m_PIDController = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD);
+	private PIDController m_PIDController = new PIDController(kP, kI, kD);
 	private CANcoder m_CANCoder;
 	private CANSparkMax m_driveMotor;
 	public RelativeEncoder m_driveEncoder;
