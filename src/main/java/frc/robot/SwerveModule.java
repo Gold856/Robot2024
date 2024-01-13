@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.SwerveConstants.*;
+
 import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -13,10 +15,10 @@ import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.SwerveConstants;
 
 /** Add your docs here. */
 public class SwerveModule {
@@ -51,6 +53,11 @@ public class SwerveModule {
 		motorController.setSmartCurrentLimit(30);
 	}
 
+	/**
+	 * Returns drive encoder distance in meters traveled.
+	 * 
+	 * @return The position
+	 */
 	public double getDriveEncoderPosition() {
 		return this.m_driveEncoder.getPosition();
 	}
@@ -87,6 +94,10 @@ public class SwerveModule {
 	 */
 	public void setModuleAngle(double angle) {
 		m_PIDController.setSetpoint(angle);
+	}
+
+	public SwerveModulePosition getModulePosition() {
+		return new SwerveModulePosition(getDriveEncoderPosition(), Rotation2d.fromDegrees(getModuleAngle()));
 	}
 
 	/**

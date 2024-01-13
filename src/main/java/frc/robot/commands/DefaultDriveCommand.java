@@ -42,7 +42,7 @@ public class DefaultDriveCommand extends Command {
 		// input so slight movements don't move the robot
 		double fwdSpeed = -MathUtil.applyDeadband(m_forwardSpeed.get(), ControllerConstants.kDeadzone);
 		double strSpeed = -MathUtil.applyDeadband(m_strafeSpeed.get(), ControllerConstants.kDeadzone);
-		double rotSpeed = MathUtil.applyDeadband(m_rotationAxis.get(), ControllerConstants.kDeadzone);
+		double rotSpeed = -MathUtil.applyDeadband(m_rotationAxis.get(), ControllerConstants.kDeadzone);
 
 		m_driveSubsystem.setSwerveStates(
 				m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
