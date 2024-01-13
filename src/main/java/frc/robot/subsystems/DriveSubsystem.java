@@ -194,10 +194,20 @@ public class DriveSubsystem extends SubsystemBase {
 		m_currentModuleStatePublisher.set(states);
 	}
 
+	/**
+	 * Creates a command to reset the gyro heading to zero.
+	 * 
+	 * @return A command to reset the gyro heading.
+	 */
 	public Command resetHeadingCommand() {
 		return runOnce(m_gyro::zeroYaw);
 	}
 
+	/**
+	 * Creates a command to reset the drive encoders to zero.
+	 * 
+	 * @return A command to reset the drive encoders.
+	 */
 	public Command resetEncodersCommand() {
 		return runOnce(() -> {
 			resetEncoders();
@@ -205,6 +215,12 @@ public class DriveSubsystem extends SubsystemBase {
 		});
 	}
 
+	/**
+	 * Creates a command to align the swerve modules to zero degrees relative to the
+	 * robot.
+	 * 
+	 * @return A command to align the swerve modules.
+	 */
 	public Command alignModulesToZeroComamnd() {
 		return runOnce(() -> {
 			m_frontLeft.setModuleAngle(0);

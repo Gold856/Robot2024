@@ -20,7 +20,9 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 
-/** Add your docs here. */
+/**
+ * Contains all the hardware and controllers for a swerve module.
+ */
 public class SwerveModule {
 	private PIDController m_PIDController = new PIDController(DriveConstants.kP, DriveConstants.kI, DriveConstants.kD);
 	private CANcoder m_CANCoder;
@@ -40,7 +42,7 @@ public class SwerveModule {
 		m_PIDController.enableContinuousInput(0, 360);
 	}
 
-	/***
+	/**
 	 * Configures our motors with the exact same settings
 	 * 
 	 * @param motorController The CANSparkMax to configure
@@ -95,6 +97,11 @@ public class SwerveModule {
 		m_PIDController.setSetpoint(angle);
 	}
 
+	/**
+	 * Returns the module position.
+	 * 
+	 * @return The module position
+	 */
 	public SwerveModulePosition getModulePosition() {
 		return new SwerveModulePosition(getDriveEncoderPosition(), Rotation2d.fromDegrees(getModuleAngle()));
 	}
@@ -108,6 +115,11 @@ public class SwerveModule {
 		return new SwerveModuleState(m_driveMotor.getAppliedOutput(), Rotation2d.fromDegrees(getModuleAngle()));
 	}
 
+	/**
+	 * Sets the drive motor speeds and module angle.
+	 * 
+	 * @param state The module state
+	 */
 	public void setModuleState(SwerveModuleState state) {
 		// Will allow the module to spin to 180 deg + target angle
 		// but swap drive speed if that is quicker than normal
