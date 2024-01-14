@@ -66,28 +66,24 @@ public class DriveSubsystem extends SubsystemBase {
 					kFrontLeftCANCoderPort,
 					kFrontLeftDrivePort,
 					kFrontLeftSteerPort,
-					kFrontLeftEncoderOffset,
 					kFrontLeftDriveInverted);
 
 			m_frontRight = new SwerveModule(
 					kFrontRightCANCoderPort,
 					kFrontRightDrivePort,
 					kFrontRightSteerPort,
-					kFrontRightEncoderOffset,
 					kFrontRightDriveInverted);
 
 			m_backLeft = new SwerveModule(
 					kBackLeftCANCoderPort,
 					kBackLeftDrivePort,
 					kBackLeftSteerPort,
-					kBackLeftEncoderOffset,
 					kBackLeftDriveInverted);
 
 			m_backRight = new SwerveModule(
 					kBackRightCANCoderPort,
 					kBackRightDrivePort,
 					kBackRightSteerPort,
-					kBackRightEncoderOffset,
 					kBackRightDriveInverted);
 		}
 		m_gyro.zeroYaw();

@@ -28,12 +28,11 @@ public class SwerveModule {
 	private final RelativeEncoder m_driveEncoder;
 	private final CANSparkMax m_steerMotor;
 
-	public SwerveModule(int CANport, int drivePort, int steerPort, double magnetOffset, boolean inverted) {
+	public SwerveModule(int CANport, int drivePort, int steerPort, boolean inverted) {
 		m_CANCoder = new CANcoder(CANport);
 		m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
 		m_driveEncoder = m_driveMotor.getEncoder();
-		m_CANCoder.getConfigurator().apply(new MagnetSensorConfigs().withMagnetOffset(-magnetOffset));
 		configMotorController(m_driveMotor);
 		m_driveMotor.setInverted(inverted);
 		configMotorController(m_steerMotor);

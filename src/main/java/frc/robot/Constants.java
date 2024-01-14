@@ -105,12 +105,6 @@ public final class Constants {
 
 		public static final double kMotorRotationsPerMeter = (1 / kGearRatio) * (Math.PI * kWheelDiameter);
 
-		// These set points resulted in back being front, front is back
-		public static final double kFrontLeftEncoderOffset = -0.139648;
-		public static final double kFrontRightEncoderOffset = -0.336182;
-		public static final double kBackLeftEncoderOffset = 0.262451;
-		public static final double kBackRightEncoderOffset = -0.376709;
-
 		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
 		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
 		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
