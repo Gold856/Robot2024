@@ -1,5 +1,8 @@
 package frc.robot.commands;
 
+import static frc.robot.Constants.DriveConstants.kMaxSpeed;
+import static frc.robot.Constants.DriveConstants.kMinSpeed;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -9,6 +12,20 @@ public class DriveDistanceCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
 	private double m_target; // if distance, in meters; if angle, in degrees
 	private double m_amount;
+	private double m_tolerance;
+
+	/***
+	 * Autonomous command to drive straight
+	 * 
+	 * @param amount
+	 *               amount is distance in meters
+	 */
+	public DriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
+		m_driveSubsystem = subsystem;
+		m_amount = amount;
+		m_tolerance = tolerance;
+		addRequirements(subsystem);
+	}
 
 	/***
 	 * Autonomous command to drive straight
@@ -19,6 +36,7 @@ public class DriveDistanceCommand extends Command {
 	public DriveDistanceCommand(DriveSubsystem subsystem, double amount) {
 		m_driveSubsystem = subsystem;
 		m_amount = amount;
+		m_tolerance = 0.1;
 		addRequirements(subsystem);
 	}
 
@@ -36,16 +54,17 @@ public class DriveDistanceCommand extends Command {
 		} else {
 			sign = -1;
 		}
-		double speed;
-		if (getDiff() > 2) {
-			speed = 0.2;
-		} else if (getDiff() > 1) {
-			speed = 0.1;
-		} else {
-			speed = getDiff() * 0.1;
+
+		double error = getDiff();
+		double kP = 0.1;
+		double speed = error * kP;
+		if (speed > kMaxSpeed) {
+			speed = kMaxSpeed;
+		} else if (speed < kMinSpeed) {
+			speed = kMinSpeed;
 		}
-		var moduleStates = m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(sign * speed, 0, 0), false);
-		m_driveSubsystem.setSwerveStates(moduleStates);
+
+		m_driveSubsystem.setSpeeds(speed * sign, 0, 0, false);
 	}
 
 	@Override
@@ -53,7 +72,7 @@ public class DriveDistanceCommand extends Command {
 		// Determine whether the target distance has been reached
 		double diff = getDiff();
 		SmartDashboard.putNumber("diff", diff);
-		return diff < 0.2;
+		return diff < m_tolerance;
 	}
 
 	@Override

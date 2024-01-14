@@ -98,6 +98,7 @@ public final class Constants {
 		// Speed multiplier to make sure the robot doesn't crash into something when
 		// testing, because crashing into people's shins would be bad
 		public static final double kMaxSpeed = 1;
+		public static final double kMinSpeed = 0.1;
 		public static final double kModuleResponseTimeSeconds = 0.1;
 		public static final double kGearRatio = 6.12;
 		public static final double kWheelDiameter = Units.inchesToMeters(4);

@@ -151,6 +151,19 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * 
+	 * Sets and starts drive motors
+	 * 
+	 * @param speedFwd
+	 * @param speedSide
+	 * @param speedRot
+	 * @param isFieldRelative
+	 */
+	public void setSpeeds(double speedFwd, double speedSide, double speedRot, boolean isFieldRelative) {
+		setSwerveStates(calculateModuleStates(new ChassisSpeeds(speedFwd, speedSide, speedRot), isFieldRelative));
+	}
+
+	/**
 	 * Stops all the motors.
 	 */
 	public void stopDriving() {
@@ -158,9 +171,10 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Gets the module positions.
+	 * Array - FL [0], FR [1], BL [2], BR [3]
+	 * Uses swerve module encoder to determine position
 	 * 
-	 * @return The module positions in order of FL, FR, BL, BR
+	 * @return
 	 */
 	public SwerveModulePosition[] getModulePositions() {
 		return new SwerveModulePosition[] { m_frontLeft.getModulePosition(), m_frontRight.getModulePosition(),
@@ -191,9 +205,6 @@ public class DriveSubsystem extends SubsystemBase {
 	/**
 	 * Creates a command to drive the robot with joystick input.
 	 * 
-	 * @param forwardSpeed A getter for the forward speed
-	 * @param strafeSpeed  A getter for the strafe speed
-	 * @param rotationAxis A getter for the rotation speed
 	 * @return A command to drive the robot.
 	 */
 	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
