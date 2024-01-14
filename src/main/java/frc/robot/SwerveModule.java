@@ -126,7 +126,5 @@ public class SwerveModule {
 		// Set drive and steer speed
 		m_driveMotor.set(state.speedMetersPerSecond);
 		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
-		// Print state to dashboard
-		SmartDashboard.putString("Swerve module " + m_CANCoder.getDeviceID(), state.toString());
 	}
 }
