@@ -13,11 +13,19 @@ public class DriveTimeCommand extends Command {
 	private DriveSubsystem m_driveSubsystem;
 	private double m_seconds;
 	private final Timer m_timer = new Timer();
+	private final double m_speed;
 
-	/** Creates a new DriveTimeCommand. */
-	public DriveTimeCommand(DriveSubsystem subsystem, double seconds) {
+	/**
+	 * Creates a new DriveTimeCommand.
+	 * 
+	 * @param subsystem The subsystem
+	 * @param seconds   Time to drive in seconds
+	 * @param speed     The speed in percent output
+	 */
+	public DriveTimeCommand(DriveSubsystem subsystem, double seconds, double speed) {
 		m_driveSubsystem = subsystem;
 		m_seconds = seconds;
+		m_speed = speed;
 		addRequirements(subsystem);
 	}
 
@@ -30,7 +38,7 @@ public class DriveTimeCommand extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(1, 0, 0), true);
+		m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(m_speed, 0, 0), true);
 	}
 
 	// Called once the command ends or is interrupted.
