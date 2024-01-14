@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
@@ -242,11 +243,10 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @return A command to align the swerve modules.
 	 */
 	public Command alignModulesToZeroComamnd() {
-		return runOnce(() -> {
-			m_frontLeft.setModuleAngle(0);
-			m_frontRight.setModuleAngle(0);
-			m_backLeft.setModuleAngle(0);
-			m_backRight.setModuleAngle(0);
-		});
+		return run(() -> {
+			m_kinematics.resetHeadings(
+					new Rotation2d[] { new Rotation2d(0), new Rotation2d(0), new Rotation2d(0), new Rotation2d(0) });
+			setModuleStates(0, 0, 0, false);
+		}).raceWith(Commands.waitSeconds(5));
 	}
 }
