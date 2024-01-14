@@ -158,10 +158,9 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Array - FL [0], FR [1], BL [2], BR [3]
-	 * Uses swerve module encoder to determine position
+	 * Gets the module positions for each swerve module.
 	 * 
-	 * @return
+	 * @return The module positions, in order of FL, FR, BL, BR
 	 */
 	public SwerveModulePosition[] getModulePositions() {
 		return new SwerveModulePosition[] { m_frontLeft.getModulePosition(), m_frontRight.getModulePosition(),
