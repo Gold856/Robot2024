@@ -151,23 +151,10 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * 
-	 * Sets and starts drive motors
-	 * 
-	 * @param speedFwd
-	 * @param speedSide
-	 * @param speedRot
-	 * @param isFieldRelative
-	 */
-	public void setSpeeds(double speedFwd, double speedSide, double speedRot, boolean isFieldRelative) {
-		setSwerveStates(calculateModuleStates(new ChassisSpeeds(speedFwd, speedSide, speedRot), isFieldRelative));
-	}
-
-	/**
 	 * Stops all the motors.
 	 */
 	public void stopDriving() {
-		setSwerveStates(calculateModuleStates(new ChassisSpeeds(0, 0, 0), true));
+		setModuleStates(calculateModuleStates(new ChassisSpeeds(0, 0, 0), true));
 	}
 
 	/**
@@ -186,11 +173,23 @@ public class DriveSubsystem extends SubsystemBase {
 	 * 
 	 * @param moduleStates The module states, in order of FL, FR, BL, BR
 	 */
-	public void setSwerveStates(SwerveModuleState[] moduleStates) {
+	public void setModuleStates(SwerveModuleState[] moduleStates) {
 		m_frontLeft.setModuleState(moduleStates[0]);
 		m_frontRight.setModuleState(moduleStates[1]);
 		m_backLeft.setModuleState(moduleStates[2]);
 		m_backRight.setModuleState(moduleStates[3]);
+	}
+
+	/**
+	 * Sets module states for each swerve module.
+	 * 
+	 * @param speedFwd        The forward speed
+	 * @param speedSide       The sideways speed
+	 * @param speedRot        The rotation speed
+	 * @param isFieldRelative Whether or not the speeds are relative to the field
+	 */
+	public void setModuleStates(double speedFwd, double speedSide, double speedRot, boolean isFieldRelative) {
+		setModuleStates(calculateModuleStates(new ChassisSpeeds(speedFwd, speedSide, speedRot), isFieldRelative));
 	}
 
 	@Override
@@ -216,7 +215,7 @@ public class DriveSubsystem extends SubsystemBase {
 			double strSpeed = -MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			double rotSpeed = -MathUtil.applyDeadband(rotationAxis.get(), ControllerConstants.kDeadzone);
 
-			setSwerveStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
 		});
 	}
 

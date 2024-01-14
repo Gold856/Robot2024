@@ -40,7 +40,7 @@ public class TurnRelativeCommand extends Command {
 	public void execute() {
 		var moduleStates = m_driveSubsystem.calculateModuleStates(
 				new ChassisSpeeds(0, 0, m_controller.calculate(m_driveSubsystem.getHeading().getDegrees())), false);
-		m_driveSubsystem.setSwerveStates(moduleStates);
+		m_driveSubsystem.setModuleStates(moduleStates);
 	}
 
 	// Called once the command ends or is interrupted.
