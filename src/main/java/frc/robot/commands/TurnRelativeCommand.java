@@ -14,7 +14,12 @@ public class TurnRelativeCommand extends Command {
 	private double m_angle;
 	private PIDController m_controller;
 
-	/** Creates a new TurnRelativeaCommand. */
+	/**
+	 * Creates a new TurnRelativeCommand.
+	 * 
+	 * @param subsystem The drive subsystem.
+	 * @param angle     The angle in degrees.
+	 */
 	public TurnRelativeCommand(DriveSubsystem subsystem, double angle) {
 		m_driveSubsystem = subsystem;
 		m_angle = angle;
