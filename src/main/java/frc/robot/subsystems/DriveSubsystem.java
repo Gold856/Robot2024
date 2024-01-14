@@ -186,6 +186,9 @@ public class DriveSubsystem extends SubsystemBase {
 	/**
 	 * Creates a command to drive the robot with joystick input.
 	 * 
+	 * @param forwardSpeed A getter for the forward speed
+	 * @param strafeSpeed  A getter for the strafe speed
+	 * @param rotationAxis A getter for the rotation speed
 	 * @return A command to drive the robot.
 	 */
 	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
