@@ -157,6 +157,11 @@ public class DriveSubsystem extends SubsystemBase {
 		setSwerveStates(calculateModuleStates(new ChassisSpeeds(0, 0, 0), true));
 	}
 
+	/**
+	 * Gets the module positions.
+	 * 
+	 * @return The module positions in order of FL, FR, BL, BR
+	 */
 	public SwerveModulePosition[] getModulePositions() {
 		return new SwerveModulePosition[] { m_frontLeft.getModulePosition(), m_frontRight.getModulePosition(),
 				m_backLeft.getModulePosition(), m_backRight.getModulePosition() };
