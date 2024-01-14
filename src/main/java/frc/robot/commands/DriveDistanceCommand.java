@@ -64,7 +64,7 @@ public class DriveDistanceCommand extends Command {
 			speed = kMinSpeed;
 		}
 
-		m_driveSubsystem.setSpeeds(speed * sign, 0, 0, false);
+		m_driveSubsystem.setModuleStates(speed * sign, 0, 0, false);
 	}
 
 	@Override
