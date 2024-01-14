@@ -177,6 +177,18 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * Directly sets the module angle. Do not use for general driving.
+	 * 
+	 * @param angle The angle in degrees
+	 */
+	public void setModuleAngles(double angle) {
+		m_frontLeft.setAngle(angle);
+		m_frontRight.setAngle(angle);
+		m_backLeft.setAngle(angle);
+		m_backRight.setAngle(angle);
+	}
+
+	/**
 	 * Sets module states for each swerve module.
 	 * 
 	 * @param speedFwd        The forward speed

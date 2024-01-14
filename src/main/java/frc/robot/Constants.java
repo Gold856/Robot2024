@@ -80,9 +80,9 @@ public final class Constants {
 		public static final double kDriveScale = 0.5;
 		// Drive PID values
 		public static final double kP = 0.005;
-		public static final double kI = 0;
+		public static final double kI = 0.015;
 		public static final double kD = 0;
-		public static final double kIz = 0;
+		public static final double kIz = 5;
 		public static final double kFF = 0;
 		public static final double kMinOutput = -1.0;
 		public static final double kMaxOutput = 1.0;

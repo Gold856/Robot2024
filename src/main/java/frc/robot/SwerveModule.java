@@ -6,7 +6,6 @@ package frc.robot;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -32,6 +31,7 @@ public class SwerveModule {
 		m_CANCoder = new CANcoder(CANport);
 		m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
+		m_PIDController.setIZone(kIz);
 		m_driveEncoder = m_driveMotor.getEncoder();
 		configMotorController(m_driveMotor);
 		m_driveMotor.setInverted(inverted);
@@ -46,7 +46,7 @@ public class SwerveModule {
 	 */
 	private void configMotorController(CANSparkMax motorController) {
 		motorController.restoreFactoryDefaults();
-		motorController.setIdleMode(IdleMode.kBrake);
+		motorController.setIdleMode(IdleMode.kCoast);
 		motorController.enableVoltageCompensation(12);
 		motorController.setSmartCurrentLimit(30);
 	}
@@ -124,5 +124,14 @@ public class SwerveModule {
 		// Set drive and steer speed
 		m_driveMotor.set(state.speedMetersPerSecond);
 		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
+	}
+
+	/**
+	 * Sets the module angle.
+	 * 
+	 * @param angle
+	 */
+	public void setAngle(double angle) {
+		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), angle));
 	}
 }
