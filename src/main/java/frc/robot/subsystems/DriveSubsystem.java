@@ -22,6 +22,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,7 +44,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private final SwerveDriveOdometry m_odometry;
 	private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
-	private Pose2d m_pose = new Pose2d(0, 0, new Rotation2d(Math.PI / 2));
+	private Pose2d m_pose = new Pose2d(0, 0, new Rotation2d());
 	private Rotation2d m_heading = new Rotation2d(Math.PI / 2);
 	private final Field2d m_field = new Field2d();
 
@@ -98,6 +100,9 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @return The heading
 	 */
 	public Rotation2d getHeading() {
+		if (RobotBase.isSimulation()) {
+			return m_heading;
+		}
 		return Rotation2d.fromDegrees(-m_gyro.getYaw());
 	}
 
@@ -120,6 +125,15 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * Returns robot pose.
+	 * 
+	 * @return The pose of the robot.
+	 */
+	public Pose2d getPose() {
+		return m_pose;
+	}
+
+	/**
 	 * Calculates the modules states needed for the robot to achieve the target
 	 * chassis speed.
 	 * 
@@ -131,13 +145,9 @@ public class DriveSubsystem extends SubsystemBase {
 		if (isFieldRelative) {
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
 		}
-		var transform = new Transform2d(speeds.vxMetersPerSecond * kModuleResponseTimeSeconds,
-				speeds.vyMetersPerSecond * kModuleResponseTimeSeconds, new Rotation2d(
-						speeds.omegaRadiansPerSecond * kModuleResponseTimeSeconds));
-
-		// m_pose = m_pose.plus(transform);
-		// m_heading = m_pose.getRotation();
-		// m_posePublisher.set(m_pose);
+		if (RobotBase.isSimulation()) {
+			updateSimPose(speeds);
+		}
 		SmartDashboard.putNumber("Heading", getHeading().getRadians());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
@@ -145,6 +155,21 @@ public class DriveSubsystem extends SubsystemBase {
 		m_targetModuleStatePublisher.set(states);
 		m_field.setRobotPose(m_pose);
 		return states;
+	}
+
+	/**
+	 * Updates the sim pose.
+	 * 
+	 * @param speeds The chassis speeds to use
+	 */
+	private void updateSimPose(ChassisSpeeds speeds) {
+		var transform = new Transform2d(speeds.vxMetersPerSecond * kModuleResponseTimeSeconds,
+				speeds.vyMetersPerSecond * kModuleResponseTimeSeconds, new Rotation2d(
+						speeds.omegaRadiansPerSecond * kModuleResponseTimeSeconds));
+
+		m_pose = m_pose.plus(transform);
+		m_heading = m_pose.getRotation();
+		m_posePublisher.set(m_pose);
 	}
 
 	/**
