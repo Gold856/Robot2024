@@ -16,6 +16,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Contains all the hardware and controllers for a swerve module.
@@ -48,7 +49,8 @@ public class SwerveModule {
 		motorController.restoreFactoryDefaults();
 		motorController.setIdleMode(IdleMode.kCoast);
 		motorController.enableVoltageCompensation(12);
-		motorController.setSmartCurrentLimit(30);
+		motorController.setSmartCurrentLimit(kSmartCurrentLimit);
+		motorController.setSecondaryCurrentLimit(kPeakCurrentLimit);
 	}
 
 	/**
@@ -58,6 +60,10 @@ public class SwerveModule {
 	 */
 	public double getDriveEncoderPosition() {
 		return this.m_driveEncoder.getPosition() * kMotorRotationsPerMeter;
+	}
+
+	public double getSteerCurrent() {
+		return m_steerMotor.getOutputCurrent();
 	}
 
 	/**

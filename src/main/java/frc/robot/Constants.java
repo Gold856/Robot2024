@@ -80,7 +80,7 @@ public final class Constants {
 		public static final double kDriveScale = 0.5;
 		// Drive PID values
 		public static final double kP = 0.005;
-		public static final double kI = 0.015;
+		public static final double kI = 0.045;
 		public static final double kD = 0;
 		public static final double kIz = 5;
 		public static final double kFF = 0;
@@ -109,5 +109,8 @@ public final class Constants {
 		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
 		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
 		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+
+		public static final int kSmartCurrentLimit = 55;
+		public static final int kPeakCurrentLimit = 65;
 	}
 }

@@ -232,6 +232,10 @@ public class DriveSubsystem extends SubsystemBase {
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
+		SmartDashboard.putNumber("Steer 1 motor current", m_frontLeft.getSteerCurrent());
+		SmartDashboard.putNumber("Steer 3 motor current", m_frontRight.getSteerCurrent());
+		SmartDashboard.putNumber("Steer 5 motor current", m_backRight.getSteerCurrent());
+		SmartDashboard.putNumber("Steer 7 motor current", m_backLeft.getSteerCurrent());
 	}
 
 	/**
