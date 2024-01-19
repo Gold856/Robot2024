@@ -38,7 +38,7 @@ public class DriveTimeCommand extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(m_speed, 0, 0), true);
+		m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(m_speed, 0, 0), false);
 	}
 
 	// Called once the command ends or is interrupted.
