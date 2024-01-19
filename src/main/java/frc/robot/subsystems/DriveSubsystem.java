@@ -9,6 +9,7 @@ import static frc.robot.Constants.DriveConstants.*;
 import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -122,6 +123,13 @@ public class DriveSubsystem extends SubsystemBase {
 		m_frontRight.resetDriveEncoder();
 		m_backLeft.resetDriveEncoder();
 		m_backRight.resetDriveEncoder();
+	}
+
+	public void setIdleMode(IdleMode mode) {
+		m_frontLeft.setIdleMode(mode);
+		m_frontRight.setIdleMode(mode);
+		m_backLeft.setIdleMode(mode);
+		m_backRight.setIdleMode(mode);
 	}
 
 	/**

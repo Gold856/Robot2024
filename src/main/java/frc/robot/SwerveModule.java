@@ -47,7 +47,7 @@ public class SwerveModule {
 	 */
 	private void configMotorController(CANSparkMax motorController) {
 		motorController.restoreFactoryDefaults();
-		motorController.setIdleMode(IdleMode.kCoast);
+		motorController.setIdleMode(IdleMode.kBrake);
 		motorController.enableVoltageCompensation(12);
 		motorController.setSmartCurrentLimit(kSmartCurrentLimit);
 		motorController.setSecondaryCurrentLimit(kPeakCurrentLimit);
@@ -138,6 +138,13 @@ public class SwerveModule {
 	 * @param angle
 	 */
 	public void setAngle(double angle) {
-		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), angle));
+		var out = m_PIDController.calculate(getModuleAngle(), angle);
+		SmartDashboard.putNumber("PID out" + m_driveMotor.getDeviceId(), out);
+		m_steerMotor.set(out);
+	}
+
+	public void setIdleMode(IdleMode mode) {
+		m_driveMotor.setIdleMode(mode);
+		m_steerMotor.setIdleMode(mode);
 	}
 }

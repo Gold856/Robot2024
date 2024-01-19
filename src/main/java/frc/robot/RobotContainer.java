@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
+import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.SetSteering;
-import frc.robot.commands.TurnRelativeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -47,7 +47,8 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kRightX)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
-		m_controller.button(Button.kSquare).onTrue(new TurnRelativeCommand(m_driveSubsystem, 90));
+		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 2, 0.1));
 	}
 
 	public Command getAutonomousCommand() {
