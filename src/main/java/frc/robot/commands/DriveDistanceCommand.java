@@ -75,7 +75,7 @@ public class DriveDistanceCommand extends Command {
 
 		SmartDashboard.putNumber("out", out);
 		// m_driveSubsystem.setModuleStates(m_targetDirection * out, 0, 0, false);
-		m_driveSubsystem.setModuleStates(out, 0, 0, true);
+		m_driveSubsystem.setModuleStates(out, 0, 0, false);
 	}
 
 	@Override
