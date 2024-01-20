@@ -13,7 +13,7 @@ public class PIDTurnCommand extends Command {
 	private final double m_targetAngle;
 	private final double m_angleThreshold;
 	private final DriveSubsystem m_driveSubsystem;
-	private final PIDController m_contoller = new PIDController(0.01, 0, 0);
+	private final PIDController m_controller = new PIDController(0.01, 0.005, 0);
 
 	/**
 	 * Creates a new {@code PIDTurnCommand} with the given params.
@@ -25,6 +25,10 @@ public class PIDTurnCommand extends Command {
 		m_targetAngle = targetAngle;
 		m_angleThreshold = angleThreshold;
 		m_driveSubsystem = driveSubsystem;
+		m_controller.enableContinuousInput(0, 360);
+		m_controller.setSetpoint(m_targetAngle);
+		m_controller.setTolerance(m_angleThreshold);
+		m_controller.setIZone(10);
 		addRequirements(driveSubsystem);
 	}
 
@@ -33,8 +37,6 @@ public class PIDTurnCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		m_contoller.setSetpoint(m_targetAngle + m_driveSubsystem.getHeading().getDegrees());
-		m_contoller.setTolerance(m_angleThreshold);
 	}
 
 	/**
@@ -43,7 +45,7 @@ public class PIDTurnCommand extends Command {
 	@Override
 	public void execute() {
 		double rot = m_driveSubsystem.getHeading().getDegrees();
-		double speed = m_contoller.calculate(rot);
+		double speed = m_controller.calculate(rot);
 
 		m_driveSubsystem.setModuleStates(0, 0, speed, false);
 		SmartDashboard.putNumber("Heading", rot);
@@ -59,7 +61,7 @@ public class PIDTurnCommand extends Command {
 	 */
 	@Override
 	public boolean isFinished() {
-		return m_contoller.atSetpoint();
+		return m_controller.atSetpoint();
 	}
 
 	// Called once the command ends or is interrupted.
