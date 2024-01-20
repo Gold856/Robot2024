@@ -91,10 +91,10 @@ public final class Constants {
 		/*** Distance between center of left wheel and center of right wheel */
 		public static final double kTrackWidth = 21.5;
 		public static final double kSteerPeriod = 0.02;
-		public static final boolean kFrontLeftDriveInverted = true;
-		public static final boolean kBackLeftDriveInverted = true;
-		public static final boolean kFrontRightDriveInverted = true;
-		public static final boolean kBackRightDriveInverted = true;
+		public static final boolean kFrontLeftDriveInverted = false;
+		public static final boolean kBackLeftDriveInverted = false;
+		public static final boolean kFrontRightDriveInverted = false;
+		public static final boolean kBackRightDriveInverted = false;
 		// Speed multiplier to make sure the robot doesn't crash into something when
 		// testing, because crashing into people's shins would be bad
 		public static final double kMaxSpeed = 1;
