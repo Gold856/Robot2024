@@ -2,83 +2,63 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveDistanceCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
-	private double m_target; // if distance, in meters; if angle, in degrees
-	private double m_amount;
-	private double m_tolerance;
+	private double m_distance;
+	private final ProfiledPIDController m_controller = new ProfiledPIDController(0.45, 0.05, kD,
+			new Constraints(16, 1));
 
-	/***
-	 * Autonomous command to drive straight
+	/**
+	 * Constructs a DriveDistanceCommand.
 	 * 
-	 * @param amount
-	 *               amount is distance in meters
+	 * @param subsystem The subsystem
+	 * @param distance  The distance in meters
+	 * @param tolerance The tolerance in meters
 	 */
-	public DriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
+	public DriveDistanceCommand(DriveSubsystem subsystem, double distance, double tolerance) {
 		m_driveSubsystem = subsystem;
-		m_amount = amount;
-		m_tolerance = tolerance;
+		m_distance = distance;
+		m_controller.setTolerance(tolerance);
+		m_controller.setIZone(0.4);
 		addRequirements(subsystem);
 	}
 
-	/***
-	 * Autonomous command to drive straight
+	/**
+	 * Constructs a DriveDistanceCommand.
 	 * 
-	 * @param amount
-	 *               amount is distance in meters
+	 * @param subsystem The subsystem
+	 * @param distance  The distance in meters
 	 */
-	public DriveDistanceCommand(DriveSubsystem subsystem, double amount) {
-		m_driveSubsystem = subsystem;
-		m_amount = amount;
-		m_tolerance = 0.1;
-		addRequirements(subsystem);
+	public DriveDistanceCommand(DriveSubsystem subsystem, double distance) {
+		this(subsystem, distance, 0.1);
 	}
 
 	@Override
 	public void initialize() {
-		double currentPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
-		m_target = currentPosition + m_amount;
+		m_controller.setGoal(m_driveSubsystem.getModulePositions()[0].distanceMeters + m_distance);
 	}
 
 	@Override
 	public void execute() {
-		double sign;
-		if (m_target > m_driveSubsystem.getModulePositions()[0].distanceMeters) {
-			sign = 1;
-		} else {
-			sign = -1;
-		}
-
-		double error = getDiff();
-		double kP = 0.1;
-		double speed = error * kP;
-		if (speed > kMaxSpeed) {
-			speed = kMaxSpeed;
-		} else if (speed < kMinSpeed) {
-			speed = kMinSpeed;
-		}
-
-		m_driveSubsystem.setModuleStates(speed * sign, 0, 0, false);
+		SmartDashboard.putNumber("err", m_controller.getPositionError());
+		var out = m_controller.calculate(m_driveSubsystem.getModulePositions()[0].distanceMeters);
+		SmartDashboard.putNumber("out", out);
+		m_driveSubsystem.setModuleStates(out + 0., 0, 0, false);
 	}
 
 	@Override
 	public boolean isFinished() {
-		// Determine whether the target distance has been reached
-		double diff = getDiff();
-		SmartDashboard.putNumber("diff", diff);
-		return diff < m_tolerance;
+		return m_controller.atGoal();
 	}
 
 	@Override
 	public void end(boolean interrupted) {
 		m_driveSubsystem.stopDriving();
-	}
-
-	private double getDiff() {
-		return Math.abs(m_target - m_driveSubsystem.getModulePositions()[0].distanceMeters);
 	}
 }
