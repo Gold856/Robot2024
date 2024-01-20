@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -79,9 +80,9 @@ public final class Constants {
 		public static final double kDriveScale = 0.5;
 		// Drive PID values
 		public static final double kP = 0.005;
-		public static final double kI = 0;
+		public static final double kI = 0.045;
 		public static final double kD = 0;
-		public static final double kIz = 0;
+		public static final double kIz = 5;
 		public static final double kFF = 0;
 		public static final double kMinOutput = -1.0;
 		public static final double kMaxOutput = 1.0;
@@ -91,32 +92,25 @@ public final class Constants {
 		public static final double kTrackWidth = 21.5;
 		public static final double kSteerPeriod = 0.02;
 		public static final boolean kFrontLeftDriveInverted = true;
-		public static final boolean kBackLeftDriveInverted = false;
+		public static final boolean kBackLeftDriveInverted = true;
 		public static final boolean kFrontRightDriveInverted = true;
 		public static final boolean kBackRightDriveInverted = true;
 		// Speed multiplier to make sure the robot doesn't crash into something when
 		// testing, because crashing into people's shins would be bad
-		public static final double kSpeedMultiplier = 0.25;
-	}
+		public static final double kMaxSpeed = 1;
+		public static final double kMinSpeed = 0.1;
+		public static final double kModuleResponseTimeSeconds = 0.02;
+		public static final double kGearRatio = 6.12;
+		public static final double kWheelDiameter = Units.inchesToMeters(4);
 
-	public static final class SwerveConstants {
-		public static final double kModuleResponseTimeSeconds = 0.1;
-		public static final double gearRatio = 8.14;
-		public static final double wheelDiameter = 0.1016; // in meters
-		// public static final double ticksPerAxisRev = 42;
-
-		public static final double kTicksToMeters = (1 / gearRatio) * Math.PI * wheelDiameter;
-		public static final double kMotorRevsPerMeter = gearRatio / (Math.PI * wheelDiameter);
-
-		// These set points resulted in back being front, front is back
-		public static final double kFrontLeftEncoderOffset = -0.139648;
-		public static final double kFrontRightEncoderOffset = -0.336182;
-		public static final double kBackLeftEncoderOffset = 0.262451;
-		public static final double kBackRightEncoderOffset = -0.376709;
+		public static final double kMotorRotationsPerMeter = (1 / kGearRatio) * (Math.PI * kWheelDiameter);
 
 		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
 		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
 		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
 		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+
+		public static final int kSmartCurrentLimit = 55;
+		public static final int kPeakCurrentLimit = 65;
 	}
 }

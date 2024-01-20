@@ -5,56 +5,56 @@
 package frc.robot.subsystems;
 
 import static frc.robot.Constants.DriveConstants.*;
-import static frc.robot.Constants.SwerveConstants.*;
+
+import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
 
 public class DriveSubsystem extends SubsystemBase {
-	private SwerveModule m_frontLeft;
-	private SwerveModule m_frontRight;
-	private SwerveModule m_backLeft;
-	private SwerveModule m_backRight;
+	private final SwerveModule m_frontLeft;
+	private final SwerveModule m_frontRight;
+	private final SwerveModule m_backLeft;
+	private final SwerveModule m_backRight;
 
-	private SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
+	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
-	private static DriveSubsystem s_subsystem;
-	private AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+	private final SwerveDriveOdometry m_odometry;
+	private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
 
-	private Pose2d m_pose = new Pose2d(0, 0, new Rotation2d(Math.PI / 2));
+	private Pose2d m_pose = new Pose2d(0, 0, new Rotation2d());
 	private Rotation2d m_heading = new Rotation2d(Math.PI / 2);
-	private ProtobufPublisher<Pose2d> m_posePublisher;
 	private final Field2d m_field = new Field2d();
 
-	private StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
-	private StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
+	private final ProtobufPublisher<Pose2d> m_posePublisher;
+	private final StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
+	private final StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
-		// Singleton
-		if (s_subsystem != null) {
-			try {
-				throw new Exception("Motor subsystem already initialized!");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		s_subsystem = this;
-
 		SmartDashboard.putData("Field", m_field);
 		m_posePublisher = NetworkTableInstance.getDefault().getProtobufTopic("/SmartDashboard/Pose", Pose2d.proto)
 				.publish();
@@ -70,63 +70,107 @@ public class DriveSubsystem extends SubsystemBase {
 					kFrontLeftCANCoderPort,
 					kFrontLeftDrivePort,
 					kFrontLeftSteerPort,
-					kFrontLeftEncoderOffset,
 					kFrontLeftDriveInverted);
 
 			m_frontRight = new SwerveModule(
 					kFrontRightCANCoderPort,
 					kFrontRightDrivePort,
 					kFrontRightSteerPort,
-					kFrontRightEncoderOffset,
 					kFrontRightDriveInverted);
 
 			m_backLeft = new SwerveModule(
 					kBackLeftCANCoderPort,
 					kBackLeftDrivePort,
 					kBackLeftSteerPort,
-					kBackLeftEncoderOffset,
 					kBackLeftDriveInverted);
 
 			m_backRight = new SwerveModule(
 					kBackRightCANCoderPort,
 					kBackRightDrivePort,
 					kBackRightSteerPort,
-					kBackRightEncoderOffset,
 					kBackRightDriveInverted);
 		}
-		m_gyro.reset();
 		m_gyro.zeroYaw();
 		resetEncoders();
+		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
 	}
 
-	public static DriveSubsystem get() {
-		return s_subsystem;
-	}
-
+	/**
+	 * Gets the robot's heading from the gyro.
+	 * 
+	 * @return The heading
+	 */
 	public Rotation2d getHeading() {
+		if (RobotBase.isSimulation()) {
+			return m_heading;
+		}
 		return Rotation2d.fromDegrees(-m_gyro.getYaw());
 	}
 
+	/**
+	 * Resets gyro heading to zero.
+	 */
 	public void resetHeading() {
 		m_gyro.reset();
 	}
 
+	/**
+	 * Resets drive encoders to zero.
+	 */
 	public void resetEncoders() {
 		// Zero drive encoders
-		m_frontLeft.getDriveEncoder().setPosition(0);
-		m_frontRight.getDriveEncoder().setPosition(0);
-		m_backLeft.getDriveEncoder().setPosition(0);
-		m_backRight.getDriveEncoder().setPosition(0);
+		m_frontLeft.resetDriveEncoder();
+		m_frontRight.resetDriveEncoder();
+		m_backLeft.resetDriveEncoder();
+		m_backRight.resetDriveEncoder();
 	}
 
-	public void setWheelRotationToZeroDegrees() {
-		setSteerMotors(0, 0, 0, 0);
+	public void setIdleMode(IdleMode mode) {
+		m_frontLeft.setIdleMode(mode);
+		m_frontRight.setIdleMode(mode);
+		m_backLeft.setIdleMode(mode);
+		m_backRight.setIdleMode(mode);
 	}
 
+	/**
+	 * Returns robot pose.
+	 * 
+	 * @return The pose of the robot.
+	 */
+	public Pose2d getPose() {
+		return m_pose;
+	}
+
+	/**
+	 * Calculates the modules states needed for the robot to achieve the target
+	 * chassis speed.
+	 * 
+	 * @param speeds          The target chassis speed
+	 * @param isFieldRelative Whether or not the chassis speeds are field-relative
+	 * @return The module states, in order of FL, FR, BL, BR
+	 */
 	public SwerveModuleState[] calculateModuleStates(ChassisSpeeds speeds, boolean isFieldRelative) {
 		if (isFieldRelative) {
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
 		}
+		if (RobotBase.isSimulation()) {
+			updateSimPose(speeds);
+		}
+		SmartDashboard.putNumber("Heading", getHeading().getRadians());
+
+		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
+		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
+		m_targetModuleStatePublisher.set(states);
+		m_field.setRobotPose(m_pose);
+		return states;
+	}
+
+	/**
+	 * Updates the sim pose.
+	 * 
+	 * @param speeds The chassis speeds to use
+	 */
+	private void updateSimPose(ChassisSpeeds speeds) {
 		var transform = new Transform2d(speeds.vxMetersPerSecond * kModuleResponseTimeSeconds,
 				speeds.vyMetersPerSecond * kModuleResponseTimeSeconds, new Rotation2d(
 						speeds.omegaRadiansPerSecond * kModuleResponseTimeSeconds));
@@ -134,49 +178,23 @@ public class DriveSubsystem extends SubsystemBase {
 		m_pose = m_pose.plus(transform);
 		m_heading = m_pose.getRotation();
 		m_posePublisher.set(m_pose);
-		SmartDashboard.putNumber("Heading", getHeading().getRadians());
-
-		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, 1);
-		m_targetModuleStatePublisher.set(states);
-		m_field.setRobotPose(m_pose);
-		return states;
 	}
 
 	/**
-	 * Makes our drive motors spin at the specified speeds
-	 * 
-	 * @param frontLeftSpeed
-	 *                        Speed of the front left wheel in duty cycles [-1, 1]
-	 * @param frontRightSpeed
-	 *                        Speed of the front right wheel in duty cycles [-1, 1]
-	 * @param backLeftSpeed
-	 *                        Speed of the back left wheel in duty cycles [-1, 1]
-	 * @param backRightSpeed
-	 *                        Speed of the back right wheel in duty cycles [-1, 1]
+	 * Stops all the motors.
 	 */
-	public void setDriveMotors(double frontLeftSpeed, double frontRightSpeed, double backLeftSpeed,
-			double backRightSpeed) {
-		m_frontLeft.getDriveMotor().set(frontLeftSpeed * kDriveScale);
-		m_frontRight.getDriveMotor().set(frontRightSpeed * kDriveScale);
-		m_backLeft.getDriveMotor().set(backLeftSpeed * kDriveScale);
-		m_backRight.getDriveMotor().set(backRightSpeed * kDriveScale);
+	public void stopDriving() {
+		setModuleStates(calculateModuleStates(new ChassisSpeeds(0, 0, 0), true));
 	}
 
 	/**
-	 * Sets the target angles in degrees for each wheel on the robot
+	 * Gets the module positions for each swerve module.
 	 * 
-	 * @param frontLeftAngle  The target angle of the front left wheel in degrees
-	 * @param frontRightAngle The target angle of the front right wheel in degrees
-	 * @param backLeftAngle   The target angle of the back left wheel in degrees
-	 * @param backRightAngle  The target angle of the back right wheel in degrees
+	 * @return The module positions, in order of FL, FR, BL, BR
 	 */
-	public void setSteerMotors(double frontLeftAngle, double frontRightAngle, double backLeftAngle,
-			double backRightAngle) {
-		m_frontLeft.getPIDController().setSetpoint(frontLeftAngle);
-		m_frontRight.getPIDController().setSetpoint(frontRightAngle);
-		m_backLeft.getPIDController().setSetpoint(backLeftAngle);
-		m_backRight.getPIDController().setSetpoint(backRightAngle);
+	public SwerveModulePosition[] getModulePositions() {
+		return new SwerveModulePosition[] { m_frontLeft.getModulePosition(), m_frontRight.getModulePosition(),
+				m_backLeft.getModulePosition(), m_backRight.getModulePosition() };
 	}
 
 	/**
@@ -184,7 +202,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * 
 	 * @param moduleStates The module states, in order of FL, FR, BL, BR
 	 */
-	public void setSwerveStates(SwerveModuleState[] moduleStates) {
+	public void setModuleStates(SwerveModuleState[] moduleStates) {
 		m_frontLeft.setModuleState(moduleStates[0]);
 		m_frontRight.setModuleState(moduleStates[1]);
 		m_backLeft.setModuleState(moduleStates[2]);
@@ -192,27 +210,92 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Recalculates the PID output, and uses it to drive our steer motors. Also logs
-	 * wheel rotations, and PID setpoints
+	 * Directly sets the module angle. Do not use for general driving.
+	 * 
+	 * @param angle The angle in degrees
 	 */
+	public void setModuleAngles(double angle) {
+		m_frontLeft.setAngle(angle);
+		m_frontRight.setAngle(angle);
+		m_backLeft.setAngle(angle);
+		m_backRight.setAngle(angle);
+	}
+
+	/**
+	 * Sets module states for each swerve module.
+	 * 
+	 * @param speedFwd        The forward speed
+	 * @param speedSide       The sideways speed
+	 * @param speedRot        The rotation speed
+	 * @param isFieldRelative Whether or not the speeds are relative to the field
+	 */
+	public void setModuleStates(double speedFwd, double speedSide, double speedRot, boolean isFieldRelative) {
+		setModuleStates(calculateModuleStates(new ChassisSpeeds(speedFwd, speedSide, speedRot), isFieldRelative));
+	}
+
 	@Override
 	public void periodic() {
-		// For each of our steer motors, feed the current angle of the wheel into its
-		// PID controller, and use it to calculate the duty cycle for its motor, and
-		// spin the motor
-
-		m_frontLeft.getSteerMotor().set(m_frontLeft.getPIDController().calculate(m_frontLeft.getModuleAngle()));
-		m_frontRight.getSteerMotor().set(m_frontRight.getPIDController().calculate(m_frontRight.getModuleAngle()));
-		m_backLeft.getSteerMotor().set(m_backLeft.getPIDController().calculate(m_backLeft.getModuleAngle()));
-		m_backRight.getSteerMotor().set(m_backRight.getPIDController().calculate(m_backRight.getModuleAngle()));
-		SwerveModuleState[] states = {
-				new SwerveModuleState(m_frontLeft.getDriveSpeed(),
-						Rotation2d.fromDegrees(m_frontLeft.getModuleAngle())),
-				new SwerveModuleState(m_frontRight.getDriveSpeed(),
-						Rotation2d.fromDegrees(m_frontRight.getModuleAngle())),
-				new SwerveModuleState(m_backLeft.getDriveSpeed(), Rotation2d.fromDegrees(m_backLeft.getModuleAngle())),
-				new SwerveModuleState(m_backRight.getDriveSpeed(),
-						Rotation2d.fromDegrees(m_backRight.getModuleAngle())) };
+		SmartDashboard.putNumber("Current Position", getModulePositions()[0].distanceMeters);
+		m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
+		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
+				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
+		SmartDashboard.putNumber("Steer 1 motor current", m_frontLeft.getSteerCurrent());
+		SmartDashboard.putNumber("Steer 3 motor current", m_frontRight.getSteerCurrent());
+		SmartDashboard.putNumber("Steer 5 motor current", m_backRight.getSteerCurrent());
+		SmartDashboard.putNumber("Steer 7 motor current", m_backLeft.getSteerCurrent());
+	}
+
+	/**
+	 * Creates a command to drive the robot with joystick input.
+	 * 
+	 * @return A command to drive the robot.
+	 */
+	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
+			Supplier<Double> rotationAxis) {
+		return run(() -> {
+			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
+			// input so slight movements don't move the robot
+			double fwdSpeed = -MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+			double strSpeed = -MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+			double rotSpeed = -MathUtil.applyDeadband(rotationAxis.get(), ControllerConstants.kDeadzone);
+
+			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+		});
+	}
+
+	/**
+	 * Creates a command to reset the gyro heading to zero.
+	 * 
+	 * @return A command to reset the gyro heading.
+	 */
+	public Command resetHeadingCommand() {
+		return runOnce(m_gyro::zeroYaw);
+	}
+
+	/**
+	 * Creates a command to reset the drive encoders to zero.
+	 * 
+	 * @return A command to reset the drive encoders.
+	 */
+	public Command resetEncodersCommand() {
+		return runOnce(() -> {
+			resetEncoders();
+			m_odometry.resetPosition(getHeading(), getModulePositions(), new Pose2d());
+		});
+	}
+
+	/**
+	 * Creates a command to align the swerve modules to zero degrees relative to the
+	 * robot.
+	 * 
+	 * @return A command to align the swerve modules.
+	 */
+	public Command alignModulesToZeroComamnd() {
+		return run(() -> {
+			m_kinematics.resetHeadings(
+					new Rotation2d[] { new Rotation2d(0), new Rotation2d(0), new Rotation2d(0), new Rotation2d(0) });
+			setModuleStates(0, 0, 0, false);
+		}).raceWith(Commands.waitSeconds(5));
 	}
 }
