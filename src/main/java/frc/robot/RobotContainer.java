@@ -35,7 +35,7 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		// Configure the button bindings
-		m_autoSelector.addOption("Drive 2 Meters", new DriveDistanceCommand(m_driveSubsystem, 2));
+		m_autoSelector.addOption("Drive 2 Meters", new DriveDistanceCommand(m_driveSubsystem, 2, .1));
 		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
 		m_autoSelector.addOption("Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
 		SmartDashboard.putData(m_autoSelector);

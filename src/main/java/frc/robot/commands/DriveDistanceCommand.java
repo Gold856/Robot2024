@@ -23,7 +23,7 @@ public class DriveDistanceCommand extends Command {
 	 * @param amount
 	 *               amount is distance in meters
 	 */
-	private DriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
+	public DriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
 		m_driveSubsystem = subsystem;
 		m_amount = amount;
 		m_tolerance = tolerance;
