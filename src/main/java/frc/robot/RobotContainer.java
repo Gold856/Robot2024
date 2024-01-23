@@ -35,7 +35,6 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		// Configure the button bindings
-		m_autoSelector.addOption("Drive 2 Meters", new DriveDistanceCommand(m_driveSubsystem, 2));
 		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
 		m_autoSelector.addOption("Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
 		SmartDashboard.putData(m_autoSelector);
@@ -56,7 +55,6 @@ public class RobotContainer {
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 2, 0.1));
 	}
 
 	public Command getAutonomousCommand() {
