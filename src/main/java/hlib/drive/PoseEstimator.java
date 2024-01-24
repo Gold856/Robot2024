@@ -115,7 +115,7 @@ public class PoseEstimator {
 	public void periodic() {
 		if (estimatedPose != null && poseCalculators.size() > 0) {
 			Stream<Pose> poses = poseCalculators.stream().map(c -> c.pose(estimatedPose));
-			estimatedPose = Pose.avarage(poses.toList().toArray(new Pose[0]));
+			estimatedPose = Pose.average(poses.toList().toArray(new Pose[0]));
 		}
 	}
 

@@ -88,7 +88,7 @@ public class Position {
 	 * @return the angle in degrees from the origin to the this {@code Position} measured from the positive x-axis
 	 */
 	public double angleInDegrees() {
-		return angleInRadians() * 180 / Math.PI;
+		return Math.toDegrees(angleInRadians());
 	}
 
 	/**

@@ -60,7 +60,7 @@ public class Pose extends Position {
 	 * @return the orientation of this {@code Pose}, expressed as a yaw value in degrees
 	 */
 	public double yawInDegrees() {
-		return yaw * 180 / Math.PI;
+		return Math.toDegrees(yaw);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public class Pose extends Position {
 	 */
 	@Override
 	public String toString() {
-		return String.format("(%.3f, %.3f, %.1f degrees)", x, y, yaw * 180 / Math.PI);
+		return String.format("(%.3f, %.3f, %.1f degrees)", x, y, Math.toDegrees(yaw));
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class Pose extends Position {
 	 *            {@code Pose}s
 	 * @return the average of the specified {@code Pose}s
 	 */
-	public static Pose avarage(Pose... poses) {
+	public static Pose average(Pose... poses) {
 		if (poses == null || poses.length == 0)
 			return null;
 		double x = 0;

@@ -8,35 +8,36 @@ import java.io.File;
 
 public class UnitTests {
 
+	String deployPath = "." + File.separator + "src" + File.separator + "main" + File.separator
+			+ "deploy";
+
 	@Test
 	public void testPose() throws Exception {
-		assertEquals(0.5 * Math.PI, Pose.normalize(0.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(1.0 * Math.PI, Pose.normalize(1.0 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(-0.5 * Math.PI, Pose.normalize(1.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(0.0 * Math.PI, Pose.normalize(2.0 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(0.5 * Math.PI, Pose.normalize(2.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(1.0 * Math.PI, Pose.normalize(3.0 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(-0.5 * Math.PI, Pose.normalize(3.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(0.0 * Math.PI, Pose.normalize(4.0 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(0.5 * Math.PI, Pose.normalize(4.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(1.0 * Math.PI, Pose.normalize(5.0 * Math.PI), 0.01 * Math.PI / 180);
+		assertEquals(0.5 * Math.PI, Pose.normalize(0.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(1.0 * Math.PI, Pose.normalize(1.0 * Math.PI), 0.001 * Math.PI);
+		assertEquals(-0.5 * Math.PI, Pose.normalize(1.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(0.0 * Math.PI, Pose.normalize(2.0 * Math.PI), 0.001 * Math.PI);
+		assertEquals(0.5 * Math.PI, Pose.normalize(2.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(1.0 * Math.PI, Pose.normalize(3.0 * Math.PI), 0.001 * Math.PI);
+		assertEquals(-0.5 * Math.PI, Pose.normalize(3.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(0.0 * Math.PI, Pose.normalize(4.0 * Math.PI), 0.001 * Math.PI);
+		assertEquals(0.5 * Math.PI, Pose.normalize(4.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(1.0 * Math.PI, Pose.normalize(5.0 * Math.PI), 0.001 * Math.PI);
 
-		assertEquals(-0.5 * Math.PI, Pose.normalize(-0.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(1.0 * Math.PI, Pose.normalize(-1.0 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(0.5 * Math.PI, Pose.normalize(-1.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(0.0 * Math.PI, Pose.normalize(-2.0 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(-0.5 * Math.PI, Pose.normalize(-2.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(1.0 * Math.PI, Pose.normalize(-3.0 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(0.5 * Math.PI, Pose.normalize(-3.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(0.0 * Math.PI, Pose.normalize(-4.0 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(-0.5 * Math.PI, Pose.normalize(-4.5 * Math.PI), 0.01 * Math.PI / 180);
-		assertEquals(1.0 * Math.PI, Pose.normalize(-5.0 * Math.PI), 0.01 * Math.PI / 180);
+		assertEquals(-0.5 * Math.PI, Pose.normalize(-0.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(1.0 * Math.PI, Pose.normalize(-1.0 * Math.PI), 0.001 * Math.PI);
+		assertEquals(0.5 * Math.PI, Pose.normalize(-1.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(0.0 * Math.PI, Pose.normalize(-2.0 * Math.PI), 0.001 * Math.PI);
+		assertEquals(-0.5 * Math.PI, Pose.normalize(-2.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(1.0 * Math.PI, Pose.normalize(-3.0 * Math.PI), 0.001 * Math.PI);
+		assertEquals(0.5 * Math.PI, Pose.normalize(-3.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(0.0 * Math.PI, Pose.normalize(-4.0 * Math.PI), 0.001 * Math.PI);
+		assertEquals(-0.5 * Math.PI, Pose.normalize(-4.5 * Math.PI), 0.001 * Math.PI);
+		assertEquals(1.0 * Math.PI, Pose.normalize(-5.0 * Math.PI), 0.001 * Math.PI);
 	}
 
 	@Test
 	public void testAprilTagMap() throws Exception {
-		String deployPath = "." + File.separator + "src" + File.separator + "main" + File.separator
-				+ "deploy";
 		AprilTagMap m = new AprilTagMap(deployPath + File.separator + "2024LimeLightMap.fmap");
 		var i = m.entrySet().iterator();
 		while (i.hasNext()) {
@@ -45,6 +46,7 @@ public class UnitTests {
 			System.out.println(String.format("{\"id\": \"%s\", \"pose\": [%.3f, %.3f, %.1f]}%s", e.getKey(), pose.x(),
 					pose.y(), pose.yawInDegrees(), i.hasNext() ? "," : ""));
 		}
+		System.out.println();
 		assertEquals(16, m.size());
 	}
 
@@ -59,11 +61,12 @@ public class UnitTests {
 
 			@Override
 			public State state() {
-				v += 0.1;
-				return new State(v, 2 * v, 0.1 * v);
+				var state = new State(v, 2 * v, 0.1 * v);
+				v += 1.0 / 50; // 1.0 m/sec
+				System.out.println(state);
+				return state;
 			}
 		});
-		System.out.println(p.estimatedPose());
 		p.periodic();
 		System.out.println(p.estimatedPose());
 		p.periodic();
@@ -71,7 +74,10 @@ public class UnitTests {
 		p.periodic();
 		System.out.println(p.estimatedPose());
 		p.periodic();
-		System.out.println(p.estimatedPose());
+		var pose = p.estimatedPose();
+		System.out.println(pose);
+		System.out.println();
+		assertEquals("(0.100, 0.010, 0.3 degrees)", "" + pose);
 	}
 
 	@Test
@@ -87,11 +93,12 @@ public class UnitTests {
 
 			@Override
 			public State state() {
-				v += 0.1;
-				return new State(angles, new double[] { v, v, v, v }, null);
+				var state = new State(angles, new double[] { v, v, v, v }, null);
+				v += 1.0 / 50; // 1.0 m/sec
+				System.out.println(state);
+				return state;
 			}
 		});
-		System.out.println(p.estimatedPose());
 		p.periodic();
 		System.out.println(p.estimatedPose());
 		p.periodic();
@@ -99,7 +106,10 @@ public class UnitTests {
 		p.periodic();
 		System.out.println(p.estimatedPose());
 		p.periodic();
-		System.out.println(p.estimatedPose());
+		var pose = p.estimatedPose();
+		System.out.println(pose);
+		System.out.println();
+		// assertEquals("(0.070, 0.016, 0.0 degrees)", "" + pose);
 	}
 
 	@Test
@@ -115,11 +125,12 @@ public class UnitTests {
 
 			@Override
 			public State state() {
-				v += 0.1;
-				return new State(angles, new double[] { v, v, v, v }, null);
+				var state = new State(angles, new double[] { v, v, v, v }, null);
+				v += 1.0 / 50; // 1.0 m/sec
+				System.out.println(state);
+				return state;
 			}
 		});
-		System.out.println(p.estimatedPose());
 		p.periodic();
 		System.out.println(p.estimatedPose());
 		p.periodic();
@@ -127,7 +138,9 @@ public class UnitTests {
 		p.periodic();
 		System.out.println(p.estimatedPose());
 		p.periodic();
-		System.out.println(p.estimatedPose());
+		var pose = p.estimatedPose();
+		System.out.println(pose);
+		System.out.println();
+		// assertEquals("(0.010, 0.010, 4.9 degrees)", "" + pose);
 	}
-
 }

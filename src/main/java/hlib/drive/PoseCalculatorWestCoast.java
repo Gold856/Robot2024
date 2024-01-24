@@ -7,7 +7,7 @@ package hlib.drive;
  * @author Andrew Hwang (u.andrew.h@gmail.com)
  * @author Jeong-Hyon Hwang (jhhbrown@gmail.com)
  */
-public abstract class PoseCalculatorWestCoast implements PoseCalculator {
+public abstract class PoseCalculatorWestCoast extends PoseCalculatorDriveTrain {
 
 	/**
 	 * A {@code State} represents the state of a west coast drivetrain at a certain moment.
@@ -54,14 +54,9 @@ public abstract class PoseCalculatorWestCoast implements PoseCalculator {
 		@Override
 		public String toString() {
 			return String.format("left encoder position: %.1f, right encoder position: %.1f, yaw: %.1f degrees",
-					leftEncoderPosition, rightEncoderPosition, yaw * 180 / Math.PI);
+					leftEncoderPosition, rightEncoderPosition, Math.toDegrees(yaw));
 		}
 	}
-
-	/**
-	 * The width (i.e., the distance from one wheel to the opposite wheel) of the drivetrain in meters.
-	 */
-	private double width;
 
 	/**
 	 * The most recent {@code State} given to this {@code PoseCalculatorWestCoast}.
@@ -77,7 +72,7 @@ public abstract class PoseCalculatorWestCoast implements PoseCalculator {
 	 *            the width (i.e., the distance from one wheel to the opposite wheel) of the drivetrain in meters
 	 */
 	public PoseCalculatorWestCoast(double width) {
-		this.width = width;
+		super(width);
 	}
 
 	/**

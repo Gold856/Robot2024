@@ -7,7 +7,7 @@ package hlib.drive;
  * @author Andrew Hwang (u.andrew.h@gmail.com)
  * @author Jeong-Hyon Hwang (jhhbrown@gmail.com)
  */
-public abstract class PoseCalculatorSwerve implements PoseCalculator {
+public abstract class PoseCalculatorSwerve extends PoseCalculatorDriveTrain {
 
 	/**
 	 * A {@code State} represents the state of a swerve drivetrain at a certain moment.
@@ -56,17 +56,16 @@ public abstract class PoseCalculatorSwerve implements PoseCalculator {
 		 */
 		@Override
 		public String toString() {
-			return String.format(
-					"wheel angles in degrees: [%.1f, %.1f, %.1f, %.1f], wheen encoder positions: [%.1f, %.1f, %.1f, %.1f], yaw: %.1f degrees",
-					wheelAngles[0], wheelAngles[1], wheelAngles[2], wheelAngles[3], wheelEncoderPositions[0],
-					wheelEncoderPositions[1], wheelEncoderPositions[2], wheelEncoderPositions[3], yaw * 180 / Math.PI);
+			var s = String.format(
+					"wheel angles in degrees: [%.1f, %.1f, %.1f, %.1f], wheen encoder positions: [%.1f, %.1f, %.1f, %.1f]",
+					Math.toDegrees(wheelAngles[0]), Math.toDegrees(wheelAngles[1]), Math.toDegrees(wheelAngles[2]),
+					Math.toDegrees(wheelAngles[3]), wheelEncoderPositions[0], wheelEncoderPositions[1],
+					wheelEncoderPositions[2], wheelEncoderPositions[3]);
+			if (this.yaw != null)
+				s += String.format(", yaw in degrees: ", Math.toDegrees(yaw));
+			return s;
 		}
 	}
-
-	/**
-	 * The width (i.e., the distance from one wheel to the opposite wheel) of the drivetrain in meters.
-	 */
-	private double width;
 
 	/**
 	 * The length (i.e., the distance from the front to the back) of the drivetrain in meters.
@@ -79,8 +78,8 @@ public abstract class PoseCalculatorSwerve implements PoseCalculator {
 	private State state = null;
 
 	/**
-	 * Constructs a {@code PoseCalculatorSwerve} whose purpose is to calculate the pose of a swerve drivetrain based
-	 * on the pose of that drivetrain at an earlier time and the changes in that drivetrain observed via a gyroscope and
+	 * Constructs a {@code PoseCalculatorSwerve} whose purpose is to calculate the pose of a swerve drivetrain based on
+	 * the pose of that drivetrain at an earlier time and the changes in that drivetrain observed via a gyroscope and
 	 * wheel encoders.
 	 * 
 	 * @param width
@@ -89,7 +88,7 @@ public abstract class PoseCalculatorSwerve implements PoseCalculator {
 	 *            the length (i.e., the distance from the front to the back) of the drivetrain in meters.
 	 */
 	public PoseCalculatorSwerve(double width, double length) {
-		this.width = width;
+		super(width);
 		this.length = length;
 	}
 
@@ -121,12 +120,12 @@ public abstract class PoseCalculatorSwerve implements PoseCalculator {
 			this.state = state;
 			return previous;
 		}
-		double[] changeWheelAnglesInRadians = difference(state.wheelAngles, this.state.wheelAngles);
 		double[] changeWheelEncoderPositions = difference(state.wheelEncoderPositions,
 				this.state.wheelEncoderPositions);
-		Double changeYaw = state.yaw == null || this.state.yaw == null ? null : state.yaw - this.state.yaw;
+		Double changeYawInRadians = state.yaw == null || this.state.yaw == null ? null : state.yaw - this.state.yaw;
+		var pose = calculate(previous, state.wheelAngles, changeWheelEncoderPositions, changeYawInRadians);
 		this.state = state;
-		return calculate(previous, changeWheelAnglesInRadians, changeWheelEncoderPositions, changeYaw);
+		return pose;
 	}
 
 	/**
@@ -152,28 +151,29 @@ public abstract class PoseCalculatorSwerve implements PoseCalculator {
 	 * 
 	 * @param previous
 	 *            a {@code Pose} representing the pose of the drivetrain at an earlier time
-	 * @param changeWheelAnglesInRadians
-	 *            the change in the angles in radians of the front left, front right, back left, and back right wheels
-	 *            of a swerve
+	 * @param wheelAnglesInRadians
+	 *            the angles in radians of the front left, front right, back left, and back right wheels of a swerve
 	 * @param changeWheelEncoderPositions
 	 *            the change in the encoder positions in meters of the front left, front right, back left, and back
 	 *            right wheels of a swerve drivetrain.
-	 * @param changeYaw
+	 * @param changeYawInRadians
 	 *            the change in the yaw value of the drivetrain ({@code null} if the yaw values have not been available)
 	 * @return a {@code Pose} representing the pose calculated by this {@code PoseCalculatorSwerve}
 	 */
-	protected abstract Pose calculate(Pose previous, double[] changeWheelAnglesInRadians, double[] changeWheelEncoderPositions,
-			Double changeYaw);
+	protected abstract Pose calculate(Pose previous, double[] wheelAnglesInRadians,
+			double[] changeWheelEncoderPositions, Double changeYawInRadians);
 
 	/**
 	 * Returns the {@code Pose} of the center of the front left wheels of a swerve drivetrain.
 	 * 
 	 * @param pose
 	 *            the {@code Pose} of the center of a swerve drivetrain
+	 * @param wheelAngle
+	 *            the angle in radians of the front left wheels of a swerve drivetrain
 	 * @return the {@code Pose} of the center of the front left wheels of a swerve drivetrain
 	 */
-	protected Pose frontLeftPose(Pose pose) {
-		return new Pose(new Position(length / 2, width / 2).rotate(pose.yaw).translate(pose), pose.yaw);
+	protected Pose frontLeftPose(Pose pose, double wheelAngle) {
+		return new Pose(new Position(length / 2, width / 2).rotate(pose.yaw).translate(pose), pose.yaw + wheelAngle);
 	}
 
 	/**
@@ -181,10 +181,12 @@ public abstract class PoseCalculatorSwerve implements PoseCalculator {
 	 * 
 	 * @param pose
 	 *            the {@code Pose} of the center of a swerve drivetrain
+	 * @param wheelAngle
+	 *            the angle in radians of the front right wheels of a swerve drivetrain
 	 * @return the {@code Pose} of the center of the front right wheels of a swerve drivetrain
 	 */
-	protected Pose frontRightPose(Pose pose) {
-		return new Pose(new Position(length / 2, -width / 2).rotate(pose.yaw).translate(pose), pose.yaw);
+	protected Pose frontRightPose(Pose pose, double wheelAngle) {
+		return new Pose(new Position(length / 2, -width / 2).rotate(pose.yaw).translate(pose), pose.yaw + wheelAngle);
 	}
 
 	/**
@@ -192,10 +194,12 @@ public abstract class PoseCalculatorSwerve implements PoseCalculator {
 	 * 
 	 * @param pose
 	 *            the {@code Pose} of the center of a swerve drivetrain
+	 * @param wheelAngle
+	 *            the angle in radians of the back left wheels of a swerve drivetrain
 	 * @return the {@code Pose} of the center of the front left wheels of a swerve drivetrain
 	 */
-	protected Pose backLeftPose(Pose pose) {
-		return new Pose(new Position(-length / 2, width / 2).rotate(pose.yaw).translate(pose), pose.yaw);
+	protected Pose backLeftPose(Pose pose, double wheelAngle) {
+		return new Pose(new Position(-length / 2, width / 2).rotate(pose.yaw).translate(pose), pose.yaw + wheelAngle);
 	}
 
 	/**
@@ -203,10 +207,12 @@ public abstract class PoseCalculatorSwerve implements PoseCalculator {
 	 * 
 	 * @param pose
 	 *            the {@code Pose} of the center of a swerve drivetrain
+	 * @param wheelAngle
+	 *            the angle in radians of the back right wheels of a swerve drivetrain
 	 * @return the {@code Pose} of the center of the back right wheels of a swerve drivetrain
 	 */
-	protected Pose backRightPose(Pose pose) {
-		return new Pose(new Position(-length / 2, -width / 2).rotate(pose.yaw).translate(pose), pose.yaw);
+	protected Pose backRightPose(Pose pose, double wheelAngle) {
+		return new Pose(new Position(-length / 2, -width / 2).rotate(pose.yaw).translate(pose), pose.yaw + wheelAngle);
 	}
 
 	/**

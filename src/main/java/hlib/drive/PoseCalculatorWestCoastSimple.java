@@ -43,8 +43,7 @@ public abstract class PoseCalculatorWestCoastSimple extends PoseCalculatorWestCo
 		Pose leftPose = leftPose(previous).move(changeLeftEncoderPosition);
 		Pose rightPose = rightPose(previous).move(changeRightEncoderPosition);
 		if (changeYaw == null)
-			return new Pose((leftPose.x() + rightPose.x()) / 2, (leftPose.y() + rightPose.y()) / 2,
-					leftPose.displacementTo(rightPose).angleInRadians() + Math.PI / 2);
+			return centerPose(leftPose, rightPose);
 		return new Pose((leftPose.x() + rightPose.x()) / 2, (leftPose.y() + rightPose.y()) / 2,
 				previous.yawInRadians() + changeYaw);
 	}
