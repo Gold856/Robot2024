@@ -49,28 +49,74 @@ public class UnitTests {
 	}
 
 	@Test
-	public void testPoseEstimation() throws Exception {
+	public void testPoseEstimationWestCoast() throws Exception {
 		var p = new PoseEstimatorWeighted(1.0, 10, 0.1);
 		p.update(new Pose(0, 0, 0));
 		p.update(new Pose(0.1, 0.1, 0));
-		p.add(new PoseCalculatorWestCoast(1.0) {
+		p.add(new PoseCalculatorWestCoastSimple(1.0) {
 
 			double v = 0.0;
 
 			@Override
-			public double leftEncoderPosition() {
+			public State state() {
 				v += 0.1;
-				return v;
+				return new State(v, 2 * v, 0.1 * v);
 			}
+		});
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+	}
+
+	@Test
+	public void testPoseEstimationSwerve1() throws Exception {
+		var p = new PoseEstimatorWeighted(1.0, 10, 0.1);
+		p.update(new Pose(0, 0, 0));
+		p.update(new Pose(0.1, 0.1, 0));
+		p.add(new PoseCalculatorSwerveSimple(1.0, 1.0) {
+
+			double v = 0.0;
+
+			double[] angles = { 0.1, 0.1, 0.1, 0.1 };
 
 			@Override
-			public double rightEncoderPosition() {
-				return v;
+			public State state() {
+				v += 0.1;
+				return new State(angles, new double[] { v, v, v, v }, null);
 			}
+		});
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+	}
+
+	@Test
+	public void testPoseEstimationSwerve2() throws Exception {
+		var p = new PoseEstimatorWeighted(1.0, 10, 0.1);
+		p.update(new Pose(0, 0, 0));
+		p.update(new Pose(0.1, 0.1, 0));
+		p.add(new PoseCalculatorSwerveSimple(1.0, 1.0) {
+
+			double v = 0.0;
+
+			double[] angles = { 3 * Math.PI / 4, Math.PI / 4, -3 * Math.PI / 4, -Math.PI / 4 };
 
 			@Override
-			public double yawInRadians() {
-				return v;
+			public State state() {
+				v += 0.1;
+				return new State(angles, new double[] { v, v, v, v }, null);
 			}
 		});
 		System.out.println(p.estimatedPose());

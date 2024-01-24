@@ -10,24 +10,63 @@ package hlib.drive;
 public abstract class PoseCalculatorWestCoast implements PoseCalculator {
 
 	/**
-	 * The last left wheel encoder position provided to this {@code PoseCalculatorWestCoast}.
+	 * A {@code State} represents the state of a west coast drivetrain at a certain moment.
 	 */
-	protected Double leftEncoderPosition = null;
+	public static class State {
+
+		/**
+		 * The left wheel encoder position of a west coast drivetrain.
+		 */
+		double leftEncoderPosition;
+
+		/**
+		 * The right wheel encoder position of a west coast drivetrain.
+		 */
+		double rightEncoderPosition;
+
+		/**
+		 * The yaw value in radians of a west coast drivetrain ({@code null} if the yaw value was not available).
+		 */
+		Double yaw;
+
+		/**
+		 * Constructs a {@code State} representing the state of a west coast drivetrain at a certain moment.
+		 * 
+		 * @param leftEncoderPosition
+		 *            the left wheel encoder position of the west coast drivetrain
+		 * @param rightEncoderPosition
+		 *            the right wheel encoder position of the west coast drivetrain
+		 * @param yawInRadians
+		 *            the yaw value in radians of the west coast drivetrain ({@code null} if the yaw value is not
+		 *            available)
+		 */
+		public State(double leftEncoderPosition, double rightEncoderPosition, Double yawInRadians) {
+			this.leftEncoderPosition = leftEncoderPosition;
+			this.rightEncoderPosition = rightEncoderPosition;
+			this.yaw = yawInRadians;
+		}
+
+		/**
+		 * Returns a string representation of this {@code State}.
+		 * 
+		 * @return a string representation of this {@code State}
+		 */
+		@Override
+		public String toString() {
+			return String.format("left encoder position: %.1f, right encoder position: %.1f, yaw: %.1f degrees",
+					leftEncoderPosition, rightEncoderPosition, yaw * 180 / Math.PI);
+		}
+	}
 
 	/**
-	 * The last right wheel encoder position provided to this {@code PoseCalculatorWestCoast}.
+	 * The width (i.e., the distance from one wheel to the opposite wheel) of the drivetrain in meters.
 	 */
-	protected Double rightEncoderPosition = null;
+	private double width;
 
 	/**
-	 * The last yaw value in radians provided to this {@code PoseCalculatorWestCoast}.
+	 * The most recent {@code State} given to this {@code PoseCalculatorWestCoast}.
 	 */
-	protected Double yaw = null;
-
-	/**
-	 * The width of the drivetrain in meters.
-	 */
-	protected double width;
+	private State state = null;
 
 	/**
 	 * Constructs a {@code PoseCalculatorWestCoast} whose purpose is to calculate the pose of a west coast drivetrain
@@ -35,7 +74,7 @@ public abstract class PoseCalculatorWestCoast implements PoseCalculator {
 	 * gyroscope and wheel encoders.
 	 * 
 	 * @param width
-	 *            the width of the drivetrain in meters
+	 *            the width (i.e., the distance from one wheel to the opposite wheel) of the drivetrain in meters
 	 */
 	public PoseCalculatorWestCoast(double width) {
 		this.width = width;
@@ -51,7 +90,7 @@ public abstract class PoseCalculatorWestCoast implements PoseCalculator {
 	 */
 	@Override
 	public Pose pose(Pose previous) {
-		return pose(previous, leftEncoderPosition(), rightEncoderPosition(), yawInRadians());
+		return pose(previous, state());
 	}
 
 	/**
@@ -60,28 +99,20 @@ public abstract class PoseCalculatorWestCoast implements PoseCalculator {
 	 * 
 	 * @param previous
 	 *            a {@code Pose} representing the pose of the drivetrain at an earlier time
-	 * @param leftEncoderPosition
-	 *            the current left wheel encoder position of the drivetrain
-	 * @param rightEncoderPosition
-	 *            the current right wheel encoder position of the drivetrain
-	 * @param yaw
-	 *            the current yaw value in radians of the drivetrain
+	 * @param state
+	 *            a {@code State} representing the current state of a west coast drivetrain
 	 * @return a {@code Pose} representing the pose calculated by this {@code PoseCalculatorWestCoast}
 	 */
-	protected Pose pose(Pose previous, double leftEncoderPosition, double rightEncoderPosition, double yaw) {
-		if (this.leftEncoderPosition == null) {
-			this.leftEncoderPosition = leftEncoderPosition;
-			this.rightEncoderPosition = rightEncoderPosition;
-			this.yaw = yaw;
-			return null;
+	protected Pose pose(Pose previous, State state) {
+		if (this.state == null) {
+			this.state = state;
+			return previous;
 		}
-		double leftDisplacement = leftEncoderPosition - this.leftEncoderPosition;
-		double rightDisplacement = rightEncoderPosition - this.rightEncoderPosition;
-		double augularDisplacement = yaw - this.yaw;
-		this.leftEncoderPosition = leftEncoderPosition;
-		this.rightEncoderPosition = rightEncoderPosition;
-		this.yaw = yaw;
-		return calculate(previous, leftDisplacement, rightDisplacement, augularDisplacement);
+		double changeLeftEncoderPosition = state.leftEncoderPosition - this.state.leftEncoderPosition;
+		double changeRightEncoderPosition = state.rightEncoderPosition - this.state.rightEncoderPosition;
+		Double changeYaw = state.yaw == null || this.state.yaw == null ? null : state.yaw - this.state.yaw;
+		this.state = state;
+		return calculate(previous, changeLeftEncoderPosition, changeRightEncoderPosition, changeYaw);
 	}
 
 	/**
@@ -95,34 +126,39 @@ public abstract class PoseCalculatorWestCoast implements PoseCalculator {
 	 * @param changeRightEncoderPosition
 	 *            the change in the right wheel encoder position of the drivetrain
 	 * @param changeYaw
-	 *            the change in the yaw value of the drivetrain
+	 *            the change in the yaw value of the drivetrain ({@code null} if the yaw values have not been available)
 	 * @return a {@code Pose} representing the pose calculated by this {@code PoseCalculatorWestCoast}
 	 */
-	protected Pose calculate(Pose previous, double changeLeftEncoderPosition, double changeRightEncoderPosition,
-			double changeYaw) {
-		// TODO Auto-generated method stub
-		return null;
+	protected abstract Pose calculate(Pose previous, double changeLeftEncoderPosition,
+			double changeRightEncoderPosition, Double changeYaw);
+
+	/**
+	 * Returns the {@code Pose} of the center of the left wheels of a west coast drivetrain.
+	 * 
+	 * @param pose
+	 *            the {@code Pose} of the center of a west coast drivetrain
+	 * @return the {@code Pose} of the center of the left wheels of a west coast drivetrain
+	 */
+	protected Pose leftPose(Pose pose) {
+		return new Pose(new Position(0, width / 2).rotate(pose.yaw).translate(pose), pose.yaw);
 	}
 
 	/**
-	 * Returns the current position of the left wheel motors in terms of meters (positive: forward).
+	 * Returns the {@code Pose} of the center of the right wheels of a west coast drivetrain.
 	 * 
-	 * @return the current position of the left wheel motors in terms of meters (positive: forward)
+	 * @param pose
+	 *            the {@code Pose} of the center of a west coast drivetrain
+	 * @return the {@code Pose} of the center of the right wheels of a west coast drivetrain
 	 */
-	public abstract double leftEncoderPosition();
+	protected Pose rightPose(Pose pose) {
+		return new Pose(new Position(0, -width / 2).rotate(pose.yaw).translate(pose), pose.yaw);
+	}
 
 	/**
-	 * Returns the current position of the right wheel motors in terms of meters (positive: forward)
+	 * Returns a {@code State} representing the current state of the west coast drive train.
 	 * 
-	 * @return the current position of the right wheel motors in terms of meters (positive: forward)
+	 * @return a {@code State} representing the current state of the west coast drive train
 	 */
-	public abstract double rightEncoderPosition();
-
-	/**
-	 * Returns the current yaw value in radians of the west coast drivetrain.
-	 * 
-	 * @return the current yaw value in radians of the west coast drivetrain
-	 */
-	public abstract double yawInRadians();
+	public abstract State state();
 
 }

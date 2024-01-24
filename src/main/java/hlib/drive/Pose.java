@@ -112,11 +112,17 @@ public class Pose extends Position {
 		double x = 0;
 		double y = 0;
 		double yaw = 0;
+		int count = 0;
 		for (var pose : poses) {
-			x += pose.x;
-			y += pose.y;
-			yaw += pose.yaw;
+			if (pose != null) {
+				x += pose.x;
+				y += pose.y;
+				yaw += pose.yaw;
+				count++;
+			}
 		}
+		if (count == 0)
+			return null;
 		return new Pose(x / poses.length, y / poses.length, yaw / poses.length);
 	}
 

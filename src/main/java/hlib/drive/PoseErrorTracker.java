@@ -63,9 +63,10 @@ public class PoseErrorTracker {
 	 *            a {@code Pose} containing error values
 	 */
 	protected void update(Pose error) {
-		if (error != null)
+		if (error != null) {
 			this.largestPoseError = new Pose(maxError(error.x(), largestPoseError.x()),
 					maxError(error.y(), largestPoseError.y()), maxError(error.yaw, largestPoseError.yaw));
+		}
 	}
 
 	/**

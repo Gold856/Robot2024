@@ -38,7 +38,7 @@ public class RobotContainer implements frc.robot.util.RobotContainer {
 		Supplier<Double> turnSupplier = () -> {
 			Pose pose = m_poseEstimationSubsystem.estimatedPose();
 			if (pose != null)
-				return pose.angleInDegrees(target) - pose.yawInDegrees();
+				return pose.displacementTo(target).angleInDegrees() - pose.yawInDegrees();
 			return 0.0;
 		};
 		Supplier<Double> driveSupplier = () -> {
