@@ -73,15 +73,15 @@ public class UnitTests {
 				return v;
 			}
 		});
-		// System.out.println(p.estimatedPose());
-		// p.periodic();
-		// System.out.println(p.estimatedPose());
-		// p.periodic();
-		// System.out.println(p.estimatedPose());
-		// p.periodic();
-		// System.out.println(p.estimatedPose());
-		// p.periodic();
-		// System.out.println(p.estimatedPose());
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
+		p.periodic();
+		System.out.println(p.estimatedPose());
 	}
 
 }
