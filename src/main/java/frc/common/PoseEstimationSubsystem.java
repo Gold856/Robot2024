@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.common;
 
 import java.io.File;
 import java.util.Map;
@@ -16,9 +16,9 @@ import hlib.drive.PoseEstimatorWeighted;
  * the robot, each AprilTag, as well as others of interest. For stationary
  * objects such AprilTags, it stores the corresponding {@code Pose}s and provide
  * them as needed.
- * For a moving object such as the robot, it estimates the pose based on variety
- * of sources including LimeLight as well as encoders and sensors attached to
- * the robot.
+ * For a moving object such as the robot, it estimates the pose based on a
+ * variety of sources including LimeLight as well as encoders and sensors
+ * attached to the robot.
  * 
  * @author Andrew Hwang (u.andrew.h@gmail.com)
  * @author Jeong-Hyon Hwang (jhhbrown@gmail.com)
@@ -28,7 +28,7 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 	/**
 	 * The {@code PoseEstimator} for estimating the pose of the robot.
 	 */
-	PoseEstimator m_poseEstimator = new PoseEstimatorWeighted(1.0, 10, 0.1);
+	protected PoseEstimator m_poseEstimator = new PoseEstimatorWeighted(1.0, 10, 0.1);
 
 	/**
 	 * A {@code Map} that maps the ID of each AprilTag to the {@code Pose} of that
@@ -37,18 +37,12 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 	Map<Integer, Pose> m_aprilTagPoses = new TreeMap<Integer, Pose>();
 
 	/**
-	 * The path to the "deploy" directory in the project.
-	 */
-	public static String deployPath = "." + File.separator + "src" + File.separator + "main" + File.separator
-			+ "deploy";
-
-	/**
 	 * Constructs a {@code PoseEstimationSubsystem}.
 	 */
 	public PoseEstimationSubsystem() {
 		super();
 		try {
-			var m = new AprilTagMap(deployPath + File.separator + "2024LimeLightMap.fmap");
+			var m = new AprilTagMap(RobotContainer.s_deployPath + File.separator + "2024LimeLightMap.fmap");
 			m.forEach((k, v) -> m_aprilTagPoses.put(k, AprilTagMap.toPose(v)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -59,17 +53,18 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 	 * Returns the {@code Pose} of the specified AprilTag.
 	 * 
 	 * @param tagID the ID of the AprilTag
-	 * @return the {@code Pose} of the specified AprilTag
+	 * @return the {@code Pose} of the specified AprilTag ({@code null} if there is
+	 *         no such AprilTag)
 	 */
 	public Pose aprilTagPose(int tagID) {
 		return m_aprilTagPoses.get(tagID);
 	}
 
 	/**
-	 * Returns the single {@code PoseEstimationSubsystem} instantiated in compliance
+	 * Returns the only {@code PoseEstimationSubsystem} instantiated in compliance
 	 * with the singleton design pattern.
 	 * 
-	 * @return the single {@code PoseEstimationSubsystem} instantiated in compliance
+	 * @return the only {@code PoseEstimationSubsystem} instantiated in compliance
 	 *         with the singleton design pattern
 	 */
 	public static PoseEstimationSubsystem get() {
@@ -87,7 +82,7 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 	 * Is invoked whenever there is a change in the {@code NetworkTable} entry
 	 * representing the pose of the robot.
 	 */
-	TimestampedDoubleArray changedBotPose(NetworkTableEvent event) {
+	protected TimestampedDoubleArray changedBotPose(NetworkTableEvent event) {
 		var botpose = super.changedBotPose(event);
 		if (botpose != null) {
 			m_poseEstimator.update(new Pose(botpose.value[0], botpose.value[1], botpose.value[5] * Math.PI / 180));
