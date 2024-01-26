@@ -140,6 +140,25 @@ public class Pose extends Position {
 	}
 
 	/**
+	 * Returns the {@code Pose} resulting from moving this {@code Pose} according to the transformation that moves the
+	 * first reference {@code Pose} to the second reference {@code Pose}.
+	 * 
+	 * @param r1
+	 *            the first reference {@code Pose}
+	 * @param r2
+	 *            the second reference {@code Pose}
+	 * @return the {@code Pose} resulting from moving this {@code Pose} according to the transformation that moves the
+	 *         first reference {@code Pose} to the second reference {@code Pose}
+	 */
+	public Pose move(Pose r1, Pose r2) {
+		double angle = r2.yawInRadians() - r1.yawInRadians();
+		Position translation = r1.displacementTo(r2).rotate(-r1.yaw);
+		// System.out.println(r2 + " vs. "
+		// + new Pose(translation.rotate(r1.yawInRadians()).translate(r1), r1.yawInRadians() + angle));
+		return new Pose(translation.rotate(this.yawInRadians()).translate(this), this.yawInRadians() + angle);
+	}
+
+	/**
 	 * Normalizes the specified angle in radians to the range (-Math.PI, Math.PI].
 	 * 
 	 * @param angleInRadians

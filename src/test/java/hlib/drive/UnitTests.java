@@ -51,96 +51,19 @@ public class UnitTests {
 	}
 
 	@Test
-	public void testPoseEstimationWestCoast() throws Exception {
-		var p = new PoseEstimatorWeighted(1.0, 10, 0.1);
-		p.update(new Pose(0, 0, 0));
-		p.update(new Pose(0.1, 0.1, 0));
-		p.add(new PoseCalculatorWestCoastSimple(1.0) {
-
-			double v = 0.0;
-
-			@Override
-			public State state() {
-				var state = new State(v, 2 * v, 0.1 * v);
-				v += 1.0 / 50; // 1.0 m/sec
-				System.out.println(state);
-				return state;
-			}
-		});
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		var pose = p.estimatedPose();
-		System.out.println(pose);
-		System.out.println();
-		assertEquals("(0.100, 0.010, 0.3 degrees)", "" + pose);
+	public void testPoseMove() throws Exception {
+		assertEquals("(1.000, 0.000, 135.0 degrees)",
+				new Pose(1, 0, Math.PI / 2).move(new Pose(0, 0, 0), new Pose(0, 0, Math.PI / 4)).toString());
+		assertEquals("(1.000, 0.000, 135.0 degrees)",
+				new Pose(1, 0, Math.PI / 2).move(new Pose(1, 1, 0), new Pose(1, 1, Math.PI / 4)).toString());
+		assertEquals("(1.000, 0.000, 135.0 degrees)",
+				new Pose(1, 0, Math.PI / 2).move(new Pose(1, 1, Math.PI / 4), new Pose(1, 1, Math.PI / 2)).toString());
+		assertEquals("(1.000, 1.414, 135.0 degrees)",
+				new Pose(1, 0, Math.PI / 2).move(new Pose(1, 1, Math.PI / 4), new Pose(2, 2, Math.PI / 2)).toString());
+		assertEquals("(0.293, 3.121, 135.0 degrees)",
+				new Pose(1, 1, Math.PI / 2).move(new Pose(1, 1, Math.PI / 4), new Pose(2, 3, Math.PI / 2)).toString());
+		assertEquals("(2.000, -2.000, 0.0 degrees)", new Pose(1, -1, -Math.PI / 4)
+				.move(new Pose(1, 1, Math.PI / 4), new Pose(2, 2, Math.PI / 2)).toString());
 	}
 
-	@Test
-	public void testPoseEstimationSwerve1() throws Exception {
-		var p = new PoseEstimatorWeighted(1.0, 10, 0.1);
-		p.update(new Pose(0, 0, 0));
-		p.update(new Pose(0.1, 0.1, 0));
-		p.add(new PoseCalculatorSwerveSimple(1.0, 1.0) {
-
-			double v = 0.0;
-
-			double[] angles = { 0.1, 0.1, 0.1, 0.1 };
-
-			@Override
-			public State state() {
-				var state = new State(angles, new double[] { v, v, v, v }, null);
-				v += 1.0 / 50; // 1.0 m/sec
-				System.out.println(state);
-				return state;
-			}
-		});
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		var pose = p.estimatedPose();
-		System.out.println(pose);
-		System.out.println();
-		// assertEquals("(0.070, 0.016, 0.0 degrees)", "" + pose);
-	}
-
-	@Test
-	public void testPoseEstimationSwerve2() throws Exception {
-		var p = new PoseEstimatorWeighted(1.0, 10, 0.1);
-		p.update(new Pose(0, 0, 0));
-		p.update(new Pose(0.1, 0.1, 0));
-		p.add(new PoseCalculatorSwerveSimple(1.0, 1.0) {
-
-			double v = 0.0;
-
-			double[] angles = { 3 * Math.PI / 4, Math.PI / 4, -3 * Math.PI / 4, -Math.PI / 4 };
-
-			@Override
-			public State state() {
-				var state = new State(angles, new double[] { v, v, v, v }, null);
-				v += 1.0 / 50; // 1.0 m/sec
-				System.out.println(state);
-				return state;
-			}
-		});
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		System.out.println(p.estimatedPose());
-		p.periodic();
-		var pose = p.estimatedPose();
-		System.out.println(pose);
-		System.out.println();
-		// assertEquals("(0.010, 0.010, 4.9 degrees)", "" + pose);
-	}
 }

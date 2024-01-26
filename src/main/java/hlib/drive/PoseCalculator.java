@@ -13,10 +13,10 @@ public interface PoseCalculator {
 	 * Calculates the current pose of an object based on the pose of that object at an earlier time and some changes in
 	 * that object observed via some sources such as a gyroscope, encoders, etc.
 	 * 
-	 * @param previous
+	 * @param pose
 	 *            a {@code Pose} representing the pose of the object at an earlier time
 	 * @return a {@code Pose} representing the pose calculated by this {@code PoseCalculator}
 	 */
-	public Pose pose(Pose previous);
+	public Pose pose(Pose pose);
 
 }

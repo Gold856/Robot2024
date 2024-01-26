@@ -1,8 +1,8 @@
 package hlib.drive;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
@@ -97,15 +97,31 @@ public class PoseEstimator {
 	}
 
 	/**
-	 * Adds {@code PoseCalculator}s for enhancing the accuracy of the estimated pose based on data from various sources
-	 * such as a gyroscope, encoders, etc.
+	 * Adds a {@code Supplier<Pose>} which can provide {@code Pose}s obtained from some sources such as a gyroscope,
+	 * encoders, etc. in order to enhance the accuracy of the pose estimated by this {@code PoseEstimator}.
 	 * 
-	 * @param poseCalculators
-	 *            {@code PoseCalculator}s for enhancing the accuracy of the estimated pose based on data from various
-	 *            sources such as a gyroscope, encoders, etc.
+	 * @param poseSupplier
+	 *            a {@code Supplier<Pose>} which can provide {@code Pose}s obtained from some sources such as a
+	 *            gyroscope, encoders, etc.
 	 */
-	public void add(PoseCalculator... poseCalculators) {
-		this.poseCalculators.addAll(Arrays.asList(poseCalculators));
+	public void add(Supplier<Pose> poseSupplier) {
+		this.poseCalculators.add(new PoseCalculator() {
+
+			Pose previous = null;
+
+			@Override
+			public Pose pose(Pose pose) {
+				var current = poseSupplier.get();
+				if (this.previous == null) {
+					this.previous = current;
+					return pose;
+				}
+				var refined = pose.move(this.previous, current);
+				this.previous = current;
+				return refined;
+			}
+
+		});
 	}
 
 	/**

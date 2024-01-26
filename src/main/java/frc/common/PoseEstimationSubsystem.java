@@ -3,7 +3,9 @@ package frc.common;
 import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import hlib.drive.AprilTagMap;
@@ -76,6 +78,7 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 	 */
 	@Override
 	public void periodic() {
+		m_poseEstimator.periodic();
 	}
 
 	/**
@@ -106,4 +109,25 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 		var pose = m_poseEstimator.estimatedPose();
 		return pose == null || pose.hasNaN() || pose.equals(Pose.DEFAULT_POSE) ? null : pose;
 	}
+
+	/**
+	 * Returns a {@code Pose} obtained from the specified {@code Pose2d}.
+	 * 
+	 * @param a {@code Pose2d}
+	 * @return a {@code Pose} obtained from the specified {@code Pose2d}
+	 */
+	public static Pose toPose(Pose2d pose) {
+		return new Pose(pose.getX(), pose.getY(), pose.getRotation().getRadians());
+	}
+
+	/**
+	 * Adds the specified {@code Supplier<Pose>} to this
+	 * {@code PoseEstimationSubsystem}.
+	 * 
+	 * @param poseSupplier a {@code Supplier<Pose>}
+	 */
+	public void add(Supplier<Pose> poseSupplier) {
+		m_poseEstimator.add(poseSupplier);
+	}
+
 }

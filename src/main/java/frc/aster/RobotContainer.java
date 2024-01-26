@@ -15,32 +15,28 @@ import frc.common.PoseEstimationSubsystem;
 import frc.aster.Constants.ControllerConstants;
 import frc.aster.commands.drive.DriveDistanceCommand;
 import hlib.drive.Pose;
-import hlib.drive.PoseCalculatorWestCoastSimple;
+
 import hlib.drive.Position;
 
 public class RobotContainer implements frc.common.RobotContainer {
 	DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+
 	PoseEstimationSubsystem m_poseEstimationSubsystem = new PoseEstimationSubsystem() {
 		{
-			m_poseEstimator.add(new PoseCalculatorWestCoastSimple(Constants.DriveConstants.kTrackwidthMeters) {
-
-				@Override
-				public State state() {
-					var state = new State(DriveSubsystem.get().getLeftEncoderPosition(),
-							DriveSubsystem.get().getRightEncoderPosition(),
-							Math.toRadians(DriveSubsystem.get().getHeading()));
-					visionTable.getEntry("odometry").setString(state.toString());
-					System.out.println(state);
-					return state;
-				}
+			add(() -> {
+				var pose = toPose(DriveSubsystem.get().getPose());
+				visionTable.getEntry("odometry").setString(String.format(
+						"pose: %s, left encoder position: %.1f, right encoder position: %.1f, yaw: %.1f degrees",
+						pose.toString(),
+						DriveSubsystem.get().getLeftEncoderPosition(),
+						DriveSubsystem.get().getRightEncoderPosition(),
+						Math.toRadians(DriveSubsystem.get().getHeading())));
+				return pose;
 			});
 		}
 
-		@Override
-		public void periodic() {
-			m_poseEstimator.periodic();
-		}
 	};
+
 	Joystick m_operatorController = new Joystick(ControllerConstants.kOperatorControllerPort);
 
 	public RobotContainer() {
