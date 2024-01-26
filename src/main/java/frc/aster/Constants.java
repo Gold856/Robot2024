@@ -123,24 +123,4 @@ public final class Constants {
 
 	}
 
-	public static final class GripperConstants {
-		public static final double kGripperOpenPosition = 0.5;// TODO is this correct
-		public static final boolean kInvert = false;
-		public static final int kGripperID = 9;
-		public static final int kSmartCurrentLimit = 15;// TODO evaluate current limit (37 for gripper, 15 for wheel)
-		public static final double kCloseTime = 3000; // TODO: change as needed
-		public static final double kMovePower = 0.7; // TODO check (0.2 for gripper, 0.4 for wheel gripper)
-		public static final double kHoldPower = 0.08; // TODO: change as needed (0.1 for gripper, 0.03 for wheel)
-	}
-
-	public static final class LimelightConstants {
-		// TODO make real numbers
-		public static final double zTolerance = 0.2;
-		public static final double xTolerance = 0.2;
-		public static final int kRollingMedianSize = 10;
-		public static final double kSlowDownDistance = 0.5;
-		public static final double kSlowDownDistanceSquared = kSlowDownDistance * kSlowDownDistance;
-		public static final double kSpeed = 0.35;
-	}
-
 }

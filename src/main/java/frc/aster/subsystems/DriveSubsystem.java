@@ -2,20 +2,20 @@ package frc.aster.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.hal.ControlWord;
 import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.aster.Constants.DriveConstants;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 	private static DriveSubsystem s_subsystem;
 
 	private final CANSparkMax m_frontLeft = new CANSparkMax(DriveConstants.kFrontLeftID, MotorType.kBrushless);
@@ -25,8 +25,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final RelativeEncoder m_leftEncoder = m_frontLeft.getEncoder();
 	private final RelativeEncoder m_rightEncoder = m_frontRight.getEncoder();
-	private final SparkMaxPIDController m_leftPIDController = m_frontLeft.getPIDController();
-	private final SparkMaxPIDController m_rightPIDController = m_frontRight.getPIDController();
+	private final SparkPIDController m_leftPIDController = m_frontLeft.getPIDController();
+	private final SparkPIDController m_rightPIDController = m_frontRight.getPIDController();
 
 	private final AHRS m_gyro = new AHRS(DriveConstants.kGyroPort);
 
@@ -105,7 +105,16 @@ public class DriveSubsystem extends SubsystemBase {
 		m_rightPIDController.setFeedbackDevice(m_rightEncoder);
 
 		m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
-		resetEncoders();
+		m_leftEncoder.setPosition(0);
+		m_rightEncoder.setPosition(0);
+	}
+
+	@Override
+	public void close() {
+		m_frontLeft.close();
+		m_frontRight.close();
+		m_backLeft.close();
+		m_backRight.close();
 	}
 
 	public static DriveSubsystem get() {
@@ -113,18 +122,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void periodic() {
-		SmartDashboard.putNumber("Heading", getHeading());
-		SmartDashboard.putNumber("L RPM: ", getLeftEncoderVelocity());
-		SmartDashboard.putNumber("R RPM: ", getRightEncoderVelocity());
-
-		SmartDashboard.putNumber("Curr X", DriveSubsystem.get().getPose().getX());
-		SmartDashboard.putNumber("Curr Y", DriveSubsystem.get().getPose().getY());
-
-		SmartDashboard.putNumber("Curr Encoder Position", DriveSubsystem.get().getAverageEncoderDistance());
-		SmartDashboard.putString("Wheel Encoder Positions", String.format("(%.3f, %.3f)",
-				DriveSubsystem.get().getLeftEncoderPosition(), DriveSubsystem.get().getRightEncoderPosition()));
-		m_odometry.update(m_gyro.getRotation2d(), getLeftEncoderPosition(),
-				getRightEncoderPosition());
+		m_odometry.update(m_gyro.getRotation2d(), getLeftEncoderPosition(), getRightEncoderPosition());
 		// wasDisabled exists so the motors aren't constantly set to brake or coast mode
 		// Without it, the code would continuously set the motors in brake or coast mode
 		// If the robot is enabled, put the motors in brake mode
@@ -155,24 +153,10 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * @return The average encoder distance of both encoders (meters)
+	 * @return The heading of the gyro (degrees)
 	 */
-	public double getAverageEncoderDistance() {
-		return (getLeftEncoderPosition() + getRightEncoderPosition()) / 2.0;
-	}
-
-	/**
-	 * @return The velocity of the left encoder (meters/s)
-	 */
-	public double getLeftEncoderVelocity() {
-		return m_leftEncoder.getVelocity();
-	}
-
-	/**
-	 * @return The velocity of the right encoder (meters/s)
-	 */
-	public double getRightEncoderVelocity() {
-		return m_rightEncoder.getVelocity();
+	public double getHeading() {
+		return m_gyro.getYaw() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
 	}
 
 	/**
@@ -180,48 +164,6 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public Pose2d getPose() {
 		return m_odometry.getPoseMeters();
-	}
-
-	/**
-	 * @return The heading of the gyro (degrees)
-	 */
-	public double getHeading() {
-		return m_gyro.getYaw() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-	}
-
-	public double getPitch() {
-		return m_gyro.getPitch() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-	}
-
-	/**
-	 * @return The rate of the gyro turn (deg/s)
-	 */
-	public double getTurnRate() {
-		return m_gyro.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-	}
-
-	/**
-	 * Resets gyro position to 0
-	 */
-	public void zeroHeading() {
-		m_gyro.zeroYaw();
-	}
-
-	/**
-	 * Sets both encoders to 0
-	 */
-	public void resetEncoders() {
-		m_leftEncoder.setPosition(0);
-		m_rightEncoder.setPosition(0);
-	}
-
-	/**
-	 * @param pose Pose to set the robot to
-	 */
-	public void resetOdometry(Pose2d pose) {
-		resetEncoders();
-		// TODO make the new position match the original we set in the constructor
-		m_odometry.resetPosition(m_gyro.getRotation2d(), 0, 0, pose);
 	}
 
 	public void arcadeDrive(double straight, double left, double right) {
@@ -239,7 +181,6 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @param rightSpeed Right motors percent output
 	 */
 	public void tankDrive(double leftSpeed, double rightSpeed) {
-		// TODO only set front? back should follow
 		m_frontLeft.set(leftSpeed);
 		m_backLeft.set(leftSpeed);
 		m_frontRight.set(rightSpeed);
@@ -255,12 +196,10 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public boolean isEnabledFast() {
 		DriverStationJNI.getControlWord(m_controlWord);
-
 		return m_controlWord.getEnabled();
 	}
 
 	public void setBackBrake() {
-
 		m_backLeft.setIdleMode(IdleMode.kBrake);
 		m_backRight.setIdleMode(IdleMode.kBrake);
 	}
@@ -279,4 +218,5 @@ public class DriveSubsystem extends SubsystemBase {
 		m_frontLeft.setIdleMode(IdleMode.kBrake);
 		m_frontRight.setIdleMode(IdleMode.kBrake);
 	}
+
 }

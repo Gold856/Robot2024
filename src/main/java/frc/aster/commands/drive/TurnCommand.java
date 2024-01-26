@@ -77,7 +77,6 @@ public class TurnCommand extends Command {
 		try {
 			setPoint += m_targetAngleCalculator.get();
 		} catch (Exception e) {
-			
 		}
 		m_turnController.setSetpoint(setPoint);
 		SmartDashboard.putString("drive",
