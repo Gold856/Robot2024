@@ -64,5 +64,6 @@ public class SwerveTest {
 		}
 		System.out.println();
 		assertEquals(1.02, m_driveSubsystem.getPose().getX(), 1e-9);
+		SimHooks.resumeTiming();
 	}
 }
