@@ -10,6 +10,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -54,6 +56,7 @@ public class SwerveTest {
 	@Test
 	void testDriveTimeCommand() {
 		DriverStationSim.setEnabled(true);
+		DriverStationSim.notifyNewData();
 		DriverStation.refreshData();
 		var command = new DriveTimeCommand(m_driveSubsystem, 1, 1);
 		command.schedule();
@@ -62,7 +65,6 @@ public class SwerveTest {
 			CommandScheduler.getInstance().run();
 			SimHooks.stepTiming(0.02);
 		}
-		System.out.println();
 		assertEquals(1.02, m_driveSubsystem.getPose().getX(), 1e-9);
 	}
 }
