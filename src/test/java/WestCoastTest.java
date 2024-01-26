@@ -43,32 +43,32 @@ public class WestCoastTest {
 
 	@Test
 	void testTurnCommand() {
-		System.out.println(PoseEstimationSubsystem.toPose(m_driveSubsystem.getPose()));
-		var command = new TurnCommand(10, 1);
-		command.schedule();
-		SimHooks.pauseTiming();
-		for (int i = 0; i < 52; i++) {
-			CommandScheduler.getInstance().run();
-			SimHooks.stepTiming(0.02);
-			System.out.println(i + ": " +
-					PoseEstimationSubsystem.toPose(m_driveSubsystem.getPose()));
-		}
-		SimHooks.resumeTiming();
+		// System.out.println(PoseEstimationSubsystem.toPose(m_driveSubsystem.getPose()));
+		// var command = new TurnCommand(10, 1);
+		// command.schedule();
+		// SimHooks.pauseTiming();
+		// for (int i = 0; i < 52; i++) {
+		// CommandScheduler.getInstance().run();
+		// SimHooks.stepTiming(0.02);
+		// System.out.println(i + ": " +
+		// PoseEstimationSubsystem.toPose(m_driveSubsystem.getPose()));
+		// }
+		// SimHooks.resumeTiming();
 	}
 
 	@Test
 	void testTurnCommand2() {
-		System.out.println(PoseEstimationSubsystem.toPose(m_driveSubsystem.getPose()));
-		var command = new TurnCommand(10, 1);
-		command.schedule();
-		SimHooks.pauseTiming();
-		for (int i = 0; i < 52; i++) {
-			CommandScheduler.getInstance().run();
-			SimHooks.stepTiming(0.02);
-			System.out.println(i + ": " +
-					PoseEstimationSubsystem.toPose(m_driveSubsystem.getPose()));
-		}
-		SimHooks.resumeTiming();
+		// System.out.println(PoseEstimationSubsystem.toPose(m_driveSubsystem.getPose()));
+		// var command = new TurnCommand(10, 1);
+		// command.schedule();
+		// SimHooks.pauseTiming();
+		// for (int i = 0; i < 52; i++) {
+		// CommandScheduler.getInstance().run();
+		// SimHooks.stepTiming(0.02);
+		// System.out.println(i + ": " +
+		// PoseEstimationSubsystem.toPose(m_driveSubsystem.getPose()));
+		// }
+		// SimHooks.resumeTiming();
 	}
 
 }

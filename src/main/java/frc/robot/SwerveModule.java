@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /**
  * Contains all the hardware and controllers for a swerve module.
  */
-public class SwerveModule {
+public class SwerveModule implements AutoCloseable {
 	private final PIDController m_PIDController = new PIDController(kP, kI, kD);
 	private final CANcoder m_CANCoder;
 	private final CANSparkMax m_driveMotor;
@@ -38,6 +38,14 @@ public class SwerveModule {
 		m_driveMotor.setInverted(inverted);
 		configMotorController(m_steerMotor);
 		m_PIDController.enableContinuousInput(0, 360);
+	}
+
+	@Override
+	public void close() {
+		m_CANCoder.close();
+		m_driveMotor.close();
+		m_steerMotor.close();
+		m_PIDController.close();
 	}
 
 	/**
@@ -147,4 +155,5 @@ public class SwerveModule {
 		m_driveMotor.setIdleMode(mode);
 		m_steerMotor.setIdleMode(mode);
 	}
+
 }

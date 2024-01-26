@@ -34,7 +34,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 	private final SwerveModule m_frontLeft;
 	private final SwerveModule m_frontRight;
 	private final SwerveModule m_backLeft;
@@ -93,6 +93,14 @@ public class DriveSubsystem extends SubsystemBase {
 		m_gyro.zeroYaw();
 		resetEncoders();
 		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
+	}
+
+	@Override
+	public void close() {
+		m_frontLeft.close();
+		m_frontRight.close();
+		m_backLeft.close();
+		m_backRight.close();
 	}
 
 	/**
@@ -299,4 +307,5 @@ public class DriveSubsystem extends SubsystemBase {
 			setModuleStates(0, 0, 0, false);
 		}).raceWith(Commands.waitSeconds(5));
 	}
+
 }
