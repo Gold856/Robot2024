@@ -32,11 +32,6 @@ public class DriveDistanceCommand extends Command {
 	private Supplier<Double> m_targetDistanceCalculator;
 
 	/**
-	 * The target distance in meters that the robot should move.
-	 */
-	private double m_targetDistance;
-
-	/**
 	 * The {@code ProfiledPIDController} for controlling the left wheels.
 	 */
 	private ProfiledPIDController m_leftController;
@@ -45,18 +40,6 @@ public class DriveDistanceCommand extends Command {
 	 * The {@code ProfiledPIDController} for controlling the right wheels.
 	 */
 	private ProfiledPIDController m_rightController;
-
-	/**
-	 * The left encoder position when this {@code DriveDistanceCommand} is
-	 * initialized.
-	 */
-	private double m_startLeftEncoderPosition;
-
-	/**
-	 * The right encoder position when this {@code DriveDistanceCommand} is
-	 * initialized.
-	 */
-	private double m_startRightEncoderPosition;
 
 	/**
 	 * Constructs a new {@code DriveDistanceCommand} whose purpose is to move the
@@ -105,19 +88,23 @@ public class DriveDistanceCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		m_startLeftEncoderPosition = DriveSubsystem.get().getLeftEncoderPosition();
-		m_startRightEncoderPosition = DriveSubsystem.get().getRightEncoderPosition();
+		var startLeftEncoderPosition = DriveSubsystem.get().getLeftEncoderPosition();
+		var startRightEncoderPosition = DriveSubsystem.get().getRightEncoderPosition();
+		var targetDistance = 0.0;
 		try {
-			m_targetDistance = m_targetDistanceCalculator.get();
+			targetDistance = m_targetDistanceCalculator.get();
 		} catch (Exception e) {
-			m_targetDistance = 0;
 		}
+		m_leftController.reset(startLeftEncoderPosition);
+		m_rightController.reset(startRightEncoderPosition);
+		m_leftController.setGoal(startLeftEncoderPosition + targetDistance);
+		m_rightController.setGoal(startRightEncoderPosition + targetDistance);
 		SmartDashboard.putString(
 				"drive",
 				String.format(
 						"distance: initialize - left encoder position: %.1f, right encoder position: %.1f, target distance: %.1f",
-						m_startLeftEncoderPosition,
-						m_startRightEncoderPosition, m_targetDistance));
+						startLeftEncoderPosition,
+						startRightEncoderPosition, targetDistance));
 	}
 
 	/**
@@ -129,10 +116,8 @@ public class DriveDistanceCommand extends Command {
 	public void execute() {
 		var leftEncoderPosition = DriveSubsystem.get().getLeftEncoderPosition();
 		var rightEncoderPosition = DriveSubsystem.get().getRightEncoderPosition();
-		double leftSpeed = m_leftController.calculate(leftEncoderPosition - m_startLeftEncoderPosition,
-				m_targetDistance);
-		double rightSpeed = m_rightController.calculate(rightEncoderPosition - m_startRightEncoderPosition,
-				m_targetDistance);
+		double leftSpeed = m_leftController.calculate(leftEncoderPosition);
+		double rightSpeed = m_rightController.calculate(rightEncoderPosition);
 		DriveSubsystem.get().tankDrive(leftSpeed, rightSpeed);
 		SmartDashboard.putString(
 				"drive",
@@ -152,8 +137,7 @@ public class DriveDistanceCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		DriveSubsystem.get().tankDrive(0, 0);
-		SmartDashboard.putString("drive", "distance: end - " + interrupted);
-
+		SmartDashboard.putString("drive", "distance: end - interrupted: " + interrupted);
 	}
 
 	/**
@@ -164,11 +148,6 @@ public class DriveDistanceCommand extends Command {
 	 */
 	@Override
 	public boolean isFinished() {
-		return Math.abs(
-				DriveSubsystem.get().getLeftEncoderPosition() - m_startLeftEncoderPosition - m_targetDistance) < .1
-				&& Math.abs(DriveSubsystem.get().getRightEncoderPosition() - m_startRightEncoderPosition
-						- m_targetDistance) < .1;// m_leftController.atSetpoint()
-		// &&
-		// m_rightController.atSetpoint();
+		return m_leftController.atGoal() && m_rightController.atGoal();
 	}
 }
