@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
  */
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
-	private RobotContainer m_robotContainer;
+	private frc.common.RobotContainer m_robotContainer;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		DataLogManager.start();
 		DataLogManager.logNetworkTables(true);
-		m_robotContainer = new RobotContainer();
+		m_robotContainer = new frc.aster.RobotContainer();
 	}
 
 	/**

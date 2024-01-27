@@ -1,5 +1,7 @@
 package frc.aster.subsystems;
 
+import java.util.function.Function;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -10,9 +12,13 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.hal.ControlWord;
 import edu.wpi.first.hal.DriverStationJNI;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.aster.Constants;
 import frc.aster.Constants.DriveConstants;
 
 public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
@@ -35,6 +41,25 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 	ControlWord m_controlWord = new ControlWord();
 	/** Prevents the motors from continuously being set to brake or coast mode */
 	private boolean wasDisabled;
+
+	/**
+	 * A {@code State} represents the state of this {@code DriveSubsystem} at a
+	 * certain moment.
+	 */
+	record State(double leftEncoderPosition, double rightEncoderPosition, double yawInDegrees) {
+
+		public State(double leftEncoderPosition, double rightEncoderPosition, double yawInDegrees) {
+			this.leftEncoderPosition = leftEncoderPosition;
+			this.rightEncoderPosition = rightEncoderPosition;
+			this.yawInDegrees = yawInDegrees > 180 ? yawInDegrees - 360
+					: yawInDegrees <= -180 ? yawInDegrees + 360 : yawInDegrees;
+		}
+	};
+
+	/**
+	 * The current {@code State} of this {@code DriveSubsystem}.
+	 */
+	State m_state;
 
 	public DriveSubsystem() {
 		// Singleton
@@ -107,6 +132,8 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 		m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d(), 0, 0);
 		m_leftEncoder.setPosition(0);
 		m_rightEncoder.setPosition(0);
+		m_state = RobotBase.isSimulation() ? new State(0, 0, 0)
+				: new State(getLeftEncoderPosition(), getRightEncoderPosition(), getHeading());
 	}
 
 	@Override
@@ -122,7 +149,7 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 	}
 
 	public void periodic() {
-		m_odometry.update(m_gyro.getRotation2d(), getLeftEncoderPosition(), getRightEncoderPosition());
+		m_odometry.update(Rotation2d.fromDegrees(getHeading()), getLeftEncoderPosition(), getRightEncoderPosition());
 		// wasDisabled exists so the motors aren't constantly set to brake or coast mode
 		// Without it, the code would continuously set the motors in brake or coast mode
 		// If the robot is enabled, put the motors in brake mode
@@ -136,27 +163,30 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 			setBackBrake();
 			wasDisabled = true;
 		}
+		SmartDashboard.putString("DriveSubsystem", "" + m_state);
+		SmartDashboard.putString("DifferentialDriveOdometry", "" + m_odometry.getPoseMeters());
 	}
 
 	/**
 	 * @return The left encoder position (meters)
 	 */
 	public double getLeftEncoderPosition() {
-		return m_leftEncoder.getPosition();
+		return RobotBase.isSimulation() ? m_state.leftEncoderPosition : m_leftEncoder.getPosition();
 	}
 
 	/**
 	 * @return The right encoder position (meters)
 	 */
 	public double getRightEncoderPosition() {
-		return m_rightEncoder.getPosition();
+		return RobotBase.isSimulation() ? m_state.rightEncoderPosition : m_rightEncoder.getPosition();
 	}
 
 	/**
 	 * @return The heading of the gyro (degrees)
 	 */
 	public double getHeading() {
-		return m_gyro.getYaw() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+		return RobotBase.isSimulation() ? m_state.yawInDegrees
+				: m_gyro.getYaw() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
 	}
 
 	/**
@@ -185,6 +215,19 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 		m_backLeft.set(leftSpeed);
 		m_frontRight.set(rightSpeed);
 		m_backRight.set(rightSpeed);
+		if (RobotBase.isSimulation()) {
+			m_state = state(m_state, leftSpeed, rightSpeed);
+		}
+	}
+
+	private State state(State state, double leftSpeed, double rightSpeed) {
+		Function<Double, Double> toDisplacement = (speed) -> 5.0 * speed * TimedRobot.kDefaultPeriod;
+		var leftDisplacement = toDisplacement.apply(leftSpeed);
+		var rightDisplacement = toDisplacement.apply(rightSpeed);
+		var yawDisplacement = Math.toDegrees(
+				Math.atan2(rightDisplacement - leftDisplacement, Constants.DriveConstants.kTrackwidthMeters));
+		return new State(state.leftEncoderPosition + leftDisplacement, state.rightEncoderPosition + rightDisplacement,
+				state.yawInDegrees + yawDisplacement);
 	}
 
 	/**
