@@ -60,12 +60,10 @@ public final class Constants {
 		public static final int kBackRightID = 5;
 		public static final boolean kBackRightOppose = false;
 
-		// TODO re-evaluate current limits
 		public static final int kSmartCurrentLimit = 55;
 		public static final double kPeakCurrentLimit = 65;
 		public static final int kPeakCurrentDurationMillis = 0;
 
-		// TODO PIDS
 		public static final double kP = .14;// 0.198;
 		public static final double kI = 0;
 		public static final double kD = 0;
@@ -75,12 +73,9 @@ public final class Constants {
 		public static final double kMinOutput = -1;
 		public static final double kFineTurningSpeed = .3;
 
-		// navX stuff
 		public static final SPI.Port kGyroPort = SPI.Port.kMXP;
-		// TODO is gyro truly reversed?
 		public static final boolean kGyroReversed = true;
 
-		// TODO CHANGE ADJUST PIDS
 		public static final double kTurnP = 0.006; // was 0.005
 		public static final double kTurnI = 0; // was 0.003
 		public static final double kTurnD = 0; // 0.0
