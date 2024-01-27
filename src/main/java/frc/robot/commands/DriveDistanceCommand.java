@@ -27,7 +27,7 @@ public class DriveDistanceCommand extends Command {
 	 *               amount is distance in meters
 	 */
 	private DriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
-		ProfiledPIDController m_driveSubsystem = subsystem;
+		m_driveSubsystem = subsystem;
 		m_amount = amount;
 		m_tolerance = tolerance;
 		m_controller.setTolerance(tolerance);
