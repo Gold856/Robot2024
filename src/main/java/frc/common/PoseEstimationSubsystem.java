@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import hlib.drive.AprilTagMap;
 import hlib.drive.Pose;
+import hlib.drive.PoseCalculator;
 import hlib.drive.PoseEstimator;
 import hlib.drive.PoseEstimatorWeighted;
 
@@ -37,6 +38,13 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 	 * AprilTag.
 	 */
 	Map<Integer, Pose> m_aprilTagPoses = new TreeMap<Integer, Pose>();
+
+	/**
+	 * The {@code PoseCalculator}s for enhancing the accuracy of the estimated pose
+	 * based on data from various sources
+	 * such as a gyroscope, encoders, etc.
+	 */
+	protected Map<String, PoseCalculator> m_poseCalculators = new TreeMap<String, PoseCalculator>();
 
 	/**
 	 * Constructs a {@code PoseEstimationSubsystem}.
@@ -78,7 +86,7 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 	 */
 	@Override
 	public void periodic() {
-		m_poseEstimator.periodic();
+		m_poseEstimator.update(m_poseCalculators.values());
 	}
 
 	/**
@@ -121,13 +129,39 @@ public class PoseEstimationSubsystem extends AprilTagSubsystem {
 	}
 
 	/**
-	 * Adds the specified {@code Supplier<Pose>} to this
-	 * {@code PoseEstimationSubsystem}.
+	 * Adds a {@code Supplier<Pose>} which can provide {@code Pose}s obtained from
+	 * some sources such as a gyroscope,
+	 * encoders, etc. in order to enhance the accuracy of the pose estimated by this
+	 * {@code PoseEstimator}.
 	 * 
-	 * @param poseSupplier a {@code Supplier<Pose>}
+	 * @param label
+	 *                     a label associated with the specifiled
+	 *                     {@code Supplier<Pose>}
+	 * @param poseSupplier
+	 *                     a {@code Supplier<Pose>} which can provide {@code Pose}s
+	 *                     obtained from some sources such as a
+	 *                     gyroscope, encoders, etc.
 	 */
-	public void add(Supplier<Pose> poseSupplier) {
-		m_poseEstimator.add(poseSupplier);
+	public void addPoseSupplier(String label, Supplier<Pose> poseSupplier) {
+		this.m_poseCalculators.put(label, new PoseCalculator() {
+
+			Pose previous = null;
+
+			@Override
+			public Pose pose(Pose pose) {
+				var current = poseSupplier.get();
+				visionTable.getEntry(label).setDoubleArray(PoseEstimationSubsystem.toPose2DAdvantageScope(current.x(),
+						current.y(), current.yawInDegrees()));
+				if (this.previous == null || pose == null) {
+					this.previous = current;
+					return pose;
+				}
+				var refined = pose.move(this.previous, current);
+				this.previous = current;
+				return refined;
+			}
+
+		});
 	}
 
 }
