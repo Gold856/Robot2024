@@ -43,10 +43,4 @@ public class ArduinoSubsystem extends SubsystemBase {
 	public Command writeStatus(StatusCode code) {
 		return runOnce(() -> setCode(code));
 	}
-
-	public void isMatchTime() {
-		if (DriverStation.getMatchTime() <= 20) {
-			setCode(StatusCode.RAINBOW_PARTY_FUN_TIME);
-		}
-	}
 }
