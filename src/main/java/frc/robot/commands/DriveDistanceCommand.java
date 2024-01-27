@@ -3,8 +3,11 @@ package frc.robot.commands;
 import static frc.robot.Constants.DriveConstants.*;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
@@ -24,7 +27,7 @@ public class DriveDistanceCommand extends Command {
 	 *               amount is distance in meters
 	 */
 	private DriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
-		m_driveSubsystem = subsystem;
+		ProfiledPIDController m_driveSubsystem = subsystem;
 		m_amount = amount;
 		m_tolerance = tolerance;
 		m_controller.setTolerance(tolerance);

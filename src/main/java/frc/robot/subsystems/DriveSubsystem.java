@@ -252,14 +252,14 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @return A command to drive the robot.
 	 */
 	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
-			Supplier<Double> rotationAxis) {
+			Supplier<Double> rotationRight, Supplier<Double> rotationLeft) {
 		return run(() -> {
 			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
 			// input so slight movements don't move the robot
 			double fwdSpeed = -MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
 			double strSpeed = -MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			double rotSpeed = -MathUtil.applyDeadband(rotationAxis.get(), ControllerConstants.kDeadzone);
-
+			double rotSpeed = 0.75 * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
+					ControllerConstants.kDeadzone);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
 		});
 	}

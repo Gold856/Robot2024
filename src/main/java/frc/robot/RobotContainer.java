@@ -13,6 +13,7 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.SetSteering;
+import frc.robot.commands.TurnRelativeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -44,11 +45,13 @@ public class RobotContainer {
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_controller.getRawAxis(Axis.kLeftY),
 				() -> m_controller.getRawAxis(Axis.kLeftX),
-				() -> m_controller.getRawAxis(Axis.kRightX)));
+				() -> m_controller.getRawAxis(Axis.kRightTrigger),
+				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
+		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd().withTimeout(0.5));
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 2, 0.1));
+		// m_controller.button(Button.kX).onTrue(new
+		// TurnRelativeCommand(m_driveSubsystem, 90));
 	}
 
 	public Command getAutonomousCommand() {
