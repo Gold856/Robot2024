@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
+import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
@@ -41,7 +42,9 @@ public class RobotContainer {
 	public RobotContainer() {
 		// Configure the button bindings
 		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
-		m_autoSelector.addOption("Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2));
+		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 2.0));
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
 	}
