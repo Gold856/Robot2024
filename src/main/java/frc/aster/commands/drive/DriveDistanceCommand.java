@@ -11,6 +11,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.aster.Constants;
+import frc.aster.Constants.DriveConstants;
 import frc.aster.subsystems.DriveSubsystem;
 
 /**
@@ -76,7 +77,8 @@ public class DriveDistanceCommand extends Command {
 		var constraints = new TrapezoidProfile.Constraints(3, 2);
 		m_leftController = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
 				Constants.DriveConstants.kDriveD, constraints);
-		m_rightController = new ProfiledPIDController(kP, kI, kD, constraints);
+		m_rightController = new ProfiledPIDController(Constants.DriveConstants.kDriveP,
+				Constants.DriveConstants.kDriveI, Constants.DriveConstants.kDriveD, constraints);
 		m_leftController.setTolerance(distanceTolerance);
 		m_rightController.setTolerance(distanceTolerance);
 		addRequirements(DriveSubsystem.get());
@@ -119,7 +121,8 @@ public class DriveDistanceCommand extends Command {
 		var rightEncoderPosition = DriveSubsystem.get().getRightEncoderPosition();
 		double leftSpeed = m_leftController.calculate(leftEncoderPosition);
 		double rightSpeed = m_rightController.calculate(rightEncoderPosition);
-		DriveSubsystem.get().tankDrive(leftSpeed, rightSpeed);
+		DriveSubsystem.get().tankDrive(TurnCommand.ceiling(leftSpeed, DriveConstants.kminSpeed),
+				TurnCommand.ceiling(rightSpeed, DriveConstants.kminSpeed));
 		SmartDashboard.putString(
 				"drive",
 				String.format(

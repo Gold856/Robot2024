@@ -117,7 +117,7 @@ public final class Constants {
 		public static final double kBalanceD = 0.001;
 		public static final double upStationSpeed = 0.55;
 		public static final double kLimelightTurnP = 0.05;
-		public static final double kTurnMinSpeed = 0.05;
+		public static final double kminSpeed = 0.07;
 
 	}
 

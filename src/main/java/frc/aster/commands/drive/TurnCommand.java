@@ -96,12 +96,18 @@ public class TurnCommand extends Command {
 	public void execute() {
 		double heading = DriveSubsystem.get().getHeading();
 		double turnSpeed = m_turnController.calculate(heading);
-		turnSpeed = Math.abs(turnSpeed) < DriveConstants.kTurnMinSpeed
-				? Math.signum(turnSpeed) * DriveConstants.kTurnMinSpeed
-				: turnSpeed;
+		turnSpeed = ceiling(turnSpeed, DriveConstants.kminSpeed);
 		DriveSubsystem.get().tankDrive(-turnSpeed, turnSpeed);
-		SmartDashboard.putString("drive",
-				String.format("turn: execute - heading: %.1f, turn speed: %.1f", heading, turnSpeed));
+		// SmartDashboard.putString("drive",
+		// String.format("turn: execute - heading: %.1f, turn speed: %.1f", heading,
+		// turnSpeed));
+	}
+
+	public static double ceiling(double value, double threshold) {
+		value = Math.abs(value) < threshold
+				? Math.signum(value) * threshold
+				: value;
+		return value;
 	}
 
 	/**
