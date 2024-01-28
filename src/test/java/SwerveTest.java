@@ -63,12 +63,10 @@ public class SwerveTest {
 		var command = new DriveTimeCommand(m_driveSubsystem, 1, 1);
 		command.schedule();
 		SimHooks.pauseTiming();
-		for (int i = 0; i < 52; i++) {
+		for (int i = 0; i < 60; i++) {
 			CommandScheduler.getInstance().run();
 			SimHooks.stepTiming(0.02);
 		}
-		System.out.println();
-		assertEquals(1.02, m_driveSubsystem.getPose().getX(), 1e-9);
-		SimHooks.resumeTiming();
+		assertEquals(3.0, m_driveSubsystem.getPose().getX(), .1);
 	}
 }

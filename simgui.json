@@ -6,13 +6,6 @@
       "/SmartDashboard/SendableChooser[0]": "String Chooser"
     }
   },
-  "NetworkTables": {
-    "transitory": {
-      "vision": {
-        "open": true
-      }
-    }
-  },
   "NetworkTables Info": {
     "visible": true
   }

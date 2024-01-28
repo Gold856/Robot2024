@@ -67,20 +67,44 @@ void loop() {
 	switch (pattern) {  // sets up lights to patterns
 		                // note: every function returns a color based on colorIndex, the pixel index, and optional color parameters.
 		                // the for loops set the pixels to have their corresponding colors based on the pattern function on the colorIndex frame
-		case 8:         // reset code
+		case 0:         // reset code
 			colorIndex = 0;
 			pattern = -1;
-		case 9:  // blinking orange note color
+		case 1:
+			for (int i = 0; i < LED_COUNT; i++) {
+				strip.setPixelColor(i, RainbowPartyFunTime(colorIndex, i));
+			}
+			delay(75);
+			break;
+		case 2:  // blinking orange note color
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, BlinkingLights(colorIndex, noteColor, color(0, 0, 0)));
 			}
 			delay(150);
 			break;
-		case 10:
+		case 3:  // blinking white
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, RainbowPartyFunTime(colorIndex, i));
+				strip.setPixelColor(i, TheaterLights(colorIndex, i, color(255, 255, 255), color(0, 0, 0)));
 			}
-			delay(40);
+			delay(150);
+			break;
+		case 4:  // solid blue
+			for (int i = 0; i < LED_COUNT; i++) {
+				strip.setPixelColor(i, color(0, 0, 255));
+			}
+			delay(150);
+			break;
+		case 5:  // yellow
+			for (int i = 0; i < LED_COUNT; i++) {
+				strip.setPixelColor(i, color(255, 255, 0));
+			}
+			delay(150);
+			break;
+		case 6:  // purple
+			for (int i = 0; i < LED_COUNT; i++) {
+				strip.setPixelColor(i, color(255, 0, 255));
+			}
+			delay(150);
 			break;
 		default:  // display team color
 			for (int i = 0; i < LED_COUNT; i++) {
