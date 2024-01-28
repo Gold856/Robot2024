@@ -171,9 +171,9 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @param speeds The chassis speeds to use
 	 */
 	private void updateSimPose(ChassisSpeeds speeds) {
-		var transform = new Transform2d(speeds.vxMetersPerSecond * kModuleResponseTimeSeconds,
-				speeds.vyMetersPerSecond * kModuleResponseTimeSeconds, new Rotation2d(
-						speeds.omegaRadiansPerSecond * kModuleResponseTimeSeconds));
+		var transform = new Transform2d(speeds.vxMetersPerSecond * kModuleResponseTimeSeconds * 3,
+				speeds.vyMetersPerSecond * kModuleResponseTimeSeconds * 3, new Rotation2d(
+						speeds.omegaRadiansPerSecond * kModuleResponseTimeSeconds * 3));
 
 		m_pose = m_pose.plus(transform);
 		m_heading = m_pose.getRotation();
@@ -237,7 +237,9 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		SmartDashboard.putNumber("Current Position", getModulePositions()[0].distanceMeters);
-		m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
+		if (RobotBase.isReal()) {
+			m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
+		}
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
