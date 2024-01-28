@@ -1,8 +1,6 @@
 package hlib.drive;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.function.Supplier;
+import java.util.Collection;
 import java.util.stream.Stream;
 
 /**
@@ -50,12 +48,6 @@ public class PoseEstimator {
 	protected long startTime = System.currentTimeMillis();
 
 	/**
-	 * The {@code PoseCalculator}s for enhancing the accuracy of the estimated pose based on data from various sources
-	 * such as a gyroscope, encoders, etc.
-	 */
-	protected List<PoseCalculator> poseCalculators = new LinkedList<PoseCalculator>();
-
-	/**
 	 * Constructs a {@code PoseEstimator}.
 	 * 
 	 * @param distanceThreshold
@@ -97,39 +89,13 @@ public class PoseEstimator {
 	}
 
 	/**
-	 * Adds a {@code Supplier<Pose>} which can provide {@code Pose}s obtained from some sources such as a gyroscope,
-	 * encoders, etc. in order to enhance the accuracy of the pose estimated by this {@code PoseEstimator}.
+	 * Updates the {@code Pose} estimated by this {@code PoseEstimator} based on the specified {@code PoseCalculator}s.
 	 * 
-	 * @param poseSupplier
-	 *            a {@code Supplier<Pose>} which can provide {@code Pose}s obtained from some sources such as a
-	 *            gyroscope, encoders, etc.
+	 * @param poseCalculators
+	 *            {@code PoseCalculator}s
 	 */
-	public void add(Supplier<Pose> poseSupplier) {
-		this.poseCalculators.add(new PoseCalculator() {
-
-			Pose previous = null;
-
-			@Override
-			public Pose pose(Pose pose) {
-				var current = poseSupplier.get();
-				if (this.previous == null) {
-					this.previous = current;
-					return pose;
-				}
-				var refined = pose.move(this.previous, current);
-				this.previous = current;
-				return refined;
-			}
-
-		});
-	}
-
-	/**
-	 * Needs to be invoked periodically in order to enhance the accuracy of the estimated pose based on data from
-	 * various sources such as a gyroscope, encoders, etc.
-	 */
-	public void periodic() {
-		if (estimatedPose != null && poseCalculators.size() > 0) {
+	public void update(Collection<PoseCalculator> poseCalculators) {
+		if (poseCalculators.size() > 0) {
 			Stream<Pose> poses = poseCalculators.stream().map(c -> c.pose(estimatedPose));
 			estimatedPose = Pose.average(poses.toList().toArray(new Pose[0]));
 		}

@@ -21,28 +21,15 @@ import hlib.drive.Position;
 
 public class RobotContainer implements frc.common.RobotContainer {
 	DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-
-	PoseEstimationSubsystem m_poseEstimationSubsystem = new PoseEstimationSubsystem() {
-		{
-			add(() -> {
-				var pose = toPose(DriveSubsystem.get().getPose());
-				visionTable.getEntry("odometry").setString(String.format(
-						"pose: %s, left encoder position: %.1f, right encoder position: %.1f, yaw: %.1f degrees",
-						pose.toString(),
-						DriveSubsystem.get().getLeftEncoderPosition(),
-						DriveSubsystem.get().getRightEncoderPosition(),
-						Math.toRadians(DriveSubsystem.get().getHeading())));
-				return pose;
-			});
-		}
-
-	};
+	PoseEstimationSubsystem m_poseEstimationSubsystem = new PoseEstimationSubsystem();
 
 	private final Joystick m_driverController = new Joystick(ControllerConstants.kDriverControllerPort);
 	// private final Joystick m_operatorController = new
 	// Joystick(ControllerConstants.kOperatorControllerPort);
 
 	public RobotContainer() {
+		m_poseEstimationSubsystem.addPoseSupplier("odometry",
+				() -> PoseEstimationSubsystem.toPose(DriveSubsystem.get().getPose()));
 		configureButtonBindings();
 	}
 
@@ -50,7 +37,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 		new JoystickButton(m_driverController, ControllerConstants.Button.kSquare)
 				.whileTrue(new DriveDistanceCommand(2.0, 0.1));
 		new JoystickButton(m_driverController, ControllerConstants.Button.kX)
-				.whileTrue(new DriveDistanceCommand(2.0, 0.1));
+				.whileTrue(new DriveDistanceCommand(-2.0, 0.1));
 		new JoystickButton(m_driverController, ControllerConstants.Button.kCircle)
 				.whileTrue(new TurnCommand(30, 2));
 		var target = new Position(6.809, -3.859);
