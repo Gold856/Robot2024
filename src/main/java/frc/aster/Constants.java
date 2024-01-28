@@ -80,7 +80,7 @@ public final class Constants {
 		public static final double kDriveI = 0;
 		public static final double kDriveD = 0;
 
-		public static final double kTurnP = 0.012; // was 0.005
+		public static final double kTurnP = 0.008; // was 0.005
 		public static final double kTurnI = 0; // was 0.003
 		public static final double kTurnD = 0; // 0.0
 		// Horizontal distance between the wheels
