@@ -60,8 +60,8 @@ public class TurnCommand extends Command {
 	 */
 	public TurnCommand(Supplier<Double> targetAngleCalculator, double angleTolerance) {
 		m_targetAngleCalculator = targetAngleCalculator;
-		var constraints = new TrapezoidProfile.Constraints(240, 240);
-		m_turnController = new ProfiledPIDController(DriveConstants.kTurnP * 2, DriveConstants.kTurnI,
+		var constraints = new TrapezoidProfile.Constraints(120, 120);
+		m_turnController = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI,
 				DriveConstants.kTurnD,
 				constraints);
 		m_turnController.setTolerance(angleTolerance);
@@ -75,8 +75,6 @@ public class TurnCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		// DriveSubsystem.get().zeroHeading();
-		// m_turnController.setIntegratorRange(-0.05, 0.05);
 		double heading = DriveSubsystem.get().getHeading();
 		double goal = heading;
 		try {
@@ -98,9 +96,9 @@ public class TurnCommand extends Command {
 	public void execute() {
 		double heading = DriveSubsystem.get().getHeading();
 		double turnSpeed = m_turnController.calculate(heading);
-		// turnSpeed = Math.abs(turnSpeed) < DriveConstants.kTurnMinSpeed
-		// ? Math.signum(turnSpeed) * DriveConstants.kTurnMinSpeed
-		// : turnSpeed;
+		turnSpeed = Math.abs(turnSpeed) < DriveConstants.kTurnMinSpeed
+				? Math.signum(turnSpeed) * DriveConstants.kTurnMinSpeed
+				: turnSpeed;
 		DriveSubsystem.get().tankDrive(-turnSpeed, turnSpeed);
 		SmartDashboard.putString("drive",
 				String.format("turn: execute - heading: %.1f, turn speed: %.1f", heading, turnSpeed));
@@ -115,8 +113,10 @@ public class TurnCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		DriveSubsystem.get().tankDrive(0, 0);
-		SmartDashboard.putString("drive", "turn: end - interrupted: " + interrupted);
-
+		SmartDashboard.putString("drive",
+				String.format("turn: end - %s : heading: %.1f, target heading: %.1f",
+						(interrupted ? "interrupted" : "completed"), DriveSubsystem.get().getHeading(),
+						m_turnController.getGoal().position));
 	}
 
 	/**

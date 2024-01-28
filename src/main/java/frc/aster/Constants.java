@@ -76,10 +76,13 @@ public final class Constants {
 		public static final SPI.Port kGyroPort = SPI.Port.kMXP;
 		public static final boolean kGyroReversed = true;
 
-		public static final double kTurnP = 0.006; // was 0.005
+		public static final double kDriveP = 0.2;
+		public static final double kDriveI = 0;
+		public static final double kDriveD = 0;
+
+		public static final double kTurnP = 0.012; // was 0.005
 		public static final double kTurnI = 0; // was 0.003
 		public static final double kTurnD = 0; // 0.0
-		public static final double kTurnTolerance = 0.5;
 		// Horizontal distance between the wheels
 		public static final double kTrackwidthMeters = Units.inchesToMeters(20.5);
 		public static final double kWheelDiameterMeters = Units.inchesToMeters(5.75);
@@ -114,7 +117,7 @@ public final class Constants {
 		public static final double kBalanceD = 0.001;
 		public static final double upStationSpeed = 0.55;
 		public static final double kLimelightTurnP = 0.05;
-		public static final double kTurnMinSpeed = 0.08;
+		public static final double kTurnMinSpeed = 0.05;
 
 	}
 

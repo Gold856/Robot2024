@@ -35,11 +35,11 @@ public class RobotContainer implements frc.common.RobotContainer {
 
 	private void configureButtonBindings() {
 		new JoystickButton(m_driverController, ControllerConstants.Button.kSquare)
-				.whileTrue(new DriveDistanceCommand(2.0, 0.1));
+				.whileTrue(new DriveDistanceCommand(2.0, 0.05));
 		new JoystickButton(m_driverController, ControllerConstants.Button.kX)
-				.whileTrue(new DriveDistanceCommand(-2.0, 0.1));
+				.whileTrue(new DriveDistanceCommand(-2.0, 0.05));
 		new JoystickButton(m_driverController, ControllerConstants.Button.kCircle)
-				.whileTrue(new TurnCommand(30, 2));
+				.whileTrue(new TurnCommand(45, 1));
 		var target = new Position(6.809, -3.859);
 		Supplier<Double> turnSupplier = () -> {
 			Pose pose = m_poseEstimationSubsystem.estimatedPose();

@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.aster.Constants;
 import frc.aster.subsystems.DriveSubsystem;
 
 /**
@@ -72,9 +73,9 @@ public class DriveDistanceCommand extends Command {
 	 */
 	public DriveDistanceCommand(Supplier<Double> targetDistanceCalculator, double distanceTolerance) {
 		m_targetDistanceCalculator = targetDistanceCalculator;
-		double kP = .2, kI = 0.0, kD = 0.0;
 		var constraints = new TrapezoidProfile.Constraints(3, 2);
-		m_leftController = new ProfiledPIDController(kP, kI, kD, constraints);
+		m_leftController = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
+				Constants.DriveConstants.kDriveD, constraints);
 		m_rightController = new ProfiledPIDController(kP, kI, kD, constraints);
 		m_leftController.setTolerance(distanceTolerance);
 		m_rightController.setTolerance(distanceTolerance);
@@ -137,7 +138,7 @@ public class DriveDistanceCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		DriveSubsystem.get().tankDrive(0, 0);
-		SmartDashboard.putString("drive", "distance: end - interrupted: " + interrupted);
+		SmartDashboard.putString("drive", "distance: end -  " + (interrupted ? "interrupted" : "completed"));
 	}
 
 	/**
