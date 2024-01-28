@@ -2,7 +2,8 @@ package frc.aster.commands.drive;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.aster.Constants.DriveConstants;
@@ -29,7 +30,7 @@ public class TurnCommand extends Command {
 	/**
 	 * The {@code PIDController} for controlling the rotational movement.
 	 */
-	private PIDController m_turnController;
+	private ProfiledPIDController m_turnController;
 
 	/**
 	 * Constructs a {@code TurnCommand}.
@@ -59,7 +60,10 @@ public class TurnCommand extends Command {
 	 */
 	public TurnCommand(Supplier<Double> targetAngleCalculator, double angleTolerance) {
 		m_targetAngleCalculator = targetAngleCalculator;
-		m_turnController = new PIDController(DriveConstants.kTurnP / 3, DriveConstants.kTurnI, DriveConstants.kTurnD);
+		var constraints = new TrapezoidProfile.Constraints(240, 240);
+		m_turnController = new ProfiledPIDController(DriveConstants.kTurnP * 2, DriveConstants.kTurnI,
+				DriveConstants.kTurnD,
+				constraints);
 		m_turnController.setTolerance(angleTolerance);
 		m_turnController.enableContinuousInput(-180, 180);
 		addRequirements(DriveSubsystem.get());
@@ -73,15 +77,17 @@ public class TurnCommand extends Command {
 	public void initialize() {
 		// DriveSubsystem.get().zeroHeading();
 		// m_turnController.setIntegratorRange(-0.05, 0.05);
-		double setPoint = DriveSubsystem.get().getHeading();
+		double heading = DriveSubsystem.get().getHeading();
+		double goal = heading;
 		try {
-			setPoint += m_targetAngleCalculator.get();
+			goal += m_targetAngleCalculator.get();
 		} catch (Exception e) {
 		}
-		m_turnController.setSetpoint(setPoint);
+		m_turnController.reset(heading);
+		m_turnController.setGoal(goal);
 		SmartDashboard.putString("drive",
-				String.format("turn: initialize - heading: %.1f, set point: %.1f", DriveSubsystem.get().getHeading(),
-						setPoint));
+				String.format("turn: initialize - heading: %.1f, target heading: %.1f", heading,
+						goal));
 	}
 
 	/**
@@ -92,9 +98,9 @@ public class TurnCommand extends Command {
 	public void execute() {
 		double heading = DriveSubsystem.get().getHeading();
 		double turnSpeed = m_turnController.calculate(heading);
-		turnSpeed = Math.abs(turnSpeed) < DriveConstants.kTurnMinSpeed
-				? Math.signum(turnSpeed) * DriveConstants.kTurnMinSpeed
-				: turnSpeed;
+		// turnSpeed = Math.abs(turnSpeed) < DriveConstants.kTurnMinSpeed
+		// ? Math.signum(turnSpeed) * DriveConstants.kTurnMinSpeed
+		// : turnSpeed;
 		DriveSubsystem.get().tankDrive(-turnSpeed, turnSpeed);
 		SmartDashboard.putString("drive",
 				String.format("turn: execute - heading: %.1f, turn speed: %.1f", heading, turnSpeed));
@@ -109,7 +115,7 @@ public class TurnCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		DriveSubsystem.get().tankDrive(0, 0);
-		SmartDashboard.putString("drive", "turn: TurnCommand ended" + interrupted);
+		SmartDashboard.putString("drive", "turn: end - interrupted: " + interrupted);
 
 	}
 
@@ -121,6 +127,6 @@ public class TurnCommand extends Command {
 	 */
 	@Override
 	public boolean isFinished() {
-		return m_turnController.atSetpoint();
+		return m_turnController.atGoal();
 	}
 }
