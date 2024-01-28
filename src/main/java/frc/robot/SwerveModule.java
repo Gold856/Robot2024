@@ -48,6 +48,12 @@ public class SwerveModule implements AutoCloseable {
 		m_PIDController.close();
 	}
 
+	@Override
+	public String toString() {
+		return String.format("[encoder position: %.1f, angle: %.1f degrees]", getDriveEncoderPosition(),
+				getModuleAngle());
+	}
+
 	/**
 	 * Configures our motors with the exact same settings
 	 * 

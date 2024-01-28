@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -24,7 +25,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -35,6 +35,12 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
 
 public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
+	/**
+	 * The only {code DriveSubsystem} instance in compliance with the singleton
+	 * design pattern.
+	 */
+	private static DriveSubsystem s_subsystem;
+
 	private final SwerveModule m_frontLeft;
 	private final SwerveModule m_frontRight;
 	private final SwerveModule m_backLeft;
@@ -55,6 +61,15 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
+		// Singleton
+		if (s_subsystem != null) {
+			try {
+				throw new Exception("Drive subsystem already initialized!");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		s_subsystem = this;
 		SmartDashboard.putData("Field", m_field);
 		m_posePublisher = NetworkTableInstance.getDefault().getProtobufTopic("/SmartDashboard/Pose", Pose2d.proto)
 				.publish();
@@ -101,6 +116,15 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 		m_frontRight.close();
 		m_backLeft.close();
 		m_backRight.close();
+	}
+
+	/**
+	 * Returns the single {@code DriveSubsystem} instance.
+	 * 
+	 * @return the single {@code DriveSubsystem} instance
+	 */
+	public static DriveSubsystem get() {
+		return s_subsystem;
 	}
 
 	/**
@@ -253,6 +277,9 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 		SmartDashboard.putNumber("Steer 3 motor current", m_frontRight.getSteerCurrent());
 		SmartDashboard.putNumber("Steer 5 motor current", m_backRight.getSteerCurrent());
 		SmartDashboard.putNumber("Steer 7 motor current", m_backLeft.getSteerCurrent());
+		SmartDashboard.putString("DriveSubsystem",
+				"" + Map.of("FL", m_frontLeft, "FR", m_frontRight, "BL", m_backLeft, "BR", m_backRight));
+		SmartDashboard.putString("SwerveDriveOdometry", "" + m_odometry.getPoseMeters());
 	}
 
 	/**
