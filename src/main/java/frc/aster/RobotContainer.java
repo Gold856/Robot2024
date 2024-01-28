@@ -21,7 +21,6 @@ import hlib.drive.Position;
 public class RobotContainer implements frc.common.RobotContainer {
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final PoseEstimationSubsystem m_poseEstimationSubsystem = new PoseEstimationSubsystem();
-
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 
 	public RobotContainer() {
