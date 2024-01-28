@@ -240,10 +240,10 @@ public class DriveSubsystem extends SubsystemBase {
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
-		SmartDashboard.putNumber("Steer 1 motor current", m_frontLeft.getSteerCurrent());
-		SmartDashboard.putNumber("Steer 3 motor current", m_frontRight.getSteerCurrent());
-		SmartDashboard.putNumber("Steer 5 motor current", m_backRight.getSteerCurrent());
-		SmartDashboard.putNumber("Steer 7 motor current", m_backLeft.getSteerCurrent());
+		SmartDashboard.putNumber("Drive 1 motor temperature", m_frontLeft.getDriveTemperature());
+		SmartDashboard.putNumber("Drive 3 motor temperature", m_frontRight.getDriveTemperature());
+		SmartDashboard.putNumber("Drive 5 motor temperature", m_backRight.getDriveTemperature());
+		SmartDashboard.putNumber("Drive 7 motor temperature", m_backLeft.getDriveTemperature());
 	}
 
 	/**
@@ -260,7 +260,7 @@ public class DriveSubsystem extends SubsystemBase {
 			double strSpeed = -MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			double rotSpeed = 0.75 * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
 					ControllerConstants.kDeadzone);
-			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), false));
 		});
 	}
 

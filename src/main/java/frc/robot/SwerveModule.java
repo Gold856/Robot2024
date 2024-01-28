@@ -38,6 +38,7 @@ public class SwerveModule {
 		m_driveMotor.setInverted(inverted);
 		configMotorController(m_steerMotor);
 		m_PIDController.enableContinuousInput(0, 360);
+		m_driveMotor.setOpenLoopRampRate(kRampRate);
 	}
 
 	/**
@@ -80,6 +81,15 @@ public class SwerveModule {
 	 */
 	public double getDriveSpeed() {
 		return m_driveMotor.getAppliedOutput();
+	}
+
+	/**
+	 * Gets the current drive motor temperature.
+	 * 
+	 * @return The temperature in degrees celcius
+	 */
+	public double getDriveTemperature() {
+		return m_driveMotor.getMotorTemperature();
 	}
 
 	/**

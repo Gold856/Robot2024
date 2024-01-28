@@ -111,6 +111,7 @@ public final class Constants {
 		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
 
 		public static final int kSmartCurrentLimit = 40;
+		public static final double kRampRate = .1;
 		public static final int kPeakCurrentLimit = 50;
 	}
 }
