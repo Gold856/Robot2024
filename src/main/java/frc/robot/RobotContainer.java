@@ -4,11 +4,13 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.DriveDistanceCommand;
@@ -26,6 +28,7 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+	SlewRateLimiter filter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -43,8 +46,9 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> m_controller.getRawAxis(Axis.kLeftY),
-				() -> m_controller.getRawAxis(Axis.kLeftX),
+				() -> filter.calculate(m_controller.getRawAxis(Axis.kLeftY)), // TODO: check if this works better than
+																				// ramp rate
+				() -> filter.calculate(m_controller.getRawAxis(Axis.kLeftX)),
 				() -> m_controller.getRawAxis(Axis.kRightTrigger),
 				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());

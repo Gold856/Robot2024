@@ -38,7 +38,8 @@ public class SwerveModule {
 		m_driveMotor.setInverted(inverted);
 		configMotorController(m_steerMotor);
 		m_PIDController.enableContinuousInput(0, 360);
-		m_driveMotor.setOpenLoopRampRate(kRampRate);
+		// m_driveMotor.setOpenLoopRampRate(kRampRate); //TODO: check if works better
+		// than slew rate limited
 	}
 
 	/**

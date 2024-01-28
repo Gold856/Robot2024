@@ -260,7 +260,10 @@ public class DriveSubsystem extends SubsystemBase {
 			double strSpeed = -MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			double rotSpeed = 0.75 * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
 					ControllerConstants.kDeadzone);
-			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), false));
+			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), false)); // TODO:
+																											// back to
+																											// field
+																											// oriented
 		});
 	}
 
