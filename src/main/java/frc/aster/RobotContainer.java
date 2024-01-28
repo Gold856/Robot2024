@@ -28,7 +28,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 	// Joystick(ControllerConstants.kOperatorControllerPort);
 
 	public RobotContainer() {
-		m_poseEstimationSubsystem.addPoseSupplier("odometry",
+		m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry",
 				() -> PoseEstimationSubsystem.toPose(DriveSubsystem.get().getPose()));
 		configureButtonBindings();
 	}
