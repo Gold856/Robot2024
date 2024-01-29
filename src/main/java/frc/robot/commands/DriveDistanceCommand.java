@@ -9,10 +9,7 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveDistanceCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
-	private double m_target; // if distance, in meters; if angle, in degrees
 	private double m_amount;
-	private double m_tolerance;
-	private double m_targetDirection;
 	private ProfiledPIDController m_controller = new ProfiledPIDController(0.1, 0.02, 0,
 			new Constraints(3, 2));
 
@@ -25,7 +22,6 @@ public class DriveDistanceCommand extends Command {
 	public DriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
 		m_driveSubsystem = subsystem;
 		m_amount = amount;
-		m_tolerance = tolerance;
 		m_controller.setTolerance(tolerance);
 		m_controller.setIZone(0.4);
 		addRequirements(subsystem);
@@ -46,15 +42,12 @@ public class DriveDistanceCommand extends Command {
 	@Override
 	public void initialize() {
 		double currentPosition = m_driveSubsystem.getPose().getX();
-		m_target = currentPosition + m_amount;
-
 		// With optimize off, encoder distance always increases
 		// m_target = currentPosition + Math.abs(m_amount);
 		// m_targetDirection = Math.signum(m_amount);
 
-		m_controller.reset(0);
-		m_controller.setGoal(m_target);
-
+		m_controller.reset(currentPosition);
+		m_controller.setGoal(currentPosition + m_amount);
 	}
 
 	@Override
