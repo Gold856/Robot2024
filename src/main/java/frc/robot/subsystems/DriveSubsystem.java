@@ -238,7 +238,8 @@ public class DriveSubsystem extends SubsystemBase {
 	public void periodic() {
 		SmartDashboard.putNumber("Current Position", getModulePositions()[0].distanceMeters);
 		if (RobotBase.isReal()) {
-			m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
+			m_pose = m_odometry.update(getHeading(), getModulePositions());
+			m_posePublisher.set(m_pose);
 		}
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
