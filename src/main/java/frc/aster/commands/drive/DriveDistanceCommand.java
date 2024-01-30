@@ -13,11 +13,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.aster.Constants;
 import frc.aster.Constants.DriveConstants;
 import frc.aster.subsystems.DriveSubsystem;
+import frc.common.MathUtil;
 
 /**
  * The {@code DriveDistanceCommand} is responsible for moving the robot by a
- * specified distance. It utilizes two
- * {@code ProfiledPIDController}s to precisely control the let and right wheels.
+ * specified distance. It utilizes two {@code ProfiledPIDController}s to
+ * precisely control the left and right wheels.
  * 
  * @author Andrew Hwang (u.andrew.h@gmail.com)
  * @author Jeong-Hyon Hwang (jhhbrown@gmail.com)
@@ -25,10 +26,10 @@ import frc.aster.subsystems.DriveSubsystem;
 public class DriveDistanceCommand extends Command {
 
 	/**
-	 * The
-	 * {@code Supplier<Double>) that calculates the target distance in meters that the robot should move.
+	 * The {@code Supplier<Double>} that calculates the target distance in meters
+	 * that the robot should move.
 	 * This is used at the commencement of this {@code DriveDistanceCommand} (i.e.,
-	 * when the scheduler begins to periodically excute this {@code
+	 * when the scheduler begins to periodically execute this {@code
 	 * DriveDistanceCommand}).
 	 */
 	private Supplier<Double> m_targetDistanceCalculator;
@@ -74,7 +75,8 @@ public class DriveDistanceCommand extends Command {
 	 */
 	public DriveDistanceCommand(Supplier<Double> targetDistanceCalculator, double distanceTolerance) {
 		m_targetDistanceCalculator = targetDistanceCalculator;
-		var constraints = new TrapezoidProfile.Constraints(3, 2);
+		var constraints = new TrapezoidProfile.Constraints(Constants.DriveConstants.kDriveMaxVelocity,
+				Constants.DriveConstants.kDriveMaxAcceleration);
 		m_leftController = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
 				Constants.DriveConstants.kDriveD, constraints);
 		m_rightController = new ProfiledPIDController(Constants.DriveConstants.kDriveP,
@@ -86,8 +88,8 @@ public class DriveDistanceCommand extends Command {
 
 	/**
 	 * Is invoked at the commencement of this {@code DriveDistanceCommand} (i.e,
-	 * when the
-	 * scheduler begins to periodically execute this {@code DriveDistanceCommand}).
+	 * when the scheduler begins to periodically execute this
+	 * {@code DriveDistanceCommand}).
 	 */
 	@Override
 	public void initialize() {
@@ -111,9 +113,8 @@ public class DriveDistanceCommand extends Command {
 	}
 
 	/**
-	 * Is invoked periodically by the scheduler while it is in charge of executing
-	 * this
-	 * {@code DriveDistanceCommand}.
+	 * Is invoked periodically by the scheduler until this
+	 * {@code DriveDistanceCommand} is either ended or interrupted.
 	 */
 	@Override
 	public void execute() {
@@ -121,8 +122,8 @@ public class DriveDistanceCommand extends Command {
 		var rightEncoderPosition = DriveSubsystem.get().getRightEncoderPosition();
 		double leftSpeed = m_leftController.calculate(leftEncoderPosition);
 		double rightSpeed = m_rightController.calculate(rightEncoderPosition);
-		DriveSubsystem.get().tankDrive(TurnCommand.ceiling(leftSpeed, DriveConstants.kminSpeed),
-				TurnCommand.ceiling(rightSpeed, DriveConstants.kminSpeed));
+		DriveSubsystem.get().tankDrive(frc.common.MathUtil.applyThreshold(leftSpeed, DriveConstants.kMinSpeed),
+				MathUtil.applyThreshold(rightSpeed, DriveConstants.kMinSpeed));
 		SmartDashboard.putString(
 				"drive",
 				String.format(
@@ -132,7 +133,8 @@ public class DriveDistanceCommand extends Command {
 	}
 
 	/**
-	 * Is invoked once this {@code DriveDistanceCommand} is ended or interrupted.
+	 * Is invoked once this {@code DriveDistanceCommand} is either ended or
+	 * interrupted.
 	 * 
 	 * @param interrupted
 	 *                    indicates if this {@code DriveDistanceCommand} was

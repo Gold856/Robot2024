@@ -11,8 +11,8 @@ import frc.aster.subsystems.DriveSubsystem;
 
 /**
  * The {@code TurnCommand} rotates the robot by a specific angle in the
- * counter-clockwise direction. It utilizes a {@code PIDController} to maintain
- * precision in the rotational movement.
+ * counter-clockwise direction. It utilizes a {@code ProfiledPIDController} to
+ * maintain precision in the rotational movement.
  * 
  * @author Andrew Hwang (u.andrew.h@gmail.com)
  * @author Jeong-Hyon Hwang (jhhbrown@gmail.com)
@@ -28,7 +28,7 @@ public class TurnCommand extends Command {
 	private Supplier<Double> m_targetAngleCalculator;
 
 	/**
-	 * The {@code PIDController} for controlling the rotational movement.
+	 * The {@code ProfiledPIDController} for controlling the rotational movement.
 	 */
 	private ProfiledPIDController m_turnController;
 
@@ -60,7 +60,8 @@ public class TurnCommand extends Command {
 	 */
 	public TurnCommand(Supplier<Double> targetAngleCalculator, double angleTolerance) {
 		m_targetAngleCalculator = targetAngleCalculator;
-		var constraints = new TrapezoidProfile.Constraints(120, 120);
+		var constraints = new TrapezoidProfile.Constraints(DriveConstants.kTurnMaxVelocity,
+				DriveConstants.kTurnMaxAcceleration);
 		m_turnController = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI,
 				DriveConstants.kTurnD,
 				constraints);
@@ -89,29 +90,22 @@ public class TurnCommand extends Command {
 	}
 
 	/**
-	 * Is invoked periodically by the scheduler while it is in charge of executing
-	 * this {@code TurnCommand}.
+	 * Is invoked periodically by the scheduler until this {@code TurnCommand} is
+	 * either ended or interrupted.
 	 */
 	@Override
 	public void execute() {
 		double heading = DriveSubsystem.get().getHeading();
 		double turnSpeed = m_turnController.calculate(heading);
-		turnSpeed = ceiling(turnSpeed, DriveConstants.kminSpeed);
+		turnSpeed = frc.common.MathUtil.applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
 		DriveSubsystem.get().tankDrive(-turnSpeed, turnSpeed);
 		SmartDashboard.putString("drive",
 				String.format("turn: execute - heading: %.1f, turn speed: %.1f", heading,
 						turnSpeed));
 	}
 
-	public static double ceiling(double value, double threshold) {
-		value = Math.abs(value) < threshold
-				? Math.signum(value) * threshold
-				: value;
-		return value;
-	}
-
 	/**
-	 * Is invoked once this {@code TurnCommand} is ended or interrupted.
+	 * Is invoked once this {@code TurnCommand} is either ended or interrupted.
 	 * 
 	 * @param interrupted
 	 *                    indicates if this {@code TurnCommand} was interrupted
