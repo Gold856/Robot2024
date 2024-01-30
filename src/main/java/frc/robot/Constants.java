@@ -87,10 +87,17 @@ public final class Constants {
 		public static final double kMinOutput = -1.0;
 		public static final double kMaxOutput = 1.0;
 
-		public static final double kTurnP = 0.006; // was 0.005
+		public static final double kDriveP = 0.2;
+		public static final double kDriveI = 0;
+		public static final double kDriveD = 0;
+		public static final double kDriveMaxVelocity = 3;
+		public static final double kDriveMaxAcceleration = 2;
+
+		public static final double kTurnP = 0.008; // was 0.005
 		public static final double kTurnI = 0; // was 0.003
 		public static final double kTurnD = 0; // 0.0
-		public static final double kTurnTolerance = 0.5;
+		public static final double kTurnMaxVelocity = 120;
+		public static final double kTurnMaxAcceleration = 120;
 
 		/*** Distance between center of front wheel and center of back wheel */
 		public static final double kWheelBase = 21.5;

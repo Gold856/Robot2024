@@ -75,7 +75,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_controller.button(Button.kX)
-				.whileTrue(new DriveCommand(() -> new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 2, 0.1));
+				.whileTrue(new DriveCommand(() -> new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 0.05, 1));
 
 	}
 

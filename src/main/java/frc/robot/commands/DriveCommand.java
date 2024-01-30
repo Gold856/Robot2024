@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.aster.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -27,9 +28,10 @@ public class DriveCommand extends Command {
 
 	/**
 	 * The
-	 * {@code Supplier<Pose2d>) that calculates the target pose to which the robot should move.
+	 * {@code Supplier<Pose2d>} that calculates the target pose to which the robot
+	 * should move.
 	 * This is used at the commencement of this {@code DriveCommand} (i.e.,
-	 * when the scheduler begins to periodically excute this {@code
+	 * when the scheduler begins to periodically execute this {@code
 	 * DriveCommand}).
 	 */
 	private Supplier<Pose2d> m_targetPoseCalculator;
@@ -58,7 +60,7 @@ public class DriveCommand extends Command {
 	 * 
 	 * @param targetPose
 	 *                          the target pose whose x and y-coordinate values are
-	 *                          in meters and y value is in degrees
+	 *                          in meters and yaw value is in degrees
 	 * @param distanceTolerance
 	 *                          the distance error in meters which is tolerable
 	 * @param angleTolerance
@@ -73,15 +75,15 @@ public class DriveCommand extends Command {
 	 * robot to a certain target pose.
 	 * 
 	 * @param targetPoseCalculator
-	 *                             a
-	 *                             {@code Supplier<Pose2d>) that calculates the target pose to which the robot should move.
+	 *                             a {@code Supplier<Pose2d>} that calculates the
+	 *                             target pose to which the robot should move.
 	 *                             This is used at the commencement of this {@code
 	 *                             DriveCommand} (i.e.,
-	 *                             when the scheduler begins to periodically excute
+	 *                             when the scheduler begins to periodically execute
 	 *                             this {@code
 	 *                             DriveCommand})
 	 * 
-	 *                             @param distanceTolerance the distance error in
+	 * @param distanceTolerance    the distance error in
 	 *                             meters which is
 	 *                             tolerable
 	 * @param angleTolerance
@@ -89,13 +91,14 @@ public class DriveCommand extends Command {
 	 */
 	public DriveCommand(Supplier<Pose2d> targetPoseCalculator, double distanceTolerance, double angleTolerance) {
 		m_targetPoseCalculator = targetPoseCalculator;
-		double kP = .2, kI = 0.0, kD = 0.0;
 		var constraints = new TrapezoidProfile.Constraints(3, 2);
-		m_controllerX = new ProfiledPIDController(kP, kI, kD, constraints);
-		m_controllerY = new ProfiledPIDController(kP, kI, kD, constraints);
-		m_controllerYaw = new ProfiledPIDController(DriveConstants.kTurnP * 2, DriveConstants.kTurnI,
+		m_controllerX = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
+				Constants.DriveConstants.kDriveD, constraints);
+		m_controllerY = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
+				Constants.DriveConstants.kDriveD, constraints);
+		m_controllerYaw = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI,
 				DriveConstants.kTurnD,
-				new TrapezoidProfile.Constraints(240, 240));
+				new TrapezoidProfile.Constraints(120, 120));
 		m_controllerX.setTolerance(distanceTolerance);
 		m_controllerY.setTolerance(distanceTolerance);
 		m_controllerYaw.setTolerance(angleTolerance);
@@ -105,8 +108,7 @@ public class DriveCommand extends Command {
 
 	/**
 	 * Is invoked at the commencement of this {@code DriveCommand} (i.e,
-	 * when the
-	 * scheduler begins to periodically execute this {@code DriveCommand}).
+	 * when the scheduler begins to periodically execute this {@code DriveCommand}).
 	 */
 	@Override
 	public void initialize() {
@@ -131,9 +133,8 @@ public class DriveCommand extends Command {
 	}
 
 	/**
-	 * Is invoked periodically by the scheduler while it is in charge of executing
-	 * this
-	 * {@code DriveCommand}.
+	 * Is invoked periodically by the scheduler until this
+	 * {@code DriveCommand} is either ended or interrupted.
 	 */
 	@Override
 	public void execute() {
@@ -141,7 +142,8 @@ public class DriveCommand extends Command {
 		double speedX = m_controllerX.calculate(pose.getX());
 		double speedY = m_controllerY.calculate(pose.getY());
 		double speedYaw = m_controllerYaw.calculate(pose.getRotation().getDegrees());
-		DriveSubsystem.get().setModuleStates(speedX, speedY, speedYaw, true);
+		DriveSubsystem.get().setModuleStates(frc.common.MathUtil.applyThreshold(speedX, DriveConstants.kMinSpeed),
+				frc.common.MathUtil.applyThreshold(speedY, DriveConstants.kMinSpeed), speedYaw, true);
 		SmartDashboard.putString(
 				"drive",
 				String.format(
@@ -150,7 +152,7 @@ public class DriveCommand extends Command {
 	}
 
 	/**
-	 * Is invoked once this {@code DriveCommand} is ended or interrupted.
+	 * Is invoked once this {@code DriveCommand} is either ended or interrupted.
 	 * 
 	 * @param interrupted
 	 *                    indicates if this {@code DriveCommand} was
@@ -159,7 +161,13 @@ public class DriveCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		DriveSubsystem.get().setModuleStates(0, 0, 0, true);
-		SmartDashboard.putString("drive", "distance: end - interrupted: " + interrupted);
+		SmartDashboard.putString("drive",
+				"distance: end - : " + (interrupted ? "interrupted"
+						: "completed" + String.format(
+								"drive: initialize - current pose: %s, target: [%.1f, %.1f, %.1f]",
+								"" + DriveSubsystem.get().getPose(),
+								m_controllerX.getGoal().position, m_controllerY.getGoal().position,
+								m_controllerYaw.getGoal().position)));
 	}
 
 	/**
