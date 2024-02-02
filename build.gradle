@@ -1,6 +1,28 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2024.2.1"
+    id 'com.diffplug.spotless' version '6.12.0'
+}
+
+spotless {
+    java {
+        target fileTree('.') {
+            include '**/*.java'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        removeUnusedImports()
+        eclipse().configFile("eclipse-formatter.xml")
+    }
+    groovyGradle {
+        target fileTree('.') {
+            include '**/*.gradle'
+            exclude '**/build/**', '**/build-*/**'
+        }
+        greclipse()
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 java {
