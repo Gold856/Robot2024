@@ -26,6 +26,7 @@ import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -92,6 +93,12 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 		m_gyro.zeroYaw();
 		resetEncoders();
+		// Wait 100 milliseconds to let all the encoders reset
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
 	}
 
