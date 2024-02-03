@@ -23,8 +23,8 @@ import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.commands.TurnRelativeCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -49,6 +49,9 @@ public class RobotContainer {
 		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2));
 		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 2.0));
+		m_autoSelector.addOption("Knock Over Blocks",
+				CommandComposer.getBlocksAuto(m_driveSubsystem));
+
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
 	}
