@@ -12,7 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.aster.Constants;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PoseEstimationSubsystem;
@@ -168,8 +168,8 @@ public class DriveCommand extends Command {
 		double speedX = m_controllerX.calculate(pose.getX());
 		double speedY = m_controllerY.calculate(pose.getY());
 		double speedYaw = m_controllerYaw.calculate(pose.getRotation().getDegrees());
-		DriveSubsystem.get().setModuleStates(frc.common.MathUtil.applyThreshold(speedX, DriveConstants.kMinSpeed),
-				frc.common.MathUtil.applyThreshold(speedY, DriveConstants.kMinSpeed), speedYaw, true);
+		DriveSubsystem.get().setModuleStates(applyThreshold(speedX, DriveConstants.kMinSpeed),
+				applyThreshold(speedY, DriveConstants.kMinSpeed), speedYaw, true);
 		SmartDashboard.putString(
 				"drive",
 				String.format(
@@ -232,6 +232,19 @@ public class DriveCommand extends Command {
 					: c.andThen(new DriveCommand(() -> pose, distanceTolerance, angleTolerance));
 		}
 		return c;
+	}
+
+	/**
+	 * Applies the specified threshold to the specified value.
+	 * 
+	 * @param value     the value to be thresholded
+	 * @param threshold the threshold limit
+	 * @return the original value if the absolute value of that value is greater or
+	 *         equal to the threshold; the threshold with the original value's sign
+	 *         otherwise
+	 */
+	public static double applyThreshold(double value, double threshold) {
+		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
 	}
 
 }

@@ -25,7 +25,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.networktables.TimestampedObject;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import hlib.drive.Pose;
 
 /**
  * The purpose of the {@code PoseEstimationSubsystem} is to provide the pose of
@@ -457,6 +456,41 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * Returns a {@code Pose2d} representing the estimated pose of the robot.
+	 * 
+	 * @return a {@code Pose2d} representing the estimated pose of the robot
+	 *         ({@code null} if it has not been possible to reliably estimate the
+	 *         pose of the robot)
+	 */
+	public Pose2d estimatedPose() {
+		var pose = m_poseEstimator.estimatedPose();
+		return pose == null || PoseEstimator.hasNaN(pose) || pose.equals(DEFAULT_POSE) ? null : pose;
+	}
+
+	/**
+	 * Returns, for each detected AprilTag, the distance in meters to that AprilTag.
+	 * 
+	 * @return a {@code Map} containing, for each detected AprilTag, the distance in
+	 *         meters to that AprilTag
+	 */
+	public Map<Integer, Double> getDistancesToDetectedTags() {
+		var pose = m_poseEstimator.estimatedPose();
+		return pose == null ? Map.of() : getDistancesToDetectedTags(pose);
+	}
+
+	/**
+	 * Returns, for each detected AprilTag, the rotation needed for the robot to
+	 * face toward that AprilTag.
+	 * 
+	 * @return a {@code Map} containing, for each detected AprilTag, the rotation
+	 *         needed for the robot face toward that AprilTag
+	 */
+	public Map<Integer, Rotation2d> getRotationsToDetectedTags() {
+		var pose = m_poseEstimator.estimatedPose();
+		return pose == null ? Map.of() : getRotationsToDetectedTags(pose);
+	}
+
+	/**
 	 * Returns the most recent botpose data obtained from LimeLight.
 	 * 
 	 * @return the most recent botpose data obtained from LimeLight
@@ -564,41 +598,6 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 			e.printStackTrace();
 			return null;
 		}
-	}
-
-	/**
-	 * Returns a {@code Pose2d} representing the estimated pose of the robot.
-	 * 
-	 * @return a {@code Pose2d} representing the estimated pose of the robot
-	 *         ({@code null} if it has not been possible to reliably estimate the
-	 *         pose of the robot)
-	 */
-	public Pose2d estimatedPose() {
-		var pose = m_poseEstimator.estimatedPose();
-		return pose == null || PoseEstimator.hasNaN(pose) || pose.equals(DEFAULT_POSE) ? null : pose;
-	}
-
-	/**
-	 * Returns, for each detected AprilTag, the distance in meters to that AprilTag.
-	 * 
-	 * @return a {@code Map} containing, for each detected AprilTag, the distance in
-	 *         meters to that AprilTag
-	 */
-	public Map<Integer, Double> getDistancesToDetectedTags() {
-		var pose = m_poseEstimator.estimatedPose();
-		return pose == null ? Map.of() : getDistancesToDetectedTags(pose);
-	}
-
-	/**
-	 * Returns, for each detected AprilTag, the rotation needed for the robot to
-	 * face toward that AprilTag.
-	 * 
-	 * @return a {@code Map} containing, for each detected AprilTag, the rotation
-	 *         needed for the robot face toward that AprilTag
-	 */
-	public Map<Integer, Rotation2d> getRotationsToDetectedTags() {
-		var pose = m_poseEstimator.estimatedPose();
-		return pose == null ? Map.of() : getRotationsToDetectedTags(pose);
 	}
 
 	/**
