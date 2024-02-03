@@ -63,12 +63,12 @@ public class RobotContainer {
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
-		new Trigger(() -> DriverStation.getMatchTime() >= 20)
-				.onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		// new Trigger(() -> DriverStation.getMatchTime() >= 20)
+		// .onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> filter.calculate(m_controller.getRawAxis(Axis.kLeftY)), // TODO: check if this works better than
-																				// ramp rate
-				() -> filter.calculate(m_controller.getRawAxis(Axis.kLeftX)),
+				() -> (m_controller.getRawAxis(Axis.kLeftY)), // TODO: check if this works better than
+																// ramp rate
+				() -> (m_controller.getRawAxis(Axis.kLeftX)),
 				() -> m_controller.getRawAxis(Axis.kRightTrigger),
 				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());

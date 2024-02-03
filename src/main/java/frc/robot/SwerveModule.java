@@ -4,7 +4,16 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.DriveConstants.*;
+import static frc.robot.Constants.DriveConstants.kD;
+import static frc.robot.Constants.DriveConstants.kDrivePeakCurrentLimit;
+import static frc.robot.Constants.DriveConstants.kDriveSmartCurrentLimit;
+import static frc.robot.Constants.DriveConstants.kI;
+import static frc.robot.Constants.DriveConstants.kIz;
+import static frc.robot.Constants.DriveConstants.kMotorRotationsPerMeter;
+import static frc.robot.Constants.DriveConstants.kP;
+import static frc.robot.Constants.DriveConstants.kRampRate;
+import static frc.robot.Constants.DriveConstants.kSteerPeakCurrentLimit;
+import static frc.robot.Constants.DriveConstants.kSteerSmartCurrentLimit;
 
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -37,7 +46,7 @@ public class SwerveModule {
 		configMotorController(m_driveMotor, kDriveSmartCurrentLimit, kDrivePeakCurrentLimit);
 		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
-		// m_driveMotor.setOpenLoopRampRate(kRampRate); //TODO: check if works better
+		m_driveMotor.setOpenLoopRampRate(kRampRate); // TODO: check if works better
 		// than slew rate limited
 	}
 
