@@ -8,12 +8,14 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.aster.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.PoseEstimationSubsystem;
 
 /**
  * The {@code DriveCommand} is responsible for moving the robot from the current
@@ -56,7 +58,7 @@ public class DriveCommand extends Command {
 
 	/**
 	 * Constructs a new {@code DriveCommand} whose purpose is to move the
-	 * robot to a certain target pose.
+	 * robot to a certain target.
 	 * 
 	 * @param targetPose
 	 *                          the target pose whose x and y-coordinate values are
@@ -68,6 +70,28 @@ public class DriveCommand extends Command {
 	 */
 	public DriveCommand(Pose2d targetPose, double distanceTolerance, double angleTolerance) {
 		this(() -> targetPose, distanceTolerance, angleTolerance);
+	}
+
+	/**
+	 * Constructs a new {@code DriveCommand} whose purpose is to navigate the robot
+	 * towards the specified target and stop at the specified distance
+	 * away from the target.
+	 * 
+	 * @param currentPose       the current {@code Pose2d} of the robot
+	 * @param targetPosition    the target position whose x and y-coordinate values
+	 *                          are in meters
+	 * @param distanceToTarget  the desired distance to the target
+	 * @param distanceTolerance
+	 *                          the distance error in meters which is tolerable
+	 * @param angleTolerance
+	 *                          the angle error in degrees which is tolerable
+	 */
+	public DriveCommand(Pose2d currentPose, Translation2d targetPosition, double distanceToTarget,
+			double distanceTolerance,
+			double angleTolerance) {
+		this(() -> PoseEstimationSubsystem.getTargetPose(currentPose, targetPosition, distanceToTarget),
+				distanceTolerance,
+				angleTolerance);
 	}
 
 	/**
@@ -91,14 +115,16 @@ public class DriveCommand extends Command {
 	 */
 	public DriveCommand(Supplier<Pose2d> targetPoseCalculator, double distanceTolerance, double angleTolerance) {
 		m_targetPoseCalculator = targetPoseCalculator;
-		var constraints = new TrapezoidProfile.Constraints(3, 2);
+		var constraints = new TrapezoidProfile.Constraints(Constants.DriveConstants.kDriveMaxVelocity,
+				Constants.DriveConstants.kDriveMaxAcceleration);
 		m_controllerX = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
 				Constants.DriveConstants.kDriveD, constraints);
 		m_controllerY = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
 				Constants.DriveConstants.kDriveD, constraints);
 		m_controllerYaw = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI,
 				DriveConstants.kTurnD,
-				new TrapezoidProfile.Constraints(120, 120));
+				new TrapezoidProfile.Constraints(Constants.DriveConstants.kTurnMaxVelocity,
+						Constants.DriveConstants.kTurnMaxAcceleration));
 		m_controllerX.setTolerance(distanceTolerance);
 		m_controllerY.setTolerance(distanceTolerance);
 		m_controllerYaw.setTolerance(angleTolerance);
@@ -180,4 +206,32 @@ public class DriveCommand extends Command {
 	public boolean isFinished() {
 		return m_controllerX.atGoal() && m_controllerY.atGoal() && m_controllerYaw.atGoal();
 	}
+
+	/**
+	 * Constructs a {@code SequentialCommandGroup} for passing through all of the
+	 * specified
+	 * {@code Pose2d}s.
+	 * 
+	 * @param distanceTolerance the distance error in meters which is tolerable
+	 * @param angleTolerance
+	 *                          the angle error in degrees which is tolerable
+	 * @param poses             the {@code Pose2d}s to pass through
+	 * @return a {@code SequentialCommandGroup} for passing through all of the
+	 *         specified {@code Pose2d}s
+	 */
+	public static Command createCommand(double distanceTolerance, double angleTolerance, Pose2d... poses) {
+		if (poses == null || poses.length == 0)
+			return new Command() {
+				public boolean isFinished() {
+					return true;
+				}
+			};
+		Command c = null;
+		for (var pose : poses) {
+			c = c == null ? new DriveCommand(() -> pose, distanceTolerance, angleTolerance)
+					: c.andThen(new DriveCommand(() -> pose, distanceTolerance, angleTolerance));
+		}
+		return c;
+	}
+
 }
