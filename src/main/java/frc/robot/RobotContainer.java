@@ -22,6 +22,7 @@ import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.SimpleVisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,6 +35,7 @@ public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
+	private final SimpleVisionSubsystem m_vision = new SimpleVisionSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 
 	/**
