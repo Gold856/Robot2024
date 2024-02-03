@@ -100,12 +100,16 @@ void loop() {
 			}
 			delay(150);
 			break;
-		case 6:  // purple
+		case 6:  // red
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, color(255, 0, 255));
+				strip.setPixelColor(i, color(255, 0, 0));
 			}
 			delay(150);
 			break;
+		case 7:
+			for (int i = 0; i < LED_COUNT; i++) {
+				strip.setPixelColor(i, color())
+			}
 		default:  // display team color
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, teamColor);

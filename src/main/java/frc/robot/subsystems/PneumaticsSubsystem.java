@@ -11,20 +11,36 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PneumaticsSubsystem extends SubsystemBase {
-	PneumaticHub m_hub = new PneumaticHub();
-	DoubleSolenoid m_solenoid = m_hub.makeDoubleSolenoid(1, 0);
+	PneumaticHub m_hub = new PneumaticHub(50);
+	DoubleSolenoid m_solenoid = m_hub.makeDoubleSolenoid(0, 1);
 
 	/** Creates a new PneumaticsSubsystem. */
 	public PneumaticsSubsystem() {
-	}
-
-	public void set() {
-		m_solenoid.set(Value.kForward);
 		m_hub.setOneShotDuration(0, 100);
 	}
 
-	public Command setCommand() {
-		return runOnce(this::set);
+	public void setForward() {
+		m_solenoid.set(Value.kForward);
+	}
+
+	public void setReverse() {
+		m_solenoid.set(Value.kReverse);
+	}
+
+	public void setOff() {
+		m_solenoid.set(Value.kOff);
+	}
+
+	public Command setForwardCommand() {
+		return runOnce(this::setForward);
+	}
+
+	public Command setReverseCommand() {
+		return runOnce(this::setReverse);
+	}
+
+	public Command setOffCommand() {
+		return runOnce(this::setOff);
 	}
 
 	@Override

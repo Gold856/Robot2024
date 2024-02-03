@@ -22,6 +22,7 @@ import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.PneumaticsSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,6 +35,7 @@ public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
+	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 
 	/**
@@ -45,8 +47,7 @@ public class RobotContainer {
 		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2));
 		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 2.0));
-		m_autoSelector.addOption("Knock Over Blocks",
-				CommandComposer.getBlocksAuto(m_driveSubsystem));
+		m_autoSelector.addOption("Knock Over Blocks", CommandComposer.getBlocksAuto(m_driveSubsystem));
 
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
@@ -68,6 +69,11 @@ public class RobotContainer {
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_controller.button(Button.kX).onTrue(CommandComposer.getOffCommand(m_pneumaticsSubsystem, m_ArduinoSubsystem));
+		m_controller.button(Button.kSquare)
+				.onTrue(CommandComposer.getReverseCommand(m_pneumaticsSubsystem, m_ArduinoSubsystem));
+		m_controller.button(Button.kCircle)
+				.onTrue(CommandComposer.getForward(m_pneumaticsSubsystem, m_ArduinoSubsystem));
 	}
 
 	public Command getAutonomousCommand() {
