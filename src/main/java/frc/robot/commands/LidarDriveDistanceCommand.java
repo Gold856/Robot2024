@@ -19,12 +19,13 @@ public class LidarDriveDistanceCommand extends Command {
 	 * @param amount
 	 *               amount is distance in meters
 	 */
-	public LidarDriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
+	public LidarDriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) { // tolerance account
+																									// for lidar in
+																									// middle
 		m_driveSubsystem = subsystem;
 		m_amount = amount;
 		m_tolerance = tolerance;
 		addRequirements(subsystem);
-		addRequirements(YDLidarSubsystem.get());
 	}
 
 	/***
@@ -43,13 +44,13 @@ public class LidarDriveDistanceCommand extends Command {
 	@Override
 	public void initialize() {
 		double currentPosition = YDLidarSubsystem.get().getDistance(180);
-		m_target = currentPosition + m_amount;
+		m_target = currentPosition - m_amount;
 	}
 
 	@Override
 	public void execute() {
 		double sign;
-		if (m_target > YDLidarSubsystem.get().getDistance(180)) {
+		if (m_target < YDLidarSubsystem.get().getDistance(180)) {
 			sign = 1;
 		} else {
 			sign = -1;
@@ -81,6 +82,6 @@ public class LidarDriveDistanceCommand extends Command {
 	}
 
 	private double getDiff() {
-		return Math.abs(m_target - YDLidarSubsystem.get().getDistance(180));
+		return (YDLidarSubsystem.get().getDistance(180) - m_target);
 	}
 }
