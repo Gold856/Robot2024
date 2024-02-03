@@ -108,8 +108,8 @@ public final class Constants {
 
 		public static final int kDriveSmartCurrentLimit = 55;
 		public static final int kDrivePeakCurrentLimit = 65;
-		public static final int kSteerSmartCurrentLimit = 20;
-		public static final int kSteerPeakCurrentLimit = 25;
+		public static final int kSteerSmartCurrentLimit = 30;
+		public static final int kSteerPeakCurrentLimit = 35;
 
 		// TODO: check values for both of these
 		// The amount of time to go from 0 to full power in seconds

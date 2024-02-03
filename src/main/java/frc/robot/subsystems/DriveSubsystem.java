@@ -244,10 +244,14 @@ public class DriveSubsystem extends SubsystemBase {
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
-		SmartDashboard.putNumber("Drive 1 motor temperature", m_frontLeft.getDriveTemperature());
-		SmartDashboard.putNumber("Drive 3 motor temperature", m_frontRight.getDriveTemperature());
-		SmartDashboard.putNumber("Drive 5 motor temperature", m_backRight.getDriveTemperature());
-		SmartDashboard.putNumber("Drive 7 motor temperature", m_backLeft.getDriveTemperature());
+		SmartDashboard.putNumber("Drive FR motor temperature", m_frontRight.getDriveTemperature());
+		SmartDashboard.putNumber("Drive BR motor temperature", m_backRight.getDriveTemperature());
+		SmartDashboard.putNumber("Drive BL motor temperature", m_backLeft.getDriveTemperature());
+		SmartDashboard.putNumber("Drive FL motor temperature", m_frontLeft.getDriveTemperature());
+		SmartDashboard.putNumber("Drive FR steer current", m_frontRight.getSteerCurrent());
+		SmartDashboard.putNumber("Drive BR steer current", m_backRight.getSteerCurrent());
+		SmartDashboard.putNumber("Drive BL steer current", m_backLeft.getSteerCurrent());
+		SmartDashboard.putNumber("Drive FL steer current", m_frontLeft.getSteerCurrent());
 	}
 
 	/**
@@ -260,9 +264,9 @@ public class DriveSubsystem extends SubsystemBase {
 		return run(() -> {
 			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
 			// input so slight movements don't move the robot
-			double fwdSpeed = -MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-			double strSpeed = -MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			double rotSpeed = 0.75 * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
+			double fwdSpeed = -0.8 * MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+			double strSpeed = -0.8 * MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+			double rotSpeed = 0.6 * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
 					ControllerConstants.kDeadzone);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true)); // TODO:
 																											// back to
