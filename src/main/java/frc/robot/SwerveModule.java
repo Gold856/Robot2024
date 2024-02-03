@@ -34,8 +34,8 @@ public class SwerveModule {
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
 		m_PIDController.setIZone(kIz);
 		m_driveEncoder = m_driveMotor.getEncoder();
-		configMotorController(m_driveMotor);
-		configMotorController(m_steerMotor);
+		configMotorController(m_driveMotor, kDriveSmartCurrentLimit, kDrivePeakCurrentLimit);
+		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
 	}
 
@@ -44,12 +44,12 @@ public class SwerveModule {
 	 * 
 	 * @param motorController The CANSparkMax to configure
 	 */
-	private void configMotorController(CANSparkMax motorController) {
+	private void configMotorController(CANSparkMax motorController, int smartCurrentLimit, int peakCurrentLimit) {
 		motorController.restoreFactoryDefaults();
 		motorController.setIdleMode(IdleMode.kBrake);
 		motorController.enableVoltageCompensation(12);
-		motorController.setSmartCurrentLimit(kSmartCurrentLimit);
-		motorController.setSecondaryCurrentLimit(kPeakCurrentLimit);
+		motorController.setSmartCurrentLimit(smartCurrentLimit);
+		motorController.setSecondaryCurrentLimit(peakCurrentLimit);
 	}
 
 	/**

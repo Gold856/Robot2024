@@ -106,7 +106,9 @@ public final class Constants {
 		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
 		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
 
-		public static final int kSmartCurrentLimit = 55;
-		public static final int kPeakCurrentLimit = 65;
+		public static final int kDriveSmartCurrentLimit = 55;
+		public static final int kDrivePeakCurrentLimit = 65;
+		public static final int kSteerSmartCurrentLimit = 20;
+		public static final int kSteerPeakCurrentLimit = 25;
 	}
 }
