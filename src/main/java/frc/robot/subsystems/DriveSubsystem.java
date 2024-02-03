@@ -25,7 +25,6 @@ import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -64,32 +63,10 @@ public class DriveSubsystem extends SubsystemBase {
 		m_currentModuleStatePublisher = NetworkTableInstance.getDefault()
 				.getStructArrayTopic("/SmartDashboard/Current Swerve Modules States", SwerveModuleState.struct)
 				.publish();
-		// Initialize modules
-		{
-			m_frontLeft = new SwerveModule(
-					kFrontLeftCANCoderPort,
-					kFrontLeftDrivePort,
-					kFrontLeftSteerPort,
-					kFrontLeftDriveInverted);
-
-			m_frontRight = new SwerveModule(
-					kFrontRightCANCoderPort,
-					kFrontRightDrivePort,
-					kFrontRightSteerPort,
-					kFrontRightDriveInverted);
-
-			m_backLeft = new SwerveModule(
-					kBackLeftCANCoderPort,
-					kBackLeftDrivePort,
-					kBackLeftSteerPort,
-					kBackLeftDriveInverted);
-
-			m_backRight = new SwerveModule(
-					kBackRightCANCoderPort,
-					kBackRightDrivePort,
-					kBackRightSteerPort,
-					kBackRightDriveInverted);
-		}
+		m_frontLeft = new SwerveModule(kFrontLeftCANCoderPort, kFrontLeftDrivePort, kFrontLeftSteerPort);
+		m_frontRight = new SwerveModule(kFrontRightCANCoderPort, kFrontRightDrivePort, kFrontRightSteerPort);
+		m_backLeft = new SwerveModule(kBackLeftCANCoderPort, kBackLeftDrivePort, kBackLeftSteerPort);
+		m_backRight = new SwerveModule(kBackRightCANCoderPort, kBackRightDrivePort, kBackRightSteerPort);
 		m_gyro.zeroYaw();
 		resetEncoders();
 		// Wait 100 milliseconds to let all the encoders reset

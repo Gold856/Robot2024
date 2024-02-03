@@ -28,14 +28,13 @@ public class SwerveModule {
 	private final RelativeEncoder m_driveEncoder;
 	private final CANSparkMax m_steerMotor;
 
-	public SwerveModule(int CANport, int drivePort, int steerPort, boolean inverted) {
+	public SwerveModule(int CANport, int drivePort, int steerPort) {
 		m_CANCoder = new CANcoder(CANport);
 		m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
 		m_PIDController.setIZone(kIz);
 		m_driveEncoder = m_driveMotor.getEncoder();
 		configMotorController(m_driveMotor);
-		m_driveMotor.setInverted(inverted);
 		configMotorController(m_steerMotor);
 		m_PIDController.enableContinuousInput(0, 360);
 	}
