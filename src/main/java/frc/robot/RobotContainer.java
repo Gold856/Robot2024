@@ -35,6 +35,7 @@ public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
+	private final SimpleVisionSubsystem m_vision = new SimpleVisionSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final SimpleVisionSubsystem m_simpleVision = new SimpleVisionSubsystem();
 
