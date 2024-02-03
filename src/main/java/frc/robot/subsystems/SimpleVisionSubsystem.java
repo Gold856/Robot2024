@@ -23,7 +23,6 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		// System.out.println(m_rawPose);
 		updateRawPose();
 		updateFilteredPose();
 	}
@@ -47,7 +46,6 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	private void updateFilteredPose() {
 		// TODO: add filtering
 		m_filteredPose = m_rawPose;
-
 		SmartDashboard.putNumber("visionAngle", getAngle());
 		SmartDashboard.putNumber("visionDistance", getDistance());
 	}
@@ -58,24 +56,22 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 
 	private void setupSubscription() {
 		// subscribe to camerapose-targetspace
+
+		// Subscriber to camerpose_targetspace
 		NetworkTableInstance i = NetworkTableInstance.getDefault();
 		NetworkTable table = i.getTable("limelight");
-
-		var topic = table.getDoubleArrayTopic("camerapose");
+		var topic = table.getDoubleArrayTopic("camerapose_targetspace");
 		m_subscription = topic.subscribe(new double[6]);
 	}
 
 	private void updateRawPose() {
 		// pull doubles from table
 		m_rawPose = toPose3D(m_subscription.get());
-		System.out.println(m_rawPose);
 	}
 
 	// From LimelightHelpers.java open source code
 	// https://github.com/LimelightVision/limelightlib-wpijava/blob/main/LimelightHelpers.java#L385
 	private static Pose3d toPose3D(double[] inData) {
-		System.out.println("here" + inData);
-
 		if (inData.length < 6) {
 			System.err.println("Bad LL 3D Pose Data!");
 			return new Pose3d();

@@ -19,6 +19,7 @@ import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.SimpleVisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -32,6 +33,7 @@ public class RobotContainer {
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
+	private final SimpleVisionSubsystem m_simpleVision = new SimpleVisionSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
