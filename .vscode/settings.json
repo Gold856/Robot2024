@@ -35,5 +35,6 @@
 	"editor.formatOnSave": true,
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
-	"java.format.settings.url": "eclipse-formatter.xml"
+	"java.format.settings.url": "eclipse-formatter.xml",
+	"java.sources.organizeImports.staticStarThreshold": 1
 }
