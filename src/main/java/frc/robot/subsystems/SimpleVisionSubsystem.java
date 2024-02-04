@@ -15,6 +15,8 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	private DoubleArraySubscriber m_subscription;
 	private Pose3d m_rawPose;
 	private Pose3d m_filteredPose;
+	private double m_distance;
+	private double m_angle;
 
 	public SimpleVisionSubsystem() {
 		setupLimelight();
@@ -25,6 +27,17 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	public void periodic() {
 		updateRawPose();
 		updateFilteredPose();
+		updateSavedPositions();
+	}
+
+	private void updateSavedPositions() {
+		m_angle = getAngle();
+		m_distance = getDistance();
+		SmartDashboard.putNumber("visionAngle", m_angle);
+		SmartDashboard.putNumber("visionDistance", m_distance);
+		double angle = Math.toDegrees(Math.atan2(-m_filteredPose.getZ(), -m_filteredPose.getX()))
+				- (Math.toDegrees(m_filteredPose.getRotation().getAngle()) + 90);
+		SmartDashboard.putNumber("Angle to Turn", Math.min(45, (Math.max(-45, angle))));
 	}
 
 	// When a tag is in frame, returns the distance from the camera to the tag
@@ -46,11 +59,7 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	private void updateFilteredPose() {
 		// TODO: add filtering
 		m_filteredPose = m_rawPose;
-		SmartDashboard.putNumber("visionAngle", getAngle());
-		SmartDashboard.putNumber("visionDistance", getDistance());
-		SmartDashboard.putNumber("Angle to Turn",
-				Math.toDegrees(Math.atan2(-m_filteredPose.getZ(), -m_filteredPose.getX()))
-						- (Math.toDegrees(m_filteredPose.getRotation().getAngle()) + 90));
+
 	}
 
 	private void setupLimelight() {
