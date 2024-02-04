@@ -24,7 +24,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -64,34 +63,18 @@ public class DriveSubsystem extends SubsystemBase {
 		m_currentModuleStatePublisher = NetworkTableInstance.getDefault()
 				.getStructArrayTopic("/SmartDashboard/Current Swerve Modules States", SwerveModuleState.struct)
 				.publish();
-		// Initialize modules
-		{
-			m_frontLeft = new SwerveModule(
-					kFrontLeftCANCoderPort,
-					kFrontLeftDrivePort,
-					kFrontLeftSteerPort,
-					kFrontLeftDriveInverted);
-
-			m_frontRight = new SwerveModule(
-					kFrontRightCANCoderPort,
-					kFrontRightDrivePort,
-					kFrontRightSteerPort,
-					kFrontRightDriveInverted);
-
-			m_backLeft = new SwerveModule(
-					kBackLeftCANCoderPort,
-					kBackLeftDrivePort,
-					kBackLeftSteerPort,
-					kBackLeftDriveInverted);
-
-			m_backRight = new SwerveModule(
-					kBackRightCANCoderPort,
-					kBackRightDrivePort,
-					kBackRightSteerPort,
-					kBackRightDriveInverted);
-		}
+		m_frontLeft = new SwerveModule(kFrontLeftCANCoderPort, kFrontLeftDrivePort, kFrontLeftSteerPort);
+		m_frontRight = new SwerveModule(kFrontRightCANCoderPort, kFrontRightDrivePort, kFrontRightSteerPort);
+		m_backLeft = new SwerveModule(kBackLeftCANCoderPort, kBackLeftDrivePort, kBackLeftSteerPort);
+		m_backRight = new SwerveModule(kBackRightCANCoderPort, kBackRightDrivePort, kBackRightSteerPort);
 		m_gyro.zeroYaw();
 		resetEncoders();
+		// Wait 100 milliseconds to let all the encoders reset
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
 	}
 
@@ -238,7 +221,8 @@ public class DriveSubsystem extends SubsystemBase {
 	public void periodic() {
 		SmartDashboard.putNumber("Current Position", getModulePositions()[0].distanceMeters);
 		if (RobotBase.isReal()) {
-			m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
+			m_pose = m_odometry.update(getHeading(), getModulePositions());
+			m_posePublisher.set(m_pose);
 		}
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
