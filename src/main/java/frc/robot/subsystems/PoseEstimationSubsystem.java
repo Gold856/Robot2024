@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.networktables.TimestampedObject;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
@@ -435,8 +436,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 		subscribe("limelight", "botpose", new double[6], event -> changedBotPose(event));
 		subscribe("limelight", "json", "", event -> changedJson(event));
 		try {
-			var m = new AprilTagMap("." + File.separator + "src" + File.separator + "main" + File.separator
-					+ "deploy" + File.separator + "2024LimeLightMap.fmap");
+			var m = new AprilTagMap(Filesystem.getDeployDirectory() + File.separator + "2024LimeLightMap.fmap");
 			m.forEach((k, v) -> m_aprilTagPoses.put(k, AprilTagMap.toPose(v)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -664,6 +664,7 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 				var p = m_aprilTagPoses.get(i);
 				m.put(i, getDistance(pose, p.getTranslation()));
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return m;
