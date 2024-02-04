@@ -48,6 +48,9 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 		m_filteredPose = m_rawPose;
 		SmartDashboard.putNumber("visionAngle", getAngle());
 		SmartDashboard.putNumber("visionDistance", getDistance());
+		SmartDashboard.putNumber("Angle to Turn",
+				Math.toDegrees(Math.atan2(-m_filteredPose.getZ(), -m_filteredPose.getX()))
+						- (Math.toDegrees(m_filteredPose.getRotation().getAngle()) + 90));
 	}
 
 	private void setupLimelight() {
