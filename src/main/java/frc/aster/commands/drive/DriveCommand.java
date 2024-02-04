@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.PoseEstimationSubsystem;
@@ -85,8 +86,10 @@ public class DriveCommand extends SequentialCommandGroup {
 			double angleTolerance) {
 		this(() -> {
 			var currentPose = DriveSubsystem.get().getPose();
-			return PoseEstimationSubsystem.getTargetPose(currentPose, targetPosition, distanceToTarget)
+			var transform = PoseEstimationSubsystem.getTargetPose(currentPose, targetPosition, distanceToTarget)
 					.minus(currentPose);
+			SmartDashboard.putString("transform", "" + transform);
+			return transform;
 		},
 				distanceTolerance,
 				angleTolerance);
@@ -112,7 +115,9 @@ public class DriveCommand extends SequentialCommandGroup {
 	 *                             the angle error in degrees which is tolerable
 	 */
 	public DriveCommand(Supplier<Transform2d> targetPoseCalculator, double distanceTolerance, double angleTolerance) {
-		this(() -> targetPoseCalculator.get().getTranslation().getNorm(),
+		this(() -> Math.abs(targetPoseCalculator.get().getRotation().getDegrees()) < 90
+				? targetPoseCalculator.get().getTranslation().getNorm()
+				: -targetPoseCalculator.get().getTranslation().getNorm(),
 				() -> targetPoseCalculator.get().getRotation().getDegrees(), distanceTolerance, angleTolerance);
 	}
 
