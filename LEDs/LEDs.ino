@@ -5,7 +5,7 @@
 #define LED_PIN 5
 
 // How many NeoPixels are attached to the Arduino?
-#define LED_COUNT 33
+#define LED_COUNT 18
 
 // Declare our NeoPixel strip object:
 // Argument 1 = Number of pixels in NeoPixel strip
@@ -56,7 +56,7 @@ uint32_t RainbowColor[] = {
 void setup() {
 	strip.begin();
 
-	strip.setBrightness(10);  // Set BRIGHTNESS to about 1/5 (max = 255)
+	strip.setBrightness(20);  // Set BRIGHTNESS to about 1/5 (max = 255)
 
 	Serial.begin(9600);
 	Wire.begin(0x18);
@@ -107,9 +107,14 @@ void loop() {
 			delay(150);
 			break;
 		case 7:
-			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, color())
+			for (int i = 0; i < LED_COUNT / 2; i++) {
+				strip.setPixelColor(i, ProgressBar(colorIndex, i, LED_COUNT / 2, color(0, 0, 255)));
 			}
+			for (int i = LED_COUNT / 2 - 1; i < LED_COUNT; i++) {
+				strip.setPixelColor(i, ProgressBar(colorIndex, 18 - i, LED_COUNT / 2, color(0, 0, 255)));
+			}
+			delay(100);
+			break;
 		default:  // display team color
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, teamColor);
@@ -179,4 +184,20 @@ uint32_t BlinkingLights(int x, uint32_t color3, uint32_t color4) {
 		return color3;
 	}
 	return color4;
+}
+
+uint32_t ProgressBar(int colorIndex, int i, int ledCount, uint32_t ledColor) {
+	int total = ledCount * 2;
+	int ledRange = colorIndex % ledCount;
+	// First half
+	if ((colorIndex % total) < ledCount) {
+		if (ledRange >= i) {
+			return ledColor;
+		}
+		return color(0, 0, 0);
+	}
+	if (ledRange < ledCount - i - 1) {
+		return ledColor;
+	}
+	return color(0, 0, 0);
 }
