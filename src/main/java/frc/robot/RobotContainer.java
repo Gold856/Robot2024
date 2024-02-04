@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.common.PoseEstimationSubsystem;
+import frc.common.PoseEstimationSubsystemAdvanced;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
@@ -37,7 +37,7 @@ import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 public class RobotContainer implements frc.common.RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-	private final PoseEstimationSubsystem m_poseEstimationSubsystem = new PoseEstimationSubsystem();
+	private final PoseEstimationSubsystemAdvanced m_poseEstimationSubsystem = new PoseEstimationSubsystemAdvanced();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 
@@ -45,8 +45,8 @@ public class RobotContainer implements frc.common.RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		// m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry@SwerveBot",
-		// () -> m_driveSubsystem.getPose());
+		m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry@SwerveBot",
+				() -> m_driveSubsystem.getPose());
 
 		// Configure the button bindings
 		m_autoSelector.addOption("Drive 2 Meters", new DriveDistanceCommand(m_driveSubsystem, 2, .1));
@@ -76,12 +76,16 @@ public class RobotContainer implements frc.common.RobotContainer {
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_controller.button(Button.kX)
 				.whileTrue(DriveCommand.createCommand(0.05, 1,
-						new Pose2d(6.85, 3.0, Rotation2d.fromDegrees(0)),
-						new Pose2d(6, 3.0, Rotation2d.fromDegrees(0)),
-						new Pose2d(6.44, 3.5, Rotation2d.fromDegrees(90)),
-						new Pose2d(6.44, 3.7, Rotation2d.fromDegrees(90)),
-						new Pose2d(4.2, 1.5, Rotation2d.fromDegrees(-120)),
-						new Pose2d(6.85, 3.0, Rotation2d.fromDegrees(0))));
+						new Pose2d(1, 0.0, Rotation2d.fromDegrees(0)),
+						new Pose2d(0, 0.0, Rotation2d.fromDegrees(0))));
+		// m_controller.button(Button.kX)
+		// .whileTrue(DriveCommand.createCommand(0.05, 1,
+		// new Pose2d(6.85, 3.0, Rotation2d.fromDegrees(0)),
+		// new Pose2d(6, 3.0, Rotation2d.fromDegrees(0)),
+		// new Pose2d(6.44, 3.5, Rotation2d.fromDegrees(90)),
+		// new Pose2d(6.44, 3.7, Rotation2d.fromDegrees(90)),
+		// new Pose2d(4.2, 1.5, Rotation2d.fromDegrees(-120)),
+		// new Pose2d(6.85, 3.0, Rotation2d.fromDegrees(0))));
 		new Command() { // sample
 			public void initialize() {
 				var pose = m_poseEstimationSubsystem.estimatedPose();

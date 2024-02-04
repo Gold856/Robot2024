@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		DataLogManager.start();
 		DataLogManager.logNetworkTables(true);
-		m_robotContainer = new frc.aster.RobotContainer();
+		m_robotContainer = new frc.robot.RobotContainer();
 	}
 
 	/**
