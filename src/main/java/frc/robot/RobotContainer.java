@@ -36,12 +36,13 @@ public class RobotContainer {
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
+
 	public RobotContainer() {
 		// Configure the button bindings
 		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
 		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
-		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2));
-		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 2.0));
+		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2, 0.01));
+		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
 		m_autoSelector.addOption("Knock Over Blocks",
 				CommandComposer.getBlocksAuto(m_driveSubsystem));
 
@@ -66,6 +67,7 @@ public class RobotContainer {
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd().withTimeout(0.5));
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}
 
 	public Command getAutonomousCommand() {
