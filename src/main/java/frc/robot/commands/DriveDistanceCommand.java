@@ -58,7 +58,7 @@ public class DriveDistanceCommand extends Command {
 		SmartDashboard.putNumber("Setpoint Position", m_controller.getSetpoint().position);
 		SmartDashboard.putNumber("Setpoint Velocity", m_controller.getSetpoint().velocity);
 		// m_driveSubsystem.setModuleStates(m_targetDirection * out, 0, 0, false);
-		m_driveSubsystem.setModuleStates(out, 0, 0, false);
+		m_driveSubsystem.setModuleStates(out, 0, 0, true);
 	}
 
 	@Override
