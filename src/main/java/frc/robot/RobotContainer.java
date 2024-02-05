@@ -4,26 +4,20 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
-import frc.robot.commands.TurnRelativeCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
-import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -36,7 +30,6 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-	SlewRateLimiter filter = new SlewRateLimiter(DriveConstants.kSlewRateLimit);
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 
@@ -66,16 +59,13 @@ public class RobotContainer {
 		// new Trigger(() -> DriverStation.getMatchTime() >= 20)
 		// .onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> (m_controller.getRawAxis(Axis.kLeftY)), // TODO: check if this works better than
-																// ramp rate
+				() -> (m_controller.getRawAxis(Axis.kLeftY)),
 				() -> (m_controller.getRawAxis(Axis.kLeftX)),
 				() -> m_controller.getRawAxis(Axis.kRightTrigger),
 				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd().withTimeout(0.5));
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		// m_controller.button(Button.kX).onTrue(new
-		// TurnRelativeCommand(m_driveSubsystem, 90));
 	}
 
 	public Command getAutonomousCommand() {

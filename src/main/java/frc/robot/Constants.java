@@ -111,11 +111,7 @@ public final class Constants {
 		public static final int kSteerSmartCurrentLimit = 30;
 		public static final int kSteerPeakCurrentLimit = 35;
 
-		// TODO: check values for both of these
 		// The amount of time to go from 0 to full power in seconds
 		public static final double kRampRate = .1;
-
-		// The maximum rate of change of signal in power per second
-		public static final double kSlewRateLimit = 0.5;
 	}
 }
