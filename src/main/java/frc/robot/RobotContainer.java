@@ -60,8 +60,8 @@ public class RobotContainer {
 		// new Trigger(() -> DriverStation.getMatchTime() >= 20)
 		// .onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> (m_controller.getRawAxis(Axis.kLeftY)),
-				() -> (m_controller.getRawAxis(Axis.kLeftX)),
+				() -> m_controller.getRawAxis(Axis.kLeftY),
+				() -> m_controller.getRawAxis(Axis.kLeftX),
 				() -> m_controller.getRawAxis(Axis.kRightTrigger),
 				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
