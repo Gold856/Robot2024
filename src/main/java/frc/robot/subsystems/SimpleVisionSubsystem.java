@@ -35,9 +35,13 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 		m_distance = getDistance();
 		SmartDashboard.putNumber("visionAngle", m_angle);
 		SmartDashboard.putNumber("visionDistance", m_distance);
-		double angle = Math.toDegrees(Math.atan2(-m_filteredPose.getZ(), -m_filteredPose.getX()))
-				- (Math.toDegrees(m_filteredPose.getRotation().getAngle()) + 90);
-		SmartDashboard.putNumber("Angle to Turn", Math.min(45, (Math.max(-45, angle))));
+		double a = Math.toDegrees(Math.atan2(m_filteredPose.getZ(), m_filteredPose.getX()));
+		double b = Math.toDegrees(m_filteredPose.getRotation().getAngle()) + 90;
+		SmartDashboard.putNumber("a", a);
+		SmartDashboard.putNumber("b", b);
+		double angle = a + b;
+		SmartDashboard.putNumber("A + B", Math.min(45, (Math.max(-45, angle))));
+		SmartDashboard.putNumber("-(A + B)", -angle);
 	}
 
 	// When a tag is in frame, returns the distance from the camera to the tag
