@@ -111,4 +111,23 @@ public final class Constants {
 		public static final int kSteerSmartCurrentLimit = 20;
 		public static final int kSteerPeakCurrentLimit = 25;
 	}
+
+	public static final class FlywheelConstants {
+		public static final int kMasterPort = 81;
+		public static final int kFollowerPort = 82;
+		public static final boolean kMasterInvert = false; // TODO: All below were from last year, change
+		public static final boolean kFollowerOppose = true;
+		public static final int kSmartCurrentLimit = 50;
+		public static final double kPeakCurrentLimit = 60;
+		public static final int kPeakCurrentDurationMillis = 100;
+		public static final double kP = 0.0001;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kIz = 0.0;
+		public static final double kFF = .000_1050;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = 0;
+		public static final double kGearRatio = 1 / 2.4;
+		public static final double kAllowedErrorPercent = 8;
+	}
 }
