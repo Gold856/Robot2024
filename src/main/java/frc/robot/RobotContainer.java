@@ -17,11 +17,16 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveDistanceCommand;
+import frc.robot.commands.IndexerFowardCommand;
+import frc.robot.commands.IndexerReverseCommand;
+import frc.robot.commands.IndexerShootCommand;
+import frc.robot.commands.IndexerStopCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IndexerSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -31,10 +36,15 @@ import frc.robot.subsystems.DriveSubsystem;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
+	private final CommandGenericHID m_driverController = new CommandGenericHID(
+			ControllerConstants.kDriverControllerPort);
+	private final CommandGenericHID m_operatorController = new CommandGenericHID(
+			ControllerConstants.kOperatorControllerPort);
+
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
+	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -63,13 +73,19 @@ public class RobotContainer {
 		new Trigger(() -> DriverStation.getMatchTime() >= 20)
 				.onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> m_controller.getRawAxis(Axis.kLeftY),
-				() -> m_controller.getRawAxis(Axis.kLeftX),
-				() -> m_controller.getRawAxis(Axis.kRightX)));
-		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
-		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+				() -> m_driverController.getRawAxis(Axis.kLeftY),
+				() -> m_driverController.getRawAxis(Axis.kLeftX),
+				() -> m_driverController.getRawAxis(Axis.kRightX)));
+		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_driverController.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
+		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		// Indexer Button Mappings
+		m_operatorController.button(Button.kSquare).onTrue(new IndexerFowardCommand(0.5)); // TODO add constants
+		m_operatorController.button(Button.kCircle).onTrue(new IndexerReverseCommand(0.5));
+		m_operatorController.button(Button.kTrackpad).onTrue(new IndexerStopCommand());
+		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(.5, .5));
+
 	}
 
 	public Command getAutonomousCommand() {

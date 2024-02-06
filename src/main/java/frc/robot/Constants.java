@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -110,5 +112,14 @@ public final class Constants {
 		public static final int kDrivePeakCurrentLimit = 65;
 		public static final int kSteerSmartCurrentLimit = 20;
 		public static final int kSteerPeakCurrentLimit = 25;
+	}
+
+	public static final class IndexerConstants {
+		public static final MotorType kIndexerMotorType = MotorType.kBrushless;
+		public static final int kIndexerPort = 70;
+		public static final int kIndexerPeakCurrentLimit = 55;
+		public static final int kIndexerSmartCurrentLimit = 55;
+		public static final double kIndexerMaxSpeed = 1;
+		public static final double kIndexerMinSpeed = 0.1;
 	}
 }
