@@ -44,8 +44,8 @@ public class RobotContainer implements frc.common.RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry",
-				() -> m_driveSubsystem.getPose());
+		// m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry@SwerveBot",
+		// () -> m_driveSubsystem.getPose());
 
 		// Configure the button bindings
 		m_autoSelector.addOption("Drive 2 Meters", new DriveDistanceCommand(m_driveSubsystem, 2, .1));
@@ -91,7 +91,13 @@ public class RobotContainer implements frc.common.RobotContainer {
 						new Pose(4.2, 1.5, -120),
 						new Pose(6.85, 3.0, 0)) };
 		m_controller.button(Button.kX)
-				.whileTrue(samples[0]);
+				.whileTrue(DriveCommand.createCommand(0.05, 1,
+						new Pose2d(6.85, 3.0, Rotation2d.fromDegrees(0)),
+						new Pose2d(6, 3.0, Rotation2d.fromDegrees(0)),
+						new Pose2d(6.44, 3.5, Rotation2d.fromDegrees(90)),
+						new Pose2d(6.44, 3.7, Rotation2d.fromDegrees(90)),
+						new Pose2d(4.2, 1.5, Rotation2d.fromDegrees(-120)),
+						new Pose2d(6.85, 3.0, Rotation2d.fromDegrees(0))));
 		new Command() { // sample
 			public void initialize() {
 				var pose = m_poseEstimationSubsystem.estimatedPose();
