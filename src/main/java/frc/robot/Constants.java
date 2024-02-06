@@ -111,4 +111,28 @@ public final class Constants {
 		public static final int kSteerSmartCurrentLimit = 20;
 		public static final int kSteerPeakCurrentLimit = 25;
 	}
+
+	public static final class FlywheelConstants {
+		public static final int kMasterPort = 9;
+		public static final int kFollowerPort = 10;
+		public static final boolean kMasterInvert = false;
+		public static final boolean kFollowerOppose = true;
+		public static final int kSmartCurrentLimit = 50;
+		public static final double kPeakCurrentLimit = 60;
+		public static final int kPeakCurrentDurationMillis = 100;
+		public static final double kP = 0.000_1;// 08; // 0.000_375; then .0004, was 0.00008
+		public static final double kI = 0;
+		public static final double kD = 0;// 0.000_0250;//0125;// 0.000_03;
+		public static final double kIz = 0.0;
+		public static final double kFF = .000_1050; // .000_1051;//0954;// 0.000_193;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = 0;
+		public static final double kGearRatio = 1 / 2.4;
+		public static final double kAllowedErrorPercent = 8; // was 5
+	}
+
+	public static final class ShooterConstants {
+		public static final double speakerHeight = 2.032145; // TODO change to this height - robot height
+		public static final double shooterLength = .25; // TODO change to deltaX between edge of robot and shooter axis on robot
+	}
 }
