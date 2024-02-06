@@ -111,4 +111,18 @@ public final class Constants {
 		public static final int kSteerSmartCurrentLimit = 20;
 		public static final int kSteerPeakCurrentLimit = 25;
 	}
+
+	public static final class ClimbConstants {
+		// TODO fix this NOW
+		public static final int kLeftPort = 90;
+		public static final int kRightPort = 91;
+		public static final boolean kLeftInvert = true;
+		public static final boolean kRightInvert = false;
+		public static final int kSmartCurrentLimit = -1;
+		public static final double kMinOutput = -1;
+		public static final double kMaxOutput = 1;
+		public static final double kP = 0;
+		public static final double kI = 0;
+		public static final double kD = 0;
+	}
 }
