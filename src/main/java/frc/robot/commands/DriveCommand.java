@@ -8,14 +8,11 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.PoseEstimationSubsystem;
 
 /**
  * The {@code DriveCommand} is responsible for moving the robot from the current
@@ -73,28 +70,6 @@ public class DriveCommand extends Command {
 	}
 
 	/**
-	 * Constructs a new {@code DriveCommand} whose purpose is to navigate the robot
-	 * towards the specified target and stop at the specified distance
-	 * away from the target.
-	 * 
-	 * @param currentPose       the current {@code Pose2d} of the robot
-	 * @param targetPosition    the target position whose x and y-coordinate values
-	 *                          are in meters
-	 * @param distanceToTarget  the desired distance to the target
-	 * @param distanceTolerance
-	 *                          the distance error in meters which is tolerable
-	 * @param angleTolerance
-	 *                          the angle error in degrees which is tolerable
-	 */
-	public DriveCommand(Pose2d currentPose, Translation2d targetPosition, double distanceToTarget,
-			double distanceTolerance,
-			double angleTolerance) {
-		this(() -> PoseEstimationSubsystem.getTargetPose(currentPose, targetPosition, distanceToTarget),
-				distanceTolerance,
-				angleTolerance);
-	}
-
-	/**
 	 * Constructs a new {@code DriveCommand} whose purpose is to move the
 	 * robot to a certain target pose.
 	 * 
@@ -133,81 +108,6 @@ public class DriveCommand extends Command {
 	}
 
 	/**
-	 * Is invoked at the commencement of this {@code DriveCommand} (i.e,
-	 * when the scheduler begins to periodically execute this {@code DriveCommand}).
-	 */
-	@Override
-	public void initialize() {
-		Pose2d pose = DriveSubsystem.get().getPose();
-		var targetPose = pose;
-		try {
-			targetPose = m_targetPoseCalculator.get();
-		} catch (Exception e) {
-		}
-		m_controllerX.reset(pose.getX());
-		m_controllerY.reset(pose.getY());
-		m_controllerYaw.reset(pose.getRotation().getDegrees());
-		m_controllerX.setGoal(targetPose.getX());
-		m_controllerY.setGoal(targetPose.getY());
-		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
-		SmartDashboard.putString(
-				"drive",
-				String.format(
-						"drive: initialize - current pose: %s, target pose: %s",
-						pose,
-						targetPose));
-	}
-
-	/**
-	 * Is invoked periodically by the scheduler until this
-	 * {@code DriveCommand} is either ended or interrupted.
-	 */
-	@Override
-	public void execute() {
-		Pose2d pose = DriveSubsystem.get().getPose();
-		double speedX = m_controllerX.calculate(pose.getX());
-		double speedY = m_controllerY.calculate(pose.getY());
-		double speedYaw = m_controllerYaw.calculate(pose.getRotation().getDegrees());
-		DriveSubsystem.get().setModuleStates(applyThreshold(speedX, DriveConstants.kMinSpeed),
-				applyThreshold(speedY, DriveConstants.kMinSpeed), speedYaw, true);
-		SmartDashboard.putString(
-				"drive",
-				String.format(
-						"distance: execute - velocities in x, y, and yaw dimensions: [%.1f, %.1f, %.1f]",
-						speedX, speedY, speedYaw));
-	}
-
-	/**
-	 * Is invoked once this {@code DriveCommand} is either ended or interrupted.
-	 * 
-	 * @param interrupted
-	 *                    indicates if this {@code DriveCommand} was
-	 *                    interrupted
-	 */
-	@Override
-	public void end(boolean interrupted) {
-		DriveSubsystem.get().setModuleStates(0, 0, 0, true);
-		SmartDashboard.putString("drive",
-				"distance: end - : " + (interrupted ? "interrupted"
-						: "completed" + String.format(
-								"drive: initialize - current pose: %s, target: [%.1f, %.1f, %.1f]",
-								"" + DriveSubsystem.get().getPose(),
-								m_controllerX.getGoal().position, m_controllerY.getGoal().position,
-								m_controllerYaw.getGoal().position)));
-	}
-
-	/**
-	 * Determines whether or not this {@code DriveCommand} needs to end.
-	 * 
-	 * @return {@code true} if this {@code DriveCommand} needs to end;
-	 *         {@code false} otherwise
-	 */
-	@Override
-	public boolean isFinished() {
-		return m_controllerX.atGoal() && m_controllerY.atGoal() && m_controllerYaw.atGoal();
-	}
-
-	/**
 	 * Constructs a {@code SequentialCommandGroup} for passing through all of the
 	 * specified
 	 * {@code Pose2d}s.
@@ -227,11 +127,82 @@ public class DriveCommand extends Command {
 				}
 			};
 		Command c = null;
-		for (var pose : poses) {
+		for (var pose : poses)
 			c = c == null ? new DriveCommand(() -> pose, distanceTolerance, angleTolerance)
 					: c.andThen(new DriveCommand(() -> pose, distanceTolerance, angleTolerance));
-		}
 		return c;
+	}
+
+	/**
+	 * Is invoked at the commencement of this {@code DriveCommand} (i.e,
+	 * when the scheduler begins to periodically execute this {@code DriveCommand}).
+	 */
+	@Override
+	public void initialize() {
+		Pose2d pose = DriveSubsystem.get().getPose();
+		var targetPose = pose;
+		try {
+			targetPose = m_targetPoseCalculator.get();
+		} catch (Exception e) {
+		}
+		m_controllerX.reset(pose.getX());
+		m_controllerY.reset(pose.getY());
+		m_controllerYaw.reset(pose.getRotation().getDegrees());
+		m_controllerX.setGoal(targetPose.getX());
+		m_controllerY.setGoal(targetPose.getY());
+		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
+		recordPose("Pose2D@Target", targetPose);
+		recordString(
+				"drive",
+				String.format(
+						"initialize - current pose: %s, target pose: %s", toString(pose), toString(targetPose)));
+
+	}
+
+	/**
+	 * Is invoked periodically by the scheduler until this
+	 * {@code DriveCommand} is either ended or interrupted.
+	 */
+	@Override
+	public void execute() {
+		Pose2d pose = DriveSubsystem.get().getPose();
+		double speedX = m_controllerX.calculate(pose.getX());
+		double speedY = m_controllerY.calculate(pose.getY());
+		double speedYaw = m_controllerYaw.calculate(pose.getRotation().getDegrees());
+		DriveSubsystem.get().setModuleStates(applyThreshold(speedX, DriveConstants.kMinSpeed),
+				applyThreshold(speedY, DriveConstants.kMinSpeed), speedYaw, true);
+		recordString(
+				"drive", "execute - velocities :" + toString(speedX, speedY, speedYaw));
+	}
+
+	/**
+	 * Is invoked once this {@code DriveCommand} is either ended or interrupted.
+	 * 
+	 * @param interrupted
+	 *                    indicates if this {@code DriveCommand} was
+	 *                    interrupted
+	 */
+	@Override
+	public void end(boolean interrupted) {
+		DriveSubsystem.get().setModuleStates(0, 0, 0, true);
+		recordPose("Pose2D@Target", null);
+		recordString("drive",
+				"end - : " + (interrupted ? "interrupted"
+						: "completed" + String.format(" - current: %s, target: %s",
+								"" + toString(DriveSubsystem.get().getPose()),
+								toString(m_controllerX.getGoal().position, m_controllerY.getGoal().position,
+										m_controllerYaw.getGoal().position))));
+	}
+
+	/**
+	 * Determines whether or not this {@code DriveCommand} needs to end.
+	 * 
+	 * @return {@code true} if this {@code DriveCommand} needs to end;
+	 *         {@code false} otherwise
+	 */
+	@Override
+	public boolean isFinished() {
+		return m_controllerX.atGoal() && m_controllerY.atGoal() && m_controllerYaw.atGoal();
 	}
 
 	/**
@@ -245,6 +216,46 @@ public class DriveCommand extends Command {
 	 */
 	public static double applyThreshold(double value, double threshold) {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
+	}
+
+	/**
+	 * Records the specified value in the specified entry in a {@code NetworkTable}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	protected void recordPose(String entryName, Pose2d value) {
+	}
+
+	/**
+	 * Records the specified value in the specified entry in a {@code NetworkTable}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	protected void recordString(String entryName, String value) {
+	}
+
+	/**
+	 * Returns a string representation of the specified {@code Pose2d}.
+	 * 
+	 * @param pose a {@code Pose2d}
+	 * @return a string representation of the specified {@code Pose2d}.
+	 */
+	public static String toString(Pose2d pose) {
+		return toString(pose.getX(), pose.getY(), pose.getRotation().getDegrees());
+	}
+
+	/**
+	 * Returns a string representation of the specified values.
+	 * 
+	 * @param x            the x-coordinate value
+	 * @param y            the y-coordinate value
+	 * @param yawInDegrees the yaw in degrees
+	 * @return a string representation of the specified values.
+	 */
+	public static String toString(double x, double y, double yawInDegrees) {
+		return String.format("[%.2f, %.2f, %.1f degrees]", x, y, yawInDegrees);
 	}
 
 }

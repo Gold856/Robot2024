@@ -144,9 +144,7 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 			@Override
 			public Pose2d pose(Pose2d pose) {
 				var current = poseSupplier.get();
-				visionTable.getEntry(label)
-						.setDoubleArray(PoseEstimationSubsystemAdvanced.toPose2DAdvantageScope(current.getX(),
-								current.getY(), current.getRotation().getDegrees()));
+				record(label, current);
 				if (this.previous == null || pose == null) {
 					this.previous = current;
 					return pose;
@@ -157,6 +155,32 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 			}
 
 		});
+	}
+
+	/**
+	 * Records the specified value in the specified entry in the
+	 * {@code NetworkTable} used by this {@code PoseEstimationSubsystem}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	public void record(String entryName, Pose2d value) {
+		if (value == null)
+			visionTable.getEntry(entryName).setDoubleArray(new double[0]);
+		else
+			visionTable.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
+					value.getY(), value.getRotation().getDegrees()));
+	}
+
+	/**
+	 * Records the specified value in the specified entry in the
+	 * {@code NetworkTable} used by this {@code PoseEstimationSubsystem}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	public void record(String entryName, String value) {
+		visionTable.getEntry(entryName).setString(value);
 	}
 
 	/**

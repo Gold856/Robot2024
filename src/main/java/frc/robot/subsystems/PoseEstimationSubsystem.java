@@ -43,6 +43,33 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class PoseEstimationSubsystem extends SubsystemBase {
 
 	/**
+	 * A wrapper class for simple construction and string representation of
+	 * {@code Pose2d} instances.
+	 */
+	public static class Pose extends Pose2d {
+
+		/**
+		 * Constrcuts a {@code Pose}
+		 * 
+		 * @param x            the x-coordinate value
+		 * @param y            the y-coordinate value
+		 * @param yawInDegrees the yaw in degrees
+		 */
+		public Pose(double x, double y, double yawInDegrees) {
+			super(x, y, Rotation2d.fromDegrees(yawInDegrees));
+		}
+
+		/**
+		 * Returns a string representation of this {@code Pose}.
+		 */
+		@Override
+		public String toString() {
+			return String.format("[%.1f, %.1f, %.1f degrees]", getX(), getY(), getRotation().getDegrees());
+		}
+
+	}
+
+	/**
 	 * A {@code PoseCalculator} calculates the pose of an object based on the pose
 	 * of that object at an earlier time and some
 	 * changes in that object observed via some sources such as a gyroscope,
