@@ -39,9 +39,14 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 		double b = Math.toDegrees(m_filteredPose.getRotation().getAngle()) + 90;
 		SmartDashboard.putNumber("a", a);
 		SmartDashboard.putNumber("b", b);
-		double angle = a + b;
-		SmartDashboard.putNumber("A + B", Math.min(45, (Math.max(-45, angle))));
-		SmartDashboard.putNumber("-(A + B)", -angle);
+		double angle;
+		if (m_filteredPose.getX() > 0) {
+			angle = -180 - (a - b);
+		} else {
+			angle = -(a + b);
+		}
+		// SmartDashboard.putNumber("A + B", Math.min(45, (Math.max(-45, angle))));
+		SmartDashboard.putNumber("math angle", angle);
 	}
 
 	// When a tag is in frame, returns the distance from the camera to the tag
