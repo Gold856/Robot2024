@@ -66,14 +66,9 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kLeftY),
 				() -> m_controller.getRawAxis(Axis.kLeftX),
 				() -> m_controller.getRawAxis(Axis.kRightX)));
-		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
-		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kX).onTrue(CommandComposer.getOffCommand(m_pneumaticsSubsystem, m_ArduinoSubsystem));
-		m_controller.button(Button.kSquare)
-				.onTrue(CommandComposer.getReverseCommand(m_pneumaticsSubsystem, m_ArduinoSubsystem));
-		m_controller.button(Button.kCircle)
-				.onTrue(CommandComposer.getForward(m_pneumaticsSubsystem, m_ArduinoSubsystem));
+
+		m_controller.button(Button.kSquare).onTrue(m_pneumaticsSubsystem.toggleIntakeCommand());
+		m_controller.button(Button.kCircle).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 	}
 
 	public Command getAutonomousCommand() {

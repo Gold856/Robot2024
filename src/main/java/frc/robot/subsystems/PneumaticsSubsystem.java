@@ -5,42 +5,36 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PneumaticsSubsystem extends SubsystemBase {
-	PneumaticHub m_hub = new PneumaticHub(50);
-	DoubleSolenoid m_solenoid = m_hub.makeDoubleSolenoid(0, 1);
+	private final PneumaticHub m_hub = new PneumaticHub(50);
+	private final DoubleSolenoid m_ampBarSolenoid = m_hub.makeDoubleSolenoid(3, 4);
+	private final DoubleSolenoid m_intakeSolenoid = m_hub.makeDoubleSolenoid(1, 2);
 
 	/** Creates a new PneumaticsSubsystem. */
 	public PneumaticsSubsystem() {
 		m_hub.setOneShotDuration(0, 100);
 	}
 
-	public void setForward() {
-		m_solenoid.set(Value.kForward);
+	/**
+	 * Creates a command to toggle the intake.
+	 * 
+	 * @return A command to toggle the intake.
+	 */
+	public Command toggleIntakeCommand() {
+		return runOnce(m_intakeSolenoid::toggle);
 	}
 
-	public void setReverse() {
-		m_solenoid.set(Value.kReverse);
-	}
-
-	public void setOff() {
-		m_solenoid.set(Value.kOff);
-	}
-
-	public Command setForwardCommand() {
-		return runOnce(this::setForward);
-	}
-
-	public Command setReverseCommand() {
-		return runOnce(this::setReverse);
-	}
-
-	public Command setOffCommand() {
-		return runOnce(this::setOff);
+	/**
+	 * Creates a command to toggle the amp bar.
+	 * 
+	 * @return A command to toggle the amp bar.
+	 */
+	public Command toggleAmpBarCommand() {
+		return runOnce(m_ampBarSolenoid::toggle);
 	}
 
 	@Override
