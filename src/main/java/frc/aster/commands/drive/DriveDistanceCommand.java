@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.aster.Constants;
 import frc.aster.Constants.DriveConstants;
 import frc.aster.subsystems.DriveSubsystem;
-import frc.common.MathUtil;
 
 /**
  * The {@code DriveDistanceCommand} is responsible for moving the robot by a
@@ -122,8 +121,8 @@ public class DriveDistanceCommand extends Command {
 		var rightEncoderPosition = DriveSubsystem.get().getRightEncoderPosition();
 		double leftSpeed = m_leftController.calculate(leftEncoderPosition);
 		double rightSpeed = m_rightController.calculate(rightEncoderPosition);
-		DriveSubsystem.get().tankDrive(frc.common.MathUtil.applyThreshold(leftSpeed, DriveConstants.kMinSpeed),
-				MathUtil.applyThreshold(rightSpeed, DriveConstants.kMinSpeed));
+		DriveSubsystem.get().tankDrive(TurnCommand.applyThreshold(leftSpeed, DriveConstants.kMinSpeed),
+				TurnCommand.applyThreshold(rightSpeed, DriveConstants.kMinSpeed));
 		SmartDashboard.putString(
 				"drive",
 				String.format(
