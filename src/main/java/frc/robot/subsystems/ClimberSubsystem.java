@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -24,6 +25,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
 	private final RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
 	private final SparkPIDController m_rightPidController = m_rightMotor.getPIDController();
+
+	private double m_setPosition = 0;
 
 	/** Creates a new ClimberSubsystem. */
 	public ClimberSubsystem() {
@@ -50,10 +53,50 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_rightPidController.setI(ClimbConstants.kI);
 		m_rightPidController.setD(ClimbConstants.kD);
 		m_rightPidController.setOutputRange(ClimbConstants.kMinOutput, ClimbConstants.kMaxOutput);
+
+		resetEncoder();
 	}
 
 	@Override
 	public void periodic() {
-		// This method will be called once per scheduler run
+	}
+
+	// returns the position of the left or right motor
+	public double getleftPosition() {
+		return m_leftEncoder.getPosition();
+	}
+
+	public double getrightPosition() {
+		return m_rightEncoder.getPosition();
+	}
+
+	// returns true if the motor is at the setpoint
+	public boolean atleftSetpoint() {
+		return (Math.abs(m_setPosition - getleftPosition()) <= ClimbConstants.ktolerance);
+	}
+
+	public boolean atrightSetpoint() {
+		return (Math.abs(m_setPosition - getrightPosition()) <= ClimbConstants.ktolerance);
+	}
+
+	public void setPosition(double position) {
+		m_setPosition = position;
+		m_leftPidController.setReference(position, ControlType.kPosition, ClimbConstants.kSlotID);
+		m_rightPidController.setReference(position, ControlType.kPosition, ClimbConstants.kSlotID);
+	}
+
+	public void resetEncoder() {
+		m_leftEncoder.setPosition(0);
+		m_rightEncoder.setPosition(0);
+		setPosition(0);
+	}
+
+	public void setSpeed(double speed) {
+		m_leftMotor.set(speed);
+		m_rightMotor.set(speed);
+	}
+
+	public double getOutputCurrent() {
+		return m_leftMotor.getOutputCurrent();
 	}
 }
