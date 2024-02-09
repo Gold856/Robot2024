@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.PoseEstimationSubsystem;
 
 /**
  * The {@code DriveCommand} is responsible for moving the robot from the current
@@ -52,6 +53,30 @@ public class DriveCommand extends Command {
 	 * dimension in angles.
 	 */
 	private ProfiledPIDController m_controllerYaw;
+
+	/**
+	 * Constructs a new {@code DriveCommand} whose purpose is to move the
+	 * robot to a certain target.
+	 * 
+	 * @param targetPose
+	 *                                the target pose whose x and y-coordinate
+	 *                                values are
+	 *                                in meters and yaw value is in degrees
+	 * @param distanceTolerance
+	 *                                the distance error in meters which is
+	 *                                tolerable
+	 * @param angleTolerance
+	 *                                the angle error in degrees which is tolerable
+	 * @param poseEstimationSubsystem the {@code PoseEstimationSubsystem} to use
+	 */
+	public DriveCommand(Pose2d targetPose, double distanceTolerance, double angleTolerance,
+			PoseEstimationSubsystem poseEstimationSubsystem) {
+		this(() -> {
+			var pose = poseEstimationSubsystem.estimatedPose();
+			poseEstimationSubsystem.recordPose("Target", targetPose);
+			return DriveSubsystem.get().getPose().plus(targetPose.minus(pose));
+		}, distanceTolerance, angleTolerance);
+	}
 
 	/**
 	 * Constructs a new {@code DriveCommand} whose purpose is to move the
@@ -125,8 +150,8 @@ public class DriveCommand extends Command {
 		m_controllerX.setGoal(targetPose.getX());
 		m_controllerY.setGoal(targetPose.getY());
 		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
-		recordPose("Target@Odometry", targetPose);
-		recordString(
+		PoseEstimationSubsystem.get().recordPose("Target@Odometry", targetPose);
+		PoseEstimationSubsystem.get().recordString(
 				"drive",
 				String.format(
 						"initialize - current pose: %s, target pose: %s", toString(pose), toString(targetPose)));
@@ -147,7 +172,7 @@ public class DriveCommand extends Command {
 		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
 		DriveSubsystem.get().setModuleStates(speedX,
 				speedY, speedYaw, true);
-		recordString(
+		PoseEstimationSubsystem.get().recordString(
 				"drive", "execute - velocities :" + toString(speedX, speedY, speedYaw));
 	}
 
@@ -161,8 +186,8 @@ public class DriveCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		DriveSubsystem.get().setModuleStates(0, 0, 0, true);
-		recordPose("Target@Odometry", null);
-		recordString("drive",
+		PoseEstimationSubsystem.get().recordPose("Target@Odometry", null);
+		PoseEstimationSubsystem.get().recordString("drive",
 				"end - : " + (interrupted ? "interrupted"
 						: "completed" + String.format(" - current: %s, target: %s",
 								"" + toString(DriveSubsystem.get().getPose()),
@@ -192,24 +217,6 @@ public class DriveCommand extends Command {
 	 */
 	public static double applyThreshold(double value, double threshold) {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	protected void recordPose(String entryName, Pose2d value) {
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	protected void recordString(String entryName, String value) {
 	}
 
 	/**

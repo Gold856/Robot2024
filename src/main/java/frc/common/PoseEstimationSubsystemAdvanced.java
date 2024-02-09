@@ -83,6 +83,11 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 	@Override
 	public void periodic() {
 		m_poseEstimator.update(m_poseCalculators.values());
+		var pose = estimatedPose();
+		visionTable.getEntry("Pose Estimated").setString("" + pose);
+		if (pose != null)
+			visionTable.getEntry("Pose2D'").setDoubleArray(toPose2DAdvantageScope(pose.getX(),
+					pose.getY(), pose.getRotation().getDegrees()));
 	}
 
 	/**
@@ -94,11 +99,6 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 		if (botpose != null) {
 			visionTable.getEntry("Pose2D")
 					.setDoubleArray(toPose2DAdvantageScope(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]));
-			var pose = estimatedPose();
-			visionTable.getEntry("Pose Estimated").setString("" + pose);
-			if (pose != null)
-				visionTable.getEntry("Pose2D'").setDoubleArray(toPose2DAdvantageScope(pose.getX(),
-						pose.getY(), pose.getRotation().getDegrees()));
 		}
 		return botpose;
 	}
@@ -144,7 +144,7 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 			@Override
 			public Pose2d pose(Pose2d pose) {
 				var current = poseSupplier.get();
-				record(label, current);
+				recordPose(label, current);
 				if (this.previous == null || pose == null) {
 					this.previous = current;
 					return pose;
@@ -155,32 +155,6 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 			}
 
 		});
-	}
-
-	/**
-	 * Records the specified value in the specified entry in the
-	 * {@code NetworkTable} used by this {@code PoseEstimationSubsystem}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void record(String entryName, Pose2d value) {
-		if (value == null)
-			visionTable.getEntry(entryName).setDoubleArray(new double[0]);
-		else
-			visionTable.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
-					value.getY(), value.getRotation().getDegrees()));
-	}
-
-	/**
-	 * Records the specified value in the specified entry in the
-	 * {@code NetworkTable} used by this {@code PoseEstimationSubsystem}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void record(String entryName, String value) {
-		visionTable.getEntry(entryName).setString(value);
 	}
 
 	/**
@@ -215,4 +189,31 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 		}
 		return "";
 	}
+
+	/**
+	 * Records the specified value in the specified entry in a {@code NetworkTable}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	public void recordPose(String entryName, Pose2d value) {
+		if (value != null && !(value instanceof Pose))
+			value = new Pose(value.getX(), value.getY(), value.getRotation().getDegrees());
+		if (value == null)
+			visionTable.getEntry(entryName).setDoubleArray(new double[0]);
+		else
+			visionTable.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
+					value.getY(), value.getRotation().getDegrees()));
+	}
+
+	/**
+	 * Records the specified value in the specified entry in a {@code NetworkTable}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	public void recordString(String entryName, String value) {
+		visionTable.getEntry(entryName).setString(value);
+	}
+
 }

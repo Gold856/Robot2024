@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import frc.common.PoseEstimationSubsystemAdvanced;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PoseEstimationSubsystem;
-import frc.robot.subsystems.PoseEstimationSubsystem.Pose;
 
 /**
  * The {@code DriveCommand} is responsible for moving the robot from the current
@@ -21,6 +20,23 @@ import frc.robot.subsystems.PoseEstimationSubsystem.Pose;
  * @author Andrew Hwang (u.andrew.h@gmail.com)
  */
 public class DriveCommandAdvanced extends DriveCommand {
+
+	/**
+	 * Constructs a new {@code DriveCommand} whose purpose is to move the
+	 * robot to a certain target.
+	 * 
+	 * @param targetPose
+	 *                          the target pose whose x and y-coordinate values are
+	 *                          in meters and yaw value is in degrees
+	 * @param distanceTolerance
+	 *                          the distance error in meters which is tolerable
+	 * @param angleTolerance
+	 *                          the angle error in degrees which is tolerable
+	 */
+	public DriveCommandAdvanced(Pose2d targetPose, double distanceTolerance, double angleTolerance,
+			PoseEstimationSubsystemAdvanced poseEstimationSubsystemAdvanced) {
+		super(targetPose, distanceTolerance, angleTolerance, poseEstimationSubsystemAdvanced);
+	}
 
 	/**
 	 * Constructs a new {@code DriveCommand} whose purpose is to move the
@@ -58,28 +74,6 @@ public class DriveCommandAdvanced extends DriveCommand {
 				distanceToTarget),
 				distanceTolerance,
 				angleTolerance);
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	protected void recordPose(String entryName, Pose2d value) {
-		if (value != null && !(value instanceof Pose))
-			value = new Pose(value.getX(), value.getY(), value.getRotation().getDegrees());
-		PoseEstimationSubsystemAdvanced.get().record(entryName, value);
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	protected void recordString(String entryName, String value) {
-		PoseEstimationSubsystemAdvanced.get().record(entryName, value);
 	}
 
 }

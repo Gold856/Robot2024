@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +25,7 @@ import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LimeLightEmulationSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.PoseEstimationSubsystem.Pose;
 
@@ -45,9 +47,10 @@ public class RobotContainer implements frc.common.RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
+		if (RobotBase.isSimulation())
+			new LimeLightEmulationSubsystem(new Pose(6, 1.45, 0), 0.01);
 		m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry",
 				() -> m_driveSubsystem.getPose());
-
 		// Configure the button bindings
 		m_autoSelector.addOption("Drive 2 Meters", new DriveDistanceCommand(m_driveSubsystem, 2, .1));
 		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
@@ -99,9 +102,16 @@ public class RobotContainer implements frc.common.RobotContainer {
 								1))
 						.andThen(new DriveCommandAdvanced(new Pose(6.0, 2.92, 0), 0.05, 1))
 						.andThen(new DriveCommandAdvanced(new Translation2d(7.87, 1.45), 1.2, 0.05,
-								1)) };
+								1)),
+				new DriveCommandAdvanced(new Pose(6.85, 3.0, 0), 0.05, 1, m_poseEstimationSubsystem)
+						.andThen(new DriveCommandAdvanced(new Pose(6, 3.0, 0), 0.05, 1, m_poseEstimationSubsystem))
+						.andThen(new DriveCommandAdvanced(new Pose(6.44, 3.5, 90), 0.05, 1, m_poseEstimationSubsystem))
+						.andThen(new DriveCommandAdvanced(new Pose(6.44, 3.7, 90), 0.05, 1, m_poseEstimationSubsystem))
+						.andThen(new DriveCommandAdvanced(new Pose(4.2, 1.5, -120), 0.05, 1, m_poseEstimationSubsystem))
+						.andThen(
+								new DriveCommandAdvanced(new Pose(6.85, 3.0, 0), 0.05, 1, m_poseEstimationSubsystem)) };
 		m_controller.button(Button.kX)
-				.whileTrue(samples[3]);
+				.whileTrue(samples[0]);
 		new Command() { // sample
 			public void initialize() {
 				var pose = m_poseEstimationSubsystem.estimatedPose();

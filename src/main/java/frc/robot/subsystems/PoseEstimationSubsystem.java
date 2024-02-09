@@ -592,9 +592,10 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 			var v = event.valueData.value;
 			m_botpose = new TimestampedDoubleArray(v.getTime(), v.getServerTime(), v.getDoubleArray());
 			if (m_botpose != null) {
-				m_poseEstimator
-						.update(new Pose2d(m_botpose.value[0], m_botpose.value[1],
-								Rotation2d.fromDegrees(m_botpose.value[5])));
+				var pose = new Pose2d(m_botpose.value[0], m_botpose.value[1],
+						Rotation2d.fromDegrees(m_botpose.value[5]));
+				if (pose.getX() != 0 || pose.getY() != 0 || pose.getRotation().getDegrees() != 0)
+					m_poseEstimator.update(pose);
 			}
 			return m_botpose;
 		} catch (Exception e) {
@@ -742,6 +743,28 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 			throw new UnsupportedOperationException();
 		return new Pose2d(pose.getTranslation().plus(diff.times(1 - distanceToTarget / diff.getNorm())),
 				diff.getAngle());
+	}
+
+	public Map<Integer, Pose2d> aprilTagPoses() {
+		return this.m_aprilTagPoses;
+	}
+
+	/**
+	 * Records the specified value in the specified entry in a {@code NetworkTable}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	public void recordPose(String entryName, Pose2d value) {
+	}
+
+	/**
+	 * Records the specified value in the specified entry in a {@code NetworkTable}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	public void recordString(String entryName, String value) {
 	}
 
 }
