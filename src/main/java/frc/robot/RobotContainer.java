@@ -18,6 +18,7 @@ import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Constants.ControllerConstants.DPad;
 import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.ClimberMove;
+import frc.robot.commands.ClimberMove.Operation;
 import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
@@ -74,7 +75,11 @@ public class RobotContainer {
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
-		m_controller.button(DPad.kUp).onTrue(new ClimberMove(m_ClimberSubsystem, 0.1));
+
+		m_controller.button(DPad.kUp).onTrue(new ClimberMove(m_ClimberSubsystem, Operation.TOP, .1));
+		m_controller.button(DPad.kDown).onTrue(new ClimberMove(m_ClimberSubsystem, Operation.ZERO, .1));
+		m_controller.button(DPad.kRight).onTrue(new ClimberMove(m_ClimberSubsystem, Operation.MID, .1));
+		m_controller.button(DPad.kLeft).onTrue(new ClimberMove(m_ClimberSubsystem, Operation.STOP, 0));
 	}
 
 	public Command getAutonomousCommand() {
