@@ -33,7 +33,7 @@ public class DriveCommand extends Command {
 	 * when the scheduler begins to periodically execute this {@code
 	 * DriveCommand}).
 	 */
-	private Supplier<Pose2d> m_targetPoseCalculator;
+	private Supplier<Pose2d> m_targetPoseSupplier;
 
 	/**
 	 * The {@code ProfiledPIDController} for controlling the robot in the x
@@ -73,23 +73,23 @@ public class DriveCommand extends Command {
 	 * Constructs a new {@code DriveCommand} whose purpose is to move the
 	 * robot to a certain target pose.
 	 * 
-	 * @param targetPoseCalculator
-	 *                             a {@code Supplier<Pose2d>} that calculates the
-	 *                             target pose to which the robot should move.
-	 *                             This is used at the commencement of this {@code
+	 * @param targetPoseSupplier
+	 *                           a {@code Supplier<Pose2d>} that provides the
+	 *                           target pose to which the robot should move.
+	 *                           This is used at the commencement of this {@code
 	 *                             DriveCommand} (i.e.,
-	 *                             when the scheduler begins to periodically execute
-	 *                             this {@code
+	 *                           when the scheduler begins to periodically execute
+	 *                           this {@code
 	 *                             DriveCommand})
 	 * 
-	 * @param distanceTolerance    the distance error in
-	 *                             meters which is
-	 *                             tolerable
+	 * @param distanceTolerance  the distance error in
+	 *                           meters which is
+	 *                           tolerable
 	 * @param angleTolerance
-	 *                             the angle error in degrees which is tolerable
+	 *                           the angle error in degrees which is tolerable
 	 */
-	public DriveCommand(Supplier<Pose2d> targetPoseCalculator, double distanceTolerance, double angleTolerance) {
-		m_targetPoseCalculator = targetPoseCalculator;
+	public DriveCommand(Supplier<Pose2d> targetPoseSupplier, double distanceTolerance, double angleTolerance) {
+		m_targetPoseSupplier = targetPoseSupplier;
 		var constraints = new TrapezoidProfile.Constraints(Constants.DriveConstants.kDriveMaxVelocity,
 				Constants.DriveConstants.kDriveMaxAcceleration);
 		m_controllerX = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
@@ -108,32 +108,6 @@ public class DriveCommand extends Command {
 	}
 
 	/**
-	 * Constructs a {@code SequentialCommandGroup} for passing through all of the
-	 * specified
-	 * {@code Pose2d}s.
-	 * 
-	 * @param distanceTolerance the distance error in meters which is tolerable
-	 * @param angleTolerance
-	 *                          the angle error in degrees which is tolerable
-	 * @param poses             the {@code Pose2d}s to pass through
-	 * @return a {@code SequentialCommandGroup} for passing through all of the
-	 *         specified {@code Pose2d}s
-	 */
-	public static Command createCommand(double distanceTolerance, double angleTolerance, Pose2d... poses) {
-		if (poses == null || poses.length == 0)
-			return new Command() {
-				public boolean isFinished() {
-					return true;
-				}
-			};
-		Command c = null;
-		for (var pose : poses)
-			c = c == null ? new DriveCommand(() -> pose, distanceTolerance, angleTolerance)
-					: c.andThen(new DriveCommand(() -> pose, distanceTolerance, angleTolerance));
-		return c;
-	}
-
-	/**
 	 * Is invoked at the commencement of this {@code DriveCommand} (i.e,
 	 * when the scheduler begins to periodically execute this {@code DriveCommand}).
 	 */
@@ -142,7 +116,7 @@ public class DriveCommand extends Command {
 		Pose2d pose = DriveSubsystem.get().getPose();
 		var targetPose = pose;
 		try {
-			targetPose = m_targetPoseCalculator.get();
+			targetPose = m_targetPoseSupplier.get();
 		} catch (Exception e) {
 		}
 		m_controllerX.reset(pose.getX());
@@ -151,7 +125,7 @@ public class DriveCommand extends Command {
 		m_controllerX.setGoal(targetPose.getX());
 		m_controllerY.setGoal(targetPose.getY());
 		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
-		recordPose("Pose2D@Target", targetPose);
+		recordPose("Target@Odometry", targetPose);
 		recordString(
 				"drive",
 				String.format(
@@ -169,8 +143,10 @@ public class DriveCommand extends Command {
 		double speedX = m_controllerX.calculate(pose.getX());
 		double speedY = m_controllerY.calculate(pose.getY());
 		double speedYaw = m_controllerYaw.calculate(pose.getRotation().getDegrees());
-		DriveSubsystem.get().setModuleStates(applyThreshold(speedX, DriveConstants.kMinSpeed),
-				applyThreshold(speedY, DriveConstants.kMinSpeed), speedYaw, true);
+		// speedX = applyThreshold(speedX, DriveConstants.kMinSpeed);
+		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
+		DriveSubsystem.get().setModuleStates(speedX,
+				speedY, speedYaw, true);
 		recordString(
 				"drive", "execute - velocities :" + toString(speedX, speedY, speedYaw));
 	}
@@ -185,7 +161,7 @@ public class DriveCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		DriveSubsystem.get().setModuleStates(0, 0, 0, true);
-		recordPose("Pose2D@Target", null);
+		recordPose("Target@Odometry", null);
 		recordString("drive",
 				"end - : " + (interrupted ? "interrupted"
 						: "completed" + String.format(" - current: %s, target: %s",
