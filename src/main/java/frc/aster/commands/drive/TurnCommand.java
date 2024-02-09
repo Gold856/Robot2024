@@ -97,7 +97,7 @@ public class TurnCommand extends Command {
 	public void execute() {
 		double heading = DriveSubsystem.get().getHeading();
 		double turnSpeed = m_turnController.calculate(heading);
-		turnSpeed = frc.common.MathUtil.applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
+		turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
 		DriveSubsystem.get().tankDrive(-turnSpeed, turnSpeed);
 		SmartDashboard.putString("drive",
 				String.format("turn: execute - heading: %.1f, turn speed: %.1f", heading,
@@ -128,5 +128,18 @@ public class TurnCommand extends Command {
 	@Override
 	public boolean isFinished() {
 		return m_turnController.atGoal();
+	}
+
+	/**
+	 * Applies the specified threshold to the specified value.
+	 * 
+	 * @param value     the value to be thresholded
+	 * @param threshold the threshold limit
+	 * @return the original value if the absolute value of that value is greater or
+	 *         equal to the threshold; the threshold with the original value's sign
+	 *         otherwise
+	 */
+	public static double applyThreshold(double value, double threshold) {
+		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
 	}
 }
