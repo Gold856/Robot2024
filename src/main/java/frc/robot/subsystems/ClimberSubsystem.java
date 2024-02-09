@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
@@ -96,7 +97,11 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_rightMotor.set(speed);
 	}
 
-	public double getOutputCurrent() {
-		return m_leftMotor.getOutputCurrent();
+	public static Subsystem get() {
+		return s_subsystem;
 	}
+
+	// public double getOutputCurrent() {
+	// return m_leftMotor.getOutputCurrent();
+	// }
 }

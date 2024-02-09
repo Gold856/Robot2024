@@ -15,12 +15,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
+import frc.robot.Constants.ControllerConstants.DPad;
 import frc.robot.commands.BangBangDriveDistance;
+import frc.robot.commands.ClimberMove;
 import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -34,6 +37,7 @@ public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
+	private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 
 	/**
@@ -70,6 +74,7 @@ public class RobotContainer {
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		m_controller.button(DPad.kUp).onTrue(new ClimberMove(m_ClimberSubsystem, 0.1));
 	}
 
 	public Command getAutonomousCommand() {
