@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -44,8 +45,8 @@ public class RobotContainer implements frc.common.RobotContainer {
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
-		// m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry@SwerveBot",
-		// () -> m_driveSubsystem.getPose());
+		m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry",
+				() -> m_driveSubsystem.getPose());
 
 		// Configure the button bindings
 		m_autoSelector.addOption("Drive 2 Meters", new DriveDistanceCommand(m_driveSubsystem, 2, .1));
@@ -73,31 +74,34 @@ public class RobotContainer implements frc.common.RobotContainer {
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		Command[] samples = { DriveCommandAdvanced.createCommand(0.05, 1,
-				new Pose(1.5, 0, 0),
-				new Pose(0, 0, 0)),
-				DriveCommandAdvanced.createCommand(0.05, 1,
-						new Pose(0, 0, 0),
-						new Pose(1, 1.0, 0),
-						new Pose(1.44, 1.5, 90),
-						new Pose(1.44, 1.7, 90),
-						new Pose(-0.8, -0.5, -120),
-						new Pose(0, 0, 0)),
-				DriveCommandAdvanced.createCommand(0.05, 1,
-						new Pose(6.85, 3.0, 0),
-						new Pose(6, 3.0, 0),
-						new Pose(6.44, 3.5, 90),
-						new Pose(6.44, 3.7, 90),
-						new Pose(4.2, 1.5, -120),
-						new Pose(6.85, 3.0, 0)) };
+		Command[] samples = {
+				new DriveCommandAdvanced(new Pose(1.5, 0, 0), 0.05, 1)
+						.andThen(new DriveCommandAdvanced(new Pose(0, 0, 0), 0.05, 1)),
+				new DriveCommandAdvanced(new Pose(0, 0, 0), 0.05, 1)
+						.andThen(new DriveCommandAdvanced(new Pose(1, 1.0, 0), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(1.44, 1.5, 90), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(1.44, 1.7, 90), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(-0.8, -0.5, -120), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(0, 0, 0), 0.05, 1)),
+				new DriveCommandAdvanced(new Pose(0, 0, 0), 0.05, 1)
+						.andThen(new DriveCommandAdvanced(new Pose(6.85, 3.0, 0), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(6, 3.0, 0), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(6.44, 3.5, 90), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(6.44, 3.7, 90), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(4.2, 1.5, -120), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Pose(0, 0, 0), 0.05, 1)),
+				new DriveCommandAdvanced(new Translation2d(7.87, 1.45), 1.2, 0.05, 1)
+						.andThen(new DriveCommandAdvanced(new Pose(6.0, 0.0, 0), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Translation2d(7.87, 1.45), 1.2, 0.05,
+								1))
+						.andThen(new DriveCommandAdvanced(new Pose(6.0, 1.45, 0), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Translation2d(7.87, 1.45), 1.2, 0.05,
+								1))
+						.andThen(new DriveCommandAdvanced(new Pose(6.0, 2.92, 0), 0.05, 1))
+						.andThen(new DriveCommandAdvanced(new Translation2d(7.87, 1.45), 1.2, 0.05,
+								1)) };
 		m_controller.button(Button.kX)
-				.whileTrue(DriveCommand.createCommand(0.05, 1,
-						new Pose2d(6.85, 3.0, Rotation2d.fromDegrees(0)),
-						new Pose2d(6, 3.0, Rotation2d.fromDegrees(0)),
-						new Pose2d(6.44, 3.5, Rotation2d.fromDegrees(90)),
-						new Pose2d(6.44, 3.7, Rotation2d.fromDegrees(90)),
-						new Pose2d(4.2, 1.5, Rotation2d.fromDegrees(-120)),
-						new Pose2d(6.85, 3.0, Rotation2d.fromDegrees(0))));
+				.whileTrue(samples[3]);
 		new Command() { // sample
 			public void initialize() {
 				var pose = m_poseEstimationSubsystem.estimatedPose();
