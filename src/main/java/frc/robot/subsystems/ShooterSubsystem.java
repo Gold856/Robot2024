@@ -92,6 +92,10 @@ public class ShooterSubsystem extends SubsystemBase {
 		setVelocity(m_setVelocity - 50);
 	}
 
+	public void aimUp() {
+
+	}
+
 	/**
 	 * @return Current setpoint.
 	 */
