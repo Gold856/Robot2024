@@ -9,18 +9,15 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.commands.BangBangDriveDistance;
-import frc.robot.commands.DriveDistanceCommand;
-import frc.robot.commands.IndexerFowardCommand;
-import frc.robot.commands.IndexerReverseCommand;
-import frc.robot.commands.IndexerShootCommand;
-import frc.robot.commands.IndexerStopCommand;
-import frc.robot.commands.PIDTurnCommand;
-import frc.robot.commands.SetSteering;
+import frc.robot.commands.drive.BangBangDriveDistance;
+import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.PIDTurnCommand;
+import frc.robot.commands.drive.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -70,19 +67,45 @@ public class RobotContainer {
 		// new Trigger(() -> DriverStation.getMatchTime() >= 20)
 		// .onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
-				() -> m_driverController.getRawAxis(Axis.kRightX)));
+				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
+				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)
+
+		));
+
 		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_driverController.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
-		// Indexer Button Mappings
-		m_operatorController.button(Button.kSquare).onTrue(new IndexerFowardCommand(0.5)); // TODO add constants
-		m_operatorController.button(Button.kCircle).onTrue(new IndexerReverseCommand(0.5));
-		m_operatorController.button(Button.kTrackpad).onTrue(new IndexerStopCommand());
-		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(.5, .5));
+		m_driverController.button(Button.kX).onTrue(new WaitCommand(0.2) {
+			@Override
+			public void initialize() {
+				super.initialize();
+				m_driveSubsystem.setModuleStates(0.1, 0, 0, false);
+			}
+
+			@Override
+			public void execute() {
+				super.execute();
+				m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
+			}
+
+			@Override
+			public void end(boolean b) {
+				super.end(b);
+				m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
+			}
+		});
+
+		// // Indexer Button Mappings
+		// m_operatorController.button(Button.kSquare).onTrue(new
+		// IndexerFowardCommand(0.5)); // TODO add constants
+		// m_operatorController.button(Button.kCircle).onTrue(new
+		// IndexerReverseCommand(0.5));
+		// m_operatorController.button(Button.kTrackpad).onTrue(new
+		// IndexerStopCommand());
+		// m_operatorController.button(Button.kRightBumper).onTrue(new
+		// IndexerShootCommand(.5, .5));
 
 	}
 
