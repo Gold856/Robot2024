@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -15,6 +19,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.drive.BangBangDriveDistance;
+import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.PIDTurnCommand;
 import frc.robot.commands.drive.SetSteering;
@@ -57,6 +62,43 @@ public class RobotContainer {
 		configureButtonBindings();
 	}
 
+	static class Pose extends Pose2d {
+
+		Pose(double x, double y, double yawInDegrees) {
+			super(x, y, Rotation2d.fromDegrees(yawInDegrees));
+		}
+
+	};
+
+	static class DriveCommandSample extends DriveCommand { // more code for debugging purposes
+
+		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
+
+		public DriveCommandSample(DriveSubsystem driveSubsystem, Pose2d targetPose, double distanceTolerance,
+				double angleTolerance) {
+			super(driveSubsystem, targetPose, distanceTolerance, angleTolerance);
+		}
+
+		@Override
+		public void recordPose(String entryName, Pose2d value) {
+			if (value == null)
+				table.getEntry(entryName).setDoubleArray(new double[0]);
+			else
+				table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
+						value.getY(), value.getRotation().getDegrees()));
+		}
+
+		@Override
+		public void recordString(String entryName, String value) {
+			table.getEntry(entryName).setString(value);
+		}
+
+		static double[] toPose2DAdvantageScope(double x, double y, double yawInDegrees) {
+			return new double[] { x + 8.27, y + 4.1, yawInDegrees * Math.PI / 180 };
+		}
+
+	}
+
 	/**
 	 * Use this method to define your button->command mappings. Buttons can be
 	 * created by instantiating a {@link GenericHID} or one of its subclasses
@@ -77,7 +119,7 @@ public class RobotContainer {
 		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_driverController.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_driverController.button(Button.kX).onTrue(new WaitCommand(0.2) {
+		Command[] samples = { new WaitCommand(0.2) {
 			@Override
 			public void initialize() {
 				super.initialize();
@@ -95,7 +137,10 @@ public class RobotContainer {
 				super.end(b);
 				m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
 			}
-		});
+		}, new DriveCommandSample(m_driveSubsystem, new Pose(1, 0, 0), 0.05, 1)
+				.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+						1)) };
+		m_driverController.button(Button.kX).whileTrue(samples[0]);
 
 		// // Indexer Button Mappings
 		// m_operatorController.button(Button.kSquare).onTrue(new
