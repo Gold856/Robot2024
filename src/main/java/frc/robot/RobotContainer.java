@@ -18,6 +18,7 @@ import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
+import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -28,9 +29,12 @@ import frc.robot.subsystems.DriveSubsystem;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
+	private final CommandGenericHID m_driverController = new CommandGenericHID(
+			ControllerConstants.kDriverControllerPort);
+	private final CommandGenericHID m_operatorController = new CommandGenericHID(
+			ControllerConstants.kOperatorControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
+	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 
 	/**
@@ -58,16 +62,27 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 		// new Trigger(() -> DriverStation.getMatchTime() >= 20)
-		// .onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		// .onTrue(m_ArduinoSubsystem.setCode(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		// TODO: LEDs to add: Left Trigger -> Orange LED, with other stuff, BLUE WHEN
+		// SHOOT COMMANDS ARE DONE
+
+		// LEDs for when you want AMP
+		m_operatorController.povLeft().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_PURPLE));
+		// LEDs for when you want COOP
+		m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
+		// LEDs for when you want HP to drop a note
+		m_driverController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.SOLID_RED));
+
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> m_controller.getRawAxis(Axis.kLeftY),
-				() -> m_controller.getRawAxis(Axis.kLeftX),
-				() -> m_controller.getRawAxis(Axis.kRightTrigger),
-				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
-		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd().withTimeout(0.5));
-		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+				() -> m_driverController.getRawAxis(Axis.kLeftY),
+				() -> m_driverController.getRawAxis(Axis.kLeftX),
+				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
+				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
+		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_driverController.button(Button.kTriangle)
+				.onTrue(m_driveSubsystem.alignModulesToZeroComamnd().withTimeout(0.5));
+		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}
 
 	public Command getAutonomousCommand() {
