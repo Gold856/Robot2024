@@ -121,5 +121,9 @@ public final class Constants {
 		public static final int kIndexerSmartCurrentLimit = 55;
 		public static final double kIndexerMaxSpeed = 1;
 		public static final double kIndexerMinSpeed = 0.1;
+
+		// Shoot Command Constants
+		public static final double kShootTime = 0.5;
+		public static final double kShootSpeed = 0.25;
 	}
 }

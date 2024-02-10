@@ -8,15 +8,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
 
 public class IndexerStopCommand extends Command {
+	private IndexerSubsystem m_indexerSubsystem;
+
 	/** Creates a new IndexerStopCommand. */
-	public IndexerStopCommand() {
-		addRequirements(IndexerSubsystem.get());
+	public IndexerStopCommand(IndexerSubsystem indexerSubsystem) {
+		m_indexerSubsystem = indexerSubsystem;
+		addRequirements(indexerSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		IndexerSubsystem.get().setSpeed(0.0);
+		m_indexerSubsystem.stop();
 	}
 
 	// Returns true when the command should end.

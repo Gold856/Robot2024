@@ -6,37 +6,36 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.IndexerSubsystem;
 
 public class IndexerShootCommand extends Command {
-	private double m_time;
-	private double m_speed;
+	private IndexerSubsystem m_indexerSubsystem;
 	private Timer m_timer;
 
 	/** Creates a new IndexerShootCommand. */
-	public IndexerShootCommand(double timeSeconds, double speed) {
+	public IndexerShootCommand(IndexerSubsystem indexerSubsystem) {
 		m_timer = new Timer();
-		m_time = timeSeconds;
-		m_speed = speed;
-		addRequirements(IndexerSubsystem.get());
+		m_indexerSubsystem = indexerSubsystem;
+		addRequirements(indexerSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
 		m_timer.start();
-		IndexerSubsystem.get().setSpeed(m_speed);
+		m_indexerSubsystem.setSpeed(Constants.IndexerConstants.kShootSpeed);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		IndexerSubsystem.get().stop();
+		m_indexerSubsystem.stop();
 	}
 
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return m_timer.hasElapsed(m_time);
+		return m_timer.hasElapsed(Constants.IndexerConstants.kShootTime);
 	}
 }

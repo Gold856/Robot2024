@@ -7,19 +7,29 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
 
-public class IndexerFowardCommand extends Command {
+public class IndexerCommand extends Command {
 	private final double m_speed;
+	private final IndexerSubsystem m_indexerSubsystem;
+
+	public static IndexerCommand getFowardCommand(IndexerSubsystem indexerSubsystem) {
+		return new IndexerCommand(indexerSubsystem, 1.0);
+	}
+
+	public static IndexerCommand getReverseCommand(IndexerSubsystem indexerSubsystem) {
+		return new IndexerCommand(indexerSubsystem, -1.0);
+	}
 
 	/** Creates a new IndexerFowardCommand. */
-	public IndexerFowardCommand(double speed) {
+	private IndexerCommand(IndexerSubsystem indexerSubsystem, double speed) {
 		m_speed = speed;
-		addRequirements(IndexerSubsystem.get());
+		m_indexerSubsystem = indexerSubsystem;
+		addRequirements(m_indexerSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		IndexerSubsystem.get().setSpeed(m_speed);
+		m_indexerSubsystem.setSpeed(m_speed);
 	}
 
 	// Returns true when the command should end.
