@@ -114,8 +114,8 @@ public final class Constants {
 
 	public static final class ClimbConstants {
 		// TODO fix this NOW
-		public static final int kLeftPort = 90;
-		public static final int kRightPort = 91;
+		public static final int kLeftPort = 11;
+		public static final int kRightPort = 41;
 		public static final boolean kLeftInvert = true;
 		public static final boolean kRightInvert = false;
 		public static final int kSmartCurrentLimit = -1;
@@ -126,5 +126,6 @@ public final class Constants {
 		public static final double kD = 0;
 		public static final double ktolerance = 1;
 		public static final double kSecondaryCurrentLimit = 0;
+		public static final double kClimberDriveSpeed = .1;
 	}
 }

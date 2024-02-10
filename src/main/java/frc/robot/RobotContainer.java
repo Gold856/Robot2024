@@ -8,17 +8,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.Constants.ControllerConstants.DPad;
 import frc.robot.commands.BangBangDriveDistance;
-import frc.robot.commands.ClimberMove;
-import frc.robot.commands.ClimberMove.Operation;
+import frc.robot.commands.ClimberDriveCommand;
 import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
@@ -36,9 +33,10 @@ import frc.robot.subsystems.DriveSubsystem;
  */
 public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
+	private final CommandGenericHID m_operator = new CommandGenericHID(ControllerConstants.kOperatorControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
-	private final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 
 	/**
@@ -47,14 +45,16 @@ public class RobotContainer {
 
 	public RobotContainer() {
 		// Configure the button bindings
-		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
+		m_autoSelector.addOption("Test Steering",
+				SetSteering.getCalibrationCommand(m_driveSubsystem));
 		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2, 0.01));
-		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
+		m_autoSelector.addOption("PID Drive 2 Meters",
+				DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
 		m_autoSelector.addOption("Knock Over Blocks",
 				CommandComposer.getBlocksAuto(m_driveSubsystem));
 
-		SmartDashboard.putData(m_autoSelector);
+		// SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
 	}
 
@@ -71,15 +71,16 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kLeftY),
 				() -> m_controller.getRawAxis(Axis.kLeftX),
 				() -> m_controller.getRawAxis(Axis.kRightX)));
+
+		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
+				() -> m_controller.getRawAxis(Axis.kLeftY),
+				() -> m_controller.getRawAxis(Axis.kRightY),
+				0.1));
+
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
-
-		m_controller.button(DPad.kUp).onTrue(new ClimberMove(m_ClimberSubsystem, Operation.TOP, .1));
-		m_controller.button(DPad.kDown).onTrue(new ClimberMove(m_ClimberSubsystem, Operation.ZERO, .1));
-		m_controller.button(DPad.kRight).onTrue(new ClimberMove(m_ClimberSubsystem, Operation.MID, .1));
-		m_controller.button(DPad.kLeft).onTrue(new ClimberMove(m_ClimberSubsystem, Operation.STOP, 0));
 	}
 
 	public Command getAutonomousCommand() {

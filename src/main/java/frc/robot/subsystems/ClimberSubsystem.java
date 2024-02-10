@@ -93,7 +93,15 @@ public class ClimberSubsystem extends SubsystemBase {
 	}
 
 	public void setSpeed(double speed) {
+		setSpeedLeft(speed);
+		setSpeedRight(speed);
+	}
+
+	public void setSpeedLeft(double speed) {
 		m_leftMotor.set(speed);
+	}
+
+	public void setSpeedRight(double speed) {
 		m_rightMotor.set(speed);
 	}
 
