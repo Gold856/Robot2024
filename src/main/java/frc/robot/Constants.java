@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -110,5 +111,17 @@ public final class Constants {
 		public static final int kDrivePeakCurrentLimit = 65;
 		public static final int kSteerSmartCurrentLimit = 20;
 		public static final int kSteerPeakCurrentLimit = 25;
+	}
+
+	public static final class PneumaticsConstants {
+		public static final int kPneumaticHubID = 50;
+		public static final int kAmpBarForwardChannel = 3;
+		public static final int kAmpBarReverseChannel = 4;
+		public static final int kIntakeForwardChannel = 1;
+		public static final int kIntakeReverseChannel = 2;
+		/** Alias for the solenoid value that makes the intake go down. */
+		public static final Value kIntakeDown = Value.kReverse;
+		/** Alias for the solenoid value that makes the intake go up. */
+		public static final Value kIntakeUp = Value.kForward;
 	}
 }
