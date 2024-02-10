@@ -135,10 +135,29 @@ public class SwerveModule {
 	public void setModuleState(SwerveModuleState state) {
 		// Will allow the module to spin to 180 deg + target angle
 		// but swap drive speed if that is quicker than normal
-		state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getModuleAngle()));
+		// state = SwerveModuleState.optimize(state,
+		// Rotation2d.fromDegrees(getModuleAngle()));
+		state = optimize(state, Rotation2d.fromDegrees(getModuleAngle()));
 		// Set drive and steer speed
 		m_driveMotor.set(state.speedMetersPerSecond);
 		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
+	}
+
+	public static SwerveModuleState optimize(SwerveModuleState desiredState, Rotation2d currentAngle) {
+		var delta = desiredState.angle.minus(currentAngle).getDegrees();
+		if (80 <= delta && delta <= 100)
+			return new SwerveModuleState(
+					desiredState.speedMetersPerSecond,
+					currentAngle.rotateBy(Rotation2d.fromDegrees(90)));
+		if (-100 <= delta && delta <= -80)
+			return new SwerveModuleState(
+					-desiredState.speedMetersPerSecond,
+					currentAngle.rotateBy(Rotation2d.fromDegrees(90)));
+		if (delta > 90.0 || delta <= -90)
+			return new SwerveModuleState(
+					-desiredState.speedMetersPerSecond,
+					desiredState.angle.rotateBy(Rotation2d.fromDegrees(180.0)));
+		return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
 	}
 
 	/**
