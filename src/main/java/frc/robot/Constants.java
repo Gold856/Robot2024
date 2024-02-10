@@ -132,10 +132,11 @@ public final class Constants {
 
 	public static final class IndexerConstants {
 		public static final MotorType kIndexerMotorType = MotorType.kBrushless;
-		public static final int kIndexerPort = 70;
-		public static final int kIndexerPeakCurrentLimit = 55;
-		public static final int kIndexerSmartCurrentLimit = 55;
-		public static final double kIndexerMaxSpeed = 1;
+		public static final int kIndexerPort = 9;
+
+		public static final int kIndexerPeakCurrentLimit = 10;
+		public static final int kIndexerSmartCurrentLimit = 10;
+		public static final double kIndexerMaxSpeed = 0.5;
 		public static final double kIndexerMinSpeed = 0.1;
 
 		// Shoot Command Constants
