@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,6 +14,8 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	private final PneumaticHub m_hub = new PneumaticHub(50);
 	private final DoubleSolenoid m_ampBarSolenoid = m_hub.makeDoubleSolenoid(3, 4);
 	private final DoubleSolenoid m_intakeSolenoid = m_hub.makeDoubleSolenoid(1, 2);
+	private boolean m_ampBarExtended;
+	private boolean m_intakeExtended;
 
 	/** Creates a new PneumaticsSubsystem. */
 	public PneumaticsSubsystem() {
@@ -25,7 +28,13 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	 * @return A command to toggle the intake.
 	 */
 	public Command toggleIntakeCommand() {
-		return runOnce(m_intakeSolenoid::toggle);
+		return runOnce(() -> {
+			if (!m_intakeExtended) {
+				m_intakeSolenoid.set(Value.kForward);
+			} else {
+				m_intakeSolenoid.toggle();
+			}
+		});
 	}
 
 	/**
@@ -34,7 +43,13 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	 * @return A command to toggle the amp bar.
 	 */
 	public Command toggleAmpBarCommand() {
-		return runOnce(m_ampBarSolenoid::toggle);
+		return runOnce(() -> {
+			if (!m_ampBarExtended) {
+				m_ampBarSolenoid.set(Value.kForward);
+			} else {
+				m_ampBarSolenoid.toggle();
+			}
+		});
 	}
 
 	@Override
