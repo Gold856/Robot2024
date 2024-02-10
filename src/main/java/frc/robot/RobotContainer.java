@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -13,12 +17,18 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
-import frc.robot.commands.indexer.IndexWithSensorCommand;
-import frc.robot.commands.indexer.IndexerCommand;
-import frc.robot.commands.indexer.IndexerStopCommand;
+import frc.robot.Constants.ControllerConstants.Axis;
+import frc.robot.Constants.ControllerConstants.Button;
+import frc.robot.commands.drive.BangBangDriveDistance;
+import frc.robot.commands.drive.DriveCommand;
+import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.PIDTurnCommand;
+import frc.robot.commands.drive.SetSteering;
+
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
+import frc.robot.subsystems.PoseEstimationSubsystemAdvanced;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -37,6 +47,7 @@ public class RobotContainer {
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
+	private final PoseEstimationSubsystemAdvanced m_poseEstimationSubsystem = new PoseEstimationSubsystemAdvanced();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -59,6 +70,46 @@ public class RobotContainer {
 		 */
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
+
+		m_poseEstimationSubsystem.addPoseSupplier("BotPose@Odometry",
+				() -> m_driveSubsystem.getPose());
+	}
+
+	static class Pose extends Pose2d {
+
+		Pose(double x, double y, double yawInDegrees) {
+			super(x, y, Rotation2d.fromDegrees(yawInDegrees));
+		}
+
+	};
+
+	static class DriveCommandSample extends DriveCommand { // more code for debugging purposes
+
+		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
+
+		public DriveCommandSample(DriveSubsystem driveSubsystem, Pose2d targetPose, double distanceTolerance,
+				double angleTolerance) {
+			super(driveSubsystem, targetPose, distanceTolerance, angleTolerance);
+		}
+
+		@Override
+		public void recordPose(String entryName, Pose2d value) {
+			if (value == null)
+				table.getEntry(entryName).setDoubleArray(new double[0]);
+			else
+				table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
+						value.getY(), value.getRotation().getDegrees()));
+		}
+
+		@Override
+		public void recordString(String entryName, String value) {
+			table.getEntry(entryName).setString(value);
+		}
+
+		static double[] toPose2DAdvantageScope(double x, double y, double yawInDegrees) {
+			return new double[] { x + 8.27, y + 4.1, yawInDegrees * Math.PI / 180 };
+		}
+
 	}
 
 	/**
@@ -69,47 +120,53 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 
-	// new Trigger(() -> DriverStation.getMatchTime() >= 20)
-	//
-	// .onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
-	// m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-	// () -> m_driverController.getRawAxis(Axis.kLeftY),
-	// () -> m_driverController.getRawAxis(Axis.kLeftX),
-	// () -> m_driverController.getRawAxis(Axis.kRightTrigger),
-	// () -> m_driverController.getRawAxis(Axis.kLeftTrigger)
-	// ));
-	// m_driverController.button(Constants.Button.kCircle).onTrue(m_driveSubsystem.
-	// resetHeadingCommand());
-	// m_driverController.button(Constants.Button.kTriangle).onTrue(m_driveSubsystem.
-	// alignModulesToZeroComamnd());
-	// m_driverController.button(Constants.Button.kSquare).onTrue(m_driveSubsystem.
-	// resetEncodersCommand());
-	// m_driverController.button(Constants.Button.kX).onTrue(new WaitCommand(0.2) {
-	// @Override
-	// public void initialize() {
-	// super.initialize();
-	// m_driveSubsystem.setModuleStates(0.1, 0, 0, false);
-	// }
-	// @Override
-	// public void execute() {
-	// super.execute();
-	// m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
-	// }
-	// @Override
-	// public void end(boolean b) {
-	// super.end(b);
-	// m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
-	// }
-	// });
-	// // Indexer Button Mappings
-	// m_operatorController.button(Button.kSquare).onTrue(new
-	// IndexerFowardCommand(0.5)); // TODO add constants
-	// m_operatorController.button(Button.kCircle).onTrue(new
-	// IndexerReverseCommand(0.5));
-	// m_operatorController.button(Button.kTrackpad).onTrue(new
-	// IndexerStopCommand());
-	// m_operatorController.button(Button.kRightBumper).onTrue(new
-	// IndexerShootCommand(.5, .5));
+
+		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_driverController.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
+		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		Command[] samples = { new WaitCommand(0.2) {
+			@Override
+			public void initialize() {
+				super.initialize();
+				m_driveSubsystem.setModuleStates(0.1, 0, 0, false);
+			}
+
+			@Override
+			public void execute() {
+				super.execute();
+				// m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
+			}
+
+			@Override
+			public void end(boolean b) {
+				super.end(b);
+				m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
+			}
+		}, new DriveCommandSample(m_driveSubsystem, new Pose(1, 0, 0), 0.05, 1)
+				.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+						1)),
+				new DriveCommandSample(m_driveSubsystem, new Pose(0, 1, 0), 0.05, 1)
+						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+								1)),
+				new DriveCommandSample(m_driveSubsystem, new Pose(1, 1, 0), 0.05, 1)
+						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+								1)),
+				new DriveCommandSample(m_driveSubsystem, new Pose(1, 1, 45), 0.05, 1)
+						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+								1)) };
+		m_driverController.button(Button.kX).whileTrue(samples[1]);
+
+		// // Indexer Button Mappings
+		// m_operatorController.button(Button.kSquare).onTrue(new
+		// IndexerFowardCommand(0.5)); // TODO add constants
+		// m_operatorController.button(Button.kCircle).onTrue(new
+		// IndexerReverseCommand(0.5));
+		// m_operatorController.button(Button.kTrackpad).onTrue(new
+		// IndexerStopCommand());
+		// m_operatorController.button(Button.kRightBumper).onTrue(new
+		// IndexerShootCommand(.5, .5));
+
+	}
 
 	public Command getAutonomousCommand() {
 		return new SequentialCommandGroup(
