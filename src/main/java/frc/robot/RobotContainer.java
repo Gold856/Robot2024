@@ -78,7 +78,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		Command[] samples = {
-				new DriveCommandAdvanced(new Pose(1.5, 0, 0), 0.05, 1)
+				new DriveCommandAdvanced(new Pose(1.0, 0, 0), 0.05, 1)
 						.andThen(new DriveCommandAdvanced(new Pose(0, 0, 0), 0.05, 1)),
 				new DriveCommandAdvanced(new Pose(0, 0, 0), 0.05, 1)
 						.andThen(new DriveCommandAdvanced(new Pose(1, 1.0, 0), 0.05, 1))

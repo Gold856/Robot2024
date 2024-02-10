@@ -51,7 +51,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 		Command[] samples = { new TurnCommand(turnSupplier, 2)
 				.andThen(new DriveDistanceCommand(driveSupplier, 0.1)),
 				DriveCommand.createCommand(0.05, 1,
-						new Pose(1.5, 0, 0),
+						new Pose(1.0, 0, 0),
 						new Pose(0, 0, 0)),
 				DriveCommand.createCommand(0.05, 1,
 						new Pose(0, 0, 0),
@@ -67,7 +67,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 						new Pose(6.44, 3.7, 90),
 						new Pose(4.2, 1.5, -120),
 						new Pose(6.85, 3.0, 0)) };
-		m_controller.button(Button.kX).whileTrue(samples[1]);
+		m_controller.button(Button.kX).whileTrue(samples[0]);
 		m_driveSubsystem.setDefaultCommand(new DefaultDriveCommand(
 				() -> -m_controller.getRawAxis(ControllerConstants.Axis.kLeftY),
 				() -> m_controller.getRawAxis(ControllerConstants.Axis.kLeftTrigger),
