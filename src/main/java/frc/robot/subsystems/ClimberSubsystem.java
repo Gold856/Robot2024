@@ -10,13 +10,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
 public class ClimberSubsystem extends SubsystemBase {
-
-	private static ClimberSubsystem s_subsystem;
 
 	private final CANSparkMax m_leftMotor = new CANSparkMax(ClimbConstants.kLeftPort, MotorType.kBrushless);
 	private final CANSparkMax m_rightMotor = new CANSparkMax(ClimbConstants.kRightPort, MotorType.kBrushless);
@@ -27,23 +24,25 @@ public class ClimberSubsystem extends SubsystemBase {
 	private final RelativeEncoder m_rightEncoder = m_rightMotor.getEncoder();
 	private final SparkPIDController m_rightPidController = m_rightMotor.getPIDController();
 
-	private double m_setPosition = 0;
+	private double m_setPositionLeft = 0;
+	private double m_setPositionRight = 0;
 
 	/** Creates a new ClimberSubsystem. */
 	public ClimberSubsystem() {
-		s_subsystem = this;
 
 		m_leftMotor.restoreFactoryDefaults();
 		m_leftMotor.setInverted(ClimbConstants.kLeftInvert);
 		m_leftMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 		m_leftMotor.enableVoltageCompensation(12);
 		m_leftMotor.setSmartCurrentLimit(ClimbConstants.kSmartCurrentLimit);
+		m_leftMotor.setSecondaryCurrentLimit(ClimbConstants.kSecondaryCurrentLimit);
 
 		m_rightMotor.restoreFactoryDefaults();
 		m_rightMotor.setInverted(ClimbConstants.kRightInvert);
 		m_rightMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
 		m_rightMotor.enableVoltageCompensation(12);
 		m_rightMotor.setSmartCurrentLimit(ClimbConstants.kSmartCurrentLimit);
+		m_rightMotor.setSecondaryCurrentLimit(ClimbConstants.kSecondaryCurrentLimit);
 
 		m_leftPidController.setP(ClimbConstants.kP);
 		m_leftPidController.setI(ClimbConstants.kI);
@@ -73,23 +72,24 @@ public class ClimberSubsystem extends SubsystemBase {
 
 	// returns true if the motor is at the setpoint
 	public boolean atleftSetpoint() {
-		return (Math.abs(m_setPosition - getleftPosition()) <= ClimbConstants.ktolerance);
+		return (Math.abs(m_setPositionLeft - getleftPosition()) <= ClimbConstants.ktolerance);
 	}
 
 	public boolean atrightSetpoint() {
-		return (Math.abs(m_setPosition - getrightPosition()) <= ClimbConstants.ktolerance);
+		return (Math.abs(m_setPositionRight - getrightPosition()) <= ClimbConstants.ktolerance);
 	}
 
-	public void setPosition(double position) {
-		m_setPosition = position;
-		m_leftPidController.setReference(position, ControlType.kPosition, ClimbConstants.kSlotID);
-		m_rightPidController.setReference(position, ControlType.kPosition, ClimbConstants.kSlotID);
+	public void setPosition(double positionLeft, double positionRight) {
+		m_setPositionLeft = positionLeft;
+		m_setPositionRight = positionRight;
+		m_leftPidController.setReference(positionLeft, ControlType.kPosition);
+		m_rightPidController.setReference(positionRight, ControlType.kPosition);
 	}
 
 	public void resetEncoder() {
 		m_leftEncoder.setPosition(0);
 		m_rightEncoder.setPosition(0);
-		setPosition(0);
+		setPosition(0, 0);
 	}
 
 	public void setSpeed(double speed) {
@@ -97,11 +97,7 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_rightMotor.set(speed);
 	}
 
-	public static Subsystem get() {
-		return s_subsystem;
+	public double getOutputCurrent() {
+		return Math.max(Math.abs(m_leftMotor.getOutputCurrent()), Math.abs(m_rightMotor.getOutputCurrent()));
 	}
-
-	// public double getOutputCurrent() {
-	// return m_leftMotor.getOutputCurrent();
-	// }
 }

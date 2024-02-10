@@ -25,7 +25,7 @@ public class ClimberMove extends Command {
 		m_climberSubsystem = subsystem;
 		m_operation = operation;
 		m_speed = speed;
-		addRequirements(ClimberSubsystem.get());
+		addRequirements(m_climberSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
@@ -38,11 +38,11 @@ public class ClimberMove extends Command {
 	@Override
 	public void execute() {
 		if (m_operation == Operation.ZERO) {
-			m_climberSubsystem.setPosition(0);
+			m_climberSubsystem.setPosition(0, 0);
 		} else if (m_operation == Operation.MID) {
-			m_climberSubsystem.setPosition(1);
+			m_climberSubsystem.setPosition(1, 1);
 		} else if (m_operation == Operation.TOP) {
-			m_climberSubsystem.setPosition(2);
+			m_climberSubsystem.setPosition(2, 2);
 		}
 	}
 
@@ -55,11 +55,13 @@ public class ClimberMove extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		if (m_operation == Operation.ZERO || m_operation == Operation.MID || m_operation == Operation.TOP) {
-			return m_climberSubsystem.atleftSetpoint() && m_climberSubsystem.atrightSetpoint();
-		} else if (m_operation == Operation.STOP) {
-			return true;
+		switch (m_operation) {
+			case ZERO, MID, TOP:
+				return m_climberSubsystem.atleftSetpoint() && m_climberSubsystem.atrightSetpoint();
+			case STOP:
+				return true;
+			default:
+				return true;
 		}
-		return false;
 	}
 }
