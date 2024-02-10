@@ -158,6 +158,9 @@ public class DriveCommand extends Command {
 		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
 		speedX = -speedX;
 		speedY = -speedY;
+		speedX = 0;
+		speedY = 0;
+		speedYaw = -speedYaw;
 		m_driveSubsystem.setModuleStates(speedX,
 				speedY, speedYaw, true);
 		recordPose("BotPose@Odometry", pose);
@@ -193,7 +196,7 @@ public class DriveCommand extends Command {
 	 */
 	@Override
 	public boolean isFinished() {
-		return m_controllerX.atGoal();// && m_controllerY.atGoal() && m_controllerYaw.atGoal();
+		return /* m_controllerX.atGoal() && m_controllerY.atGoal() && */ m_controllerYaw.atGoal();
 	}
 
 	/**

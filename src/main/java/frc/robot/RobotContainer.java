@@ -142,7 +142,7 @@ public class RobotContainer {
 				super.end(b);
 				m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
 			}
-		}, new DriveCommandSample(m_driveSubsystem, new Pose(1, 0, 0), 0.05, 1)
+		}, new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 30), 0.05, 1)
 				.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
 						1)),
 				new DriveCommandSample(m_driveSubsystem, new Pose(0, 1, 0), 0.05, 1)
