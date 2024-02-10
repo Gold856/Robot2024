@@ -22,6 +22,7 @@ import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FlywheelSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,6 +36,7 @@ public class RobotContainer {
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
+	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -42,10 +44,12 @@ public class RobotContainer {
 
 	public RobotContainer() {
 		// Configure the button bindings
-		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
+		m_autoSelector.addOption("Test Steering",
+				SetSteering.getCalibrationCommand(m_driveSubsystem));
 		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2, 0.01));
-		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
+		m_autoSelector.addOption("PID Drive 2 Meters",
+				DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
 		m_autoSelector.addOption("Knock Over Blocks",
 				CommandComposer.getBlocksAuto(m_driveSubsystem));
 
@@ -68,6 +72,9 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kRightX)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
+		// m_controller.button(Button.kTriangle)
+		// .onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
+		// 200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}

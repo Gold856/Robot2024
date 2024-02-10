@@ -18,7 +18,8 @@ public class FlywheelCommand extends Command {
 	}
 
 	/** Creates a new FlywheelCommand. */
-	public FlywheelCommand(Operation operation, double flywheelParam) {
+	public FlywheelCommand(FlywheelSubsystem flywheelSubsytem, Operation operation, double flywheelParam) {
+		m_flywheelSubsystem = flywheelSubsytem;
 		m_flywheelParam = flywheelParam;
 		m_operation = operation;
 		// Use addRequirements() here to declare subsystem dependencies.
