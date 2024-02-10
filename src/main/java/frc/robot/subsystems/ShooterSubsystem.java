@@ -4,32 +4,25 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-// import java.time.Duration;
-// import java.time.Instant;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 	private final CANSparkMax m_neoShooterMaster = new CANSparkMax(ShooterConstants.kShooterMasterPort,
-			MotorType.kBrushless);
+			MotorType.kBrushless); // TODO make 550s
 	private final CANSparkMax m_neoShooterFollower = new CANSparkMax(ShooterConstants.kShooterFollowerPort,
 			MotorType.kBrushless);
 	private final SparkPIDController m_neoController = m_neoShooterMaster.getPIDController();
 	private final RelativeEncoder m_neoEncoderMaster = m_neoShooterMaster.getEncoder();
 	private double m_setVelocity;
-	private double m_speakerHeight = Constants.ShooterConstants.speakerHeight;
 	private double m_kShooterTolerance = Constants.ShooterConstants.kShooterTolerance;
-	private double m_actuatorHeightSetpoint = 0;
+	private double m_actuatorHeightSetpoint;
+	private double m_conversionFactor;
 
 	// private Instant m_startTime;
 	/**
@@ -54,10 +47,10 @@ public class ShooterSubsystem extends SubsystemBase {
 		m_neoShooterFollower.setSoftLimit(SoftLimitDirection.kForward, ShooterConstants.kLeadScrewLimit);
 		m_neoShooterFollower.follow(m_neoShooterMaster, ShooterConstants.kFollowerOppose);
 
-		m_neoEncoderMaster.setPositionConversionFactor(ShooterConstants.kGearRatio);
-		m_neoEncoderMaster.setVelocityConversionFactor(ShooterConstants.kGearRatio);
-		float leadScrewSoftLimit = (float) (ShooterConstants.kLeadScrewLimit
-				* m_neoEncoderMaster.getPositionConversionFactor());
+		m_neoEncoderMaster.setPositionConversionFactor(1 / ShooterConstants.kGearRatio);
+		m_neoEncoderMaster.setVelocityConversionFactor(1 / ShooterConstants.kGearRatio);
+		m_conversionFactor = m_neoEncoderMaster.getPositionConversionFactor();
+		float leadScrewSoftLimit = (float) (ShooterConstants.kLeadScrewLimit * m_conversionFactor);
 		m_neoShooterMaster.setSoftLimit(SoftLimitDirection.kForward, leadScrewSoftLimit);
 
 		m_neoController.setP(ShooterConstants.kP);
@@ -69,6 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
 	}
 
 	public void periodic() {
+
 	}
 
 	/**
@@ -85,52 +79,29 @@ public class ShooterSubsystem extends SubsystemBase {
 	 */
 	public void setVelocity(double velocity) {
 		m_setVelocity = velocity;
-		m_neoController.setReference(m_setVelocity, ControlType.kVelocity, 0);
+		m_neoController.setReference(m_setVelocity, ControlType.kVelocity);
 	}
 
 	public void stopMotors() {
 		setVelocity(0);
 	}
 
-	public double calculateVelocity(double distanceToSpeaker) {
-		double vI = (distanceToSpeaker * 9.8)
-				/ (Math.cos(calculateAngle(distanceToSpeaker)) * (Math.sin(calculateAngle(distanceToSpeaker))));
-		return vI;
-	}
-
-	public void setVelocityForNegatives() {
-		m_setVelocity = -5;
-	}
-
-	public double calculateAngle(double distanceToSpeaker) {
-		double angle = Math.atan2(m_speakerHeight, distanceToSpeaker);
-		return angle;
-	}
-
 	public double getActuatorHeight() {
-		double actuatorHeight = 0; // m_encoder.getPosition();
-		return actuatorHeight; // TODO fix this
+		return m_neoEncoderMaster.getPosition(); // m_neoEncoderMaster.getPosition();
+
 	}
 
 	public void setActuatorHeight(double actuatorHeightSetpoint) {
-		setVelocity(1500);
-		// m_startTime = Instant.now();
-		m_setPosition = position;
-		m_pidController.setReference(position, CANSparkMax.ControlType.kPosition, HoodConstants.kSlotID);
 		m_actuatorHeightSetpoint = actuatorHeightSetpoint;
+		m_neoController.setReference(actuatorHeightSetpoint, CANSparkMax.ControlType.kPosition, 0);
+	}
+
+	public void adjustActuatorSetpoint(double adjustAmount) {
+		m_actuatorHeightSetpoint += adjustAmount;
+		setActuatorHeight(m_actuatorHeightSetpoint);
 	}
 
 	public boolean atActuatorSetpoint() {
 		return (Math.abs(m_actuatorHeightSetpoint - getActuatorHeight()) <= m_kShooterTolerance);
-	}
-
-	public void configureShuffleboard(boolean inCompetitionMode) {
-		if (!inCompetitionMode) {
-			ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Flywheel");
-			shuffleboardTab.addNumber("Flywheel Velocity", () -> getVelocity()).withSize(4, 2).withPosition(0, 0)
-					.withWidget(BuiltInWidgets.kGraph);
-			shuffleboardTab.addBoolean("At setpoint", () -> atActuatorSetpoint()).withSize(1, 1).withPosition(0, 2)
-					.withWidget(BuiltInWidgets.kBooleanBox);
-		}
 	}
 }

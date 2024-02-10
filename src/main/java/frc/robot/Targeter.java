@@ -1,9 +1,5 @@
 package frc.robot;
 
-import java.lang.Math;
-import frc.robot.Constants;
-import frc.robot.Constants.FlywheelConstants;
-import frc.robot.Constants.ShooterConstants;
 // imports
 
 public interface Targeter {

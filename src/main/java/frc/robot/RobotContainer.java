@@ -9,14 +9,19 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
+import frc.robot.Targeter.PhysicsAndMathTargeter;
+import frc.robot.commands.AimCommand;
+import frc.robot.commands.AimCommand.Operation;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -29,6 +34,8 @@ public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
+	private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
+	private final PhysicsAndMathTargeter m_targeter = new PhysicsAndMathTargeter();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 
 	/**
@@ -55,7 +62,12 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kLeftX),
 				() -> m_controller.getRawAxis(Axis.kRightX)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
+		m_controller.button(Button.kTriangle).onTrue(new SequentialCommandGroup(
+				new AimCommand(m_shooterSubsystem, m_targeter, Operation.CMD_UP_ADJUST),
+				new AimCommand(m_shooterSubsystem, m_targeter, Operation.CMD_SETTLE)));
+		m_controller.button(Button.kX).onTrue(new SequentialCommandGroup(
+				new AimCommand(m_shooterSubsystem, m_targeter, Operation.CMD_DOWN_ADJUST),
+				new AimCommand(m_shooterSubsystem, m_targeter, Operation.CMD_SETTLE)));
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 	}
 

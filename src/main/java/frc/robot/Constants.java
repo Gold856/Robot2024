@@ -132,26 +132,28 @@ public final class Constants {
 	}
 
 	public static final class ShooterConstants {
-		public static final int kShooterMasterPort = 57;
-		public static final int kShooterFollowerPort = 58;
+		public static final int kShooterMasterPort = 6; // 57
+		public static final int kShooterFollowerPort = 7; // 58
+		// public static final int kShooterEncoderPort = 59;
 		public static final boolean kMasterInvert = false;
 		public static final boolean kFollowerOppose = true;
-		public static final int kSmartCurrentLimit = 90;
-		public static final double kPeakCurrentLimit = 100;
+		public static final int kSmartCurrentLimit = 55; // 90
+		public static final double kPeakCurrentLimit = 65; // 100
 		public static final float kLeadScrewLimit = 5.0f; // TODO set lead screw limit from max positiob
 		public static final int kPeakCurrentDurationMillis = 100;
-		public static final double kP = 0.000_1; // TODO tune PID values
-		public static final double kI = 0;
+		public static final double kP = 0.06000; // 0.000_1; // TODO tune PID values
+		public static final double kI = 0.000;
 		public static final double kD = 0;
-		public static final double kIz = 0.0;
-		public static final double kFF = .000_1050;
+		public static final double kIz = 5; // 0.0;
+		public static final double kFF = 0.0; // .000_1050;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = 0;
-		public static final double kGearRatio = 3;
+		public static final double kGearRatio = 1; // 1 for aster testing or 3;
 		public static final double speakerHeight = 2.032145; // TODO change to this height - robot height
 		public static final double shooterLength = .25; // TODO change to deltaX between edge of robot and shooter axis
 														// on robot
 		public static final double kDefaultActuatorHeight = 0; // TODO fix actuator height
 		public static final double kShooterTolerance = 0.1; // TODO experiment
+		public static final double kAdjustAmount = 0.2; // Adjust with testing
 	}
 }

@@ -1,30 +1,35 @@
-package frc.robot.commands;
-
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+package frc.robot.commands;
+
+import static frc.robot.Constants.ShooterConstants.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
-import frc.robot.Targeter;
+import frc.robot.Targeter.PhysicsAndMathTargeter;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class AimCommand extends Command {
 	private Operation m_operation;
 	private double m_distanceMeters;
 	private ShooterSubsystem m_shooterSubsystem;
-	private Targeter m_targeter;
-	private double m_kDefaultActuatorHeight = ShooterConstants.kDefaultActuatorHeight;
+	private PhysicsAndMathTargeter m_targeter;
 
 	public enum Operation {
-		CMD_UP,
-		CMD_DOWN,
-		CMD_SETTLE,
-		CMD_STOP
+		CMD_SET_SHOOT_POS, // Calculate Angle at current position (changes)
+		CMD_SET_PRESET_DEFAULT, // For checkout, set shooter down (static)
+		CMD_PRESET_AMP,
+		CMD_HOLD,
+		CMD_PRESET_SUBWOOFER,
+		CMD_DOWN_ADJUST, // Fine tune down
+		CMD_UP_ADJUST, // Fine tune up
+		CMD_SETTLE, // Paired with above in Robot Container
+		CMD_STOP // Currently not in use (??)
 	}
 
 	/** Creates a new AimCommand. */
-	public AimCommand(ShooterSubsystem subsystem, Targeter targeter, Operation operation) {
+	public AimCommand(ShooterSubsystem subsystem, PhysicsAndMathTargeter targeter, Operation operation) {
 		m_operation = operation;
 		// m_distanceMeters = SimpleVision.getDistance(); //TODO fix vision
 		m_shooterSubsystem = subsystem;
@@ -36,11 +41,25 @@ public class AimCommand extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		if (m_operation == Operation.CMD_UP) {
-			double actuatorHeightSetpoint = m_targeter.calcActuatorHeightFromAngle(m_distanceMeters);
-			m_shooterSubsystem.setActuatorHeight(actuatorHeightSetpoint);
-		} else if (m_operation == Operation.CMD_DOWN) {
-			m_shooterSubsystem.setActuatorHeight(m_kDefaultActuatorHeight);
+		switch (m_operation) {
+			case CMD_SET_SHOOT_POS:
+				double actuatorHeightSetpoint = m_targeter.calcActuatorHeightFromDistance(m_distanceMeters);
+				m_shooterSubsystem.setActuatorHeight(actuatorHeightSetpoint);
+				break;
+			case CMD_SET_PRESET_DEFAULT:
+				m_shooterSubsystem.setActuatorHeight(kDefaultActuatorHeight);
+				break;
+			case CMD_UP_ADJUST:
+				m_shooterSubsystem.adjustActuatorSetpoint(kAdjustAmount);
+				break;
+			case CMD_DOWN_ADJUST:
+				m_shooterSubsystem.adjustActuatorSetpoint(-kAdjustAmount);
+				break;
+			case CMD_HOLD:
+				m_shooterSubsystem.setActuatorHeight(m_shooterSubsystem.getActuatorHeight());
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -53,7 +72,9 @@ public class AimCommand extends Command {
 	@Override
 	public boolean isFinished() {
 
-		if (m_operation == Operation.CMD_UP) {
+		if (m_operation == Operation.CMD_SET_SHOOT_POS || m_operation == Operation.CMD_SET_PRESET_DEFAULT) {
+			return true;
+		} else if (m_operation == Operation.CMD_UP_ADJUST || m_operation == Operation.CMD_DOWN_ADJUST) {
 			return true;
 		} else if (m_operation == Operation.CMD_SETTLE) {
 			return m_shooterSubsystem.atActuatorSetpoint();
@@ -66,7 +87,10 @@ public class AimCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		m_shooterSubsystem.stopMotors();
+		if (m_operation == Operation.CMD_STOP) {
+			m_shooterSubsystem.stopMotors();
+		}
+		// m_shooterSubsystem.stopMotors();
 	}
 
 }
