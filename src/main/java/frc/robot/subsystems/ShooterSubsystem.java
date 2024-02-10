@@ -15,21 +15,21 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.FlywheelConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-	private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(FlywheelConstants.kMasterPort,
+	private final CANSparkMax m_neoShooterMaster = new CANSparkMax(ShooterConstants.kShooterMasterPort,
 			MotorType.kBrushless);
-	private final CANSparkMax m_neoFlywheelFollower = new CANSparkMax(FlywheelConstants.kFollowerPort,
+	private final CANSparkMax m_neoShooterFollower = new CANSparkMax(ShooterConstants.kShooterFollowerPort,
 			MotorType.kBrushless);
-	private final SparkPIDController m_neoController = m_neoFlywheelMaster.getPIDController();
-	private final RelativeEncoder m_neoEncoderMaster = m_neoFlywheelMaster.getEncoder();
+	private final SparkPIDController m_neoController = m_neoShooterMaster.getPIDController();
+	private final RelativeEncoder m_neoEncoderMaster = m_neoShooterMaster.getEncoder();
 	private double m_setVelocity;
 	private double m_speakerHeight = Constants.ShooterConstants.speakerHeight;
-	private double m_shooterLength = Constants.ShooterConstants.shooterLength;
+	private double m_kShooterTolerance = Constants.ShooterConstants.kShooterTolerance;
+	private double m_actuatorHeightSetpoint = 0;
 
 	// private Instant m_startTime;
 	/**
@@ -37,70 +37,38 @@ public class ShooterSubsystem extends SubsystemBase {
 	 */
 	public ShooterSubsystem() {
 		// Initialize Motors
-		m_neoFlywheelMaster.restoreFactoryDefaults();
-		m_neoFlywheelMaster.setInverted(FlywheelConstants.kMasterInvert);
-		m_neoFlywheelMaster.setIdleMode(IdleMode.kCoast);
-		m_neoFlywheelMaster.enableVoltageCompensation(12);
-		m_neoFlywheelMaster.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
-		m_neoFlywheelMaster.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
-				FlywheelConstants.kPeakCurrentDurationMillis);
-		m_neoFlywheelMaster.setSoftLimit(SoftLimitDirection.kForward, 0.0f);
+		m_neoShooterMaster.restoreFactoryDefaults();
+		m_neoShooterMaster.setInverted(ShooterConstants.kMasterInvert);
+		m_neoShooterMaster.setIdleMode(IdleMode.kCoast);
+		m_neoShooterMaster.enableVoltageCompensation(12);
+		m_neoShooterMaster.setSmartCurrentLimit(ShooterConstants.kSmartCurrentLimit);
+		m_neoShooterMaster.setSecondaryCurrentLimit(ShooterConstants.kPeakCurrentLimit,
+				ShooterConstants.kPeakCurrentDurationMillis);
 
-		m_neoFlywheelFollower.restoreFactoryDefaults();
-		m_neoFlywheelFollower.setIdleMode(IdleMode.kCoast);
-		m_neoFlywheelFollower.enableVoltageCompensation(12);
-		m_neoFlywheelFollower.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
-		m_neoFlywheelFollower.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
-				FlywheelConstants.kPeakCurrentDurationMillis);
-		m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerOppose);
+		m_neoShooterFollower.restoreFactoryDefaults();
+		m_neoShooterFollower.setIdleMode(IdleMode.kCoast);
+		m_neoShooterFollower.enableVoltageCompensation(12);
+		m_neoShooterFollower.setSmartCurrentLimit(ShooterConstants.kSmartCurrentLimit);
+		m_neoShooterFollower.setSecondaryCurrentLimit(ShooterConstants.kPeakCurrentLimit,
+				ShooterConstants.kPeakCurrentDurationMillis);
+		m_neoShooterFollower.setSoftLimit(SoftLimitDirection.kForward, ShooterConstants.kLeadScrewLimit);
+		m_neoShooterFollower.follow(m_neoShooterMaster, ShooterConstants.kFollowerOppose);
 
-		m_neoEncoderMaster.setPositionConversionFactor(1 / FlywheelConstants.kGearRatio);
-		m_neoEncoderMaster.setVelocityConversionFactor(1 / FlywheelConstants.kGearRatio);
+		m_neoEncoderMaster.setPositionConversionFactor(ShooterConstants.kGearRatio);
+		m_neoEncoderMaster.setVelocityConversionFactor(ShooterConstants.kGearRatio);
+		float leadScrewSoftLimit = (float) (ShooterConstants.kLeadScrewLimit
+				* m_neoEncoderMaster.getPositionConversionFactor());
+		m_neoShooterMaster.setSoftLimit(SoftLimitDirection.kForward, leadScrewSoftLimit);
 
-		m_neoController.setP(FlywheelConstants.kP);
-		m_neoController.setI(FlywheelConstants.kI);
-		m_neoController.setD(FlywheelConstants.kD);
-		m_neoController.setIZone(FlywheelConstants.kIz);
-		m_neoController.setFF(FlywheelConstants.kFF);
-		m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
+		m_neoController.setP(ShooterConstants.kP);
+		m_neoController.setI(ShooterConstants.kI);
+		m_neoController.setD(ShooterConstants.kD);
+		m_neoController.setIZone(ShooterConstants.kIz);
+		m_neoController.setFF(ShooterConstants.kFF);
+		m_neoController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 	}
 
 	public void periodic() {
-		SmartDashboard.putBoolean("Flywheel at Setpoint", atSetpoint());
-		// SmartDashboard.putNumber("Flywheel Velocity", getVelocity());
-		// SmartDashboard.putNumber("Flywheel Setpoint", m_setVelocity);
-		// essentially the end method of the flywheel velocity setpoint mode
-		if (m_setVelocity == 0 && Math.abs(m_neoEncoderMaster.getVelocity()) > 0.05) {
-			m_neoFlywheelMaster.stopMotor();
-		} else {
-			// m_neoController.setReference(m_setVelocity, ControlType.kVelocity, 0);
-			// m_neoFlywheelMaster.set(neoBangBangController.calculate(m_neoEncoderMaster.getVelocity(),
-			// m_setVelocity));
-		}
-
-	}
-
-	public void setSpeed(double speed) {
-		m_neoFlywheelMaster.set(speed);
-	}
-
-	public void incrementSpeed() {
-		setVelocity(m_setVelocity + 50);
-	}
-
-	public void decrementSpeed() {
-		setVelocity(m_setVelocity - 50);
-	}
-
-	public void aimUp() {
-
-	}
-
-	/**
-	 * @return Current setpoint.
-	 */
-	public double getSetpoint() {
-		return m_setVelocity;
 	}
 
 	/**
@@ -111,33 +79,27 @@ public class ShooterSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Sets target speed for flywheel.
+	 * Sets target speed for shooter.
 	 * 
 	 * @param velocity Target velocity (rpm).
 	 */
 	public void setVelocity(double velocity) {
-		// System.out.println("VELOCITY:" + velocity);
-		// m_startTime = Instant.now();
 		m_setVelocity = velocity;
 		m_neoController.setReference(m_setVelocity, ControlType.kVelocity, 0);
 	}
 
-	// public double calcActuatorHeightFromDistance(double distanceToSpeaker) { //
-	// actuatorHeight is height of linear
-	// // actuator
-	// double actuatorHeight = (m_shooterLength * m_speakerHeight) /
-	// distanceToSpeaker;
-	// return actuatorHeight;
-	// }
+	public void stopMotors() {
+		setVelocity(0);
+	}
 
-	// public double calcActuatorHeightFromAngle(double angle) {
-	// double actuatorHeight = m_shooterLength / (Math.tan(angle));
-	// return actuatorHeight;
-	// }
+	public double calculateVelocity(double distanceToSpeaker) {
+		double vI = (distanceToSpeaker * 9.8)
+				/ (Math.cos(calculateAngle(distanceToSpeaker)) * (Math.sin(calculateAngle(distanceToSpeaker))));
+		return vI;
+	}
 
-	public void setActuatorHeight(double actuatorHeightSetpoint) {
-		// double height = calculateActuatorHeight(distance);
-		// TODO: set small delta y
+	public void setVelocityForNegatives() {
+		m_setVelocity = -5;
 	}
 
 	public double calculateAngle(double distanceToSpeaker) {
@@ -145,22 +107,21 @@ public class ShooterSubsystem extends SubsystemBase {
 		return angle;
 	}
 
-	public double calculateVelocity(double distanceToSpeaker) {
-		double vI = (distanceToSpeaker * 9.8)
-				/ (Math.cos(calculateAngle(distanceToSpeaker)) * (Math.sin(calculateAngle(distanceToSpeaker))));
-		return vI;
-
+	public double getActuatorHeight() {
+		double actuatorHeight = 0; // m_encoder.getPosition();
+		return actuatorHeight; // TODO fix this
 	}
 
-	public void setVelocityForNegatives() {
-		m_setVelocity = -5;
+	public void setActuatorHeight(double actuatorHeightSetpoint) {
+		setVelocity(1500);
+		// m_startTime = Instant.now();
+		m_setPosition = position;
+		m_pidController.setReference(position, CANSparkMax.ControlType.kPosition, HoodConstants.kSlotID);
+		m_actuatorHeightSetpoint = actuatorHeightSetpoint;
 	}
 
-	/**
-	
-	 */
-	public boolean atSetpoint() {
-		return Math.abs(getVelocity() - getSetpoint()) < 50;
+	public boolean atActuatorSetpoint() {
+		return (Math.abs(m_actuatorHeightSetpoint - getActuatorHeight()) <= m_kShooterTolerance);
 	}
 
 	public void configureShuffleboard(boolean inCompetitionMode) {
@@ -168,14 +129,8 @@ public class ShooterSubsystem extends SubsystemBase {
 			ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Flywheel");
 			shuffleboardTab.addNumber("Flywheel Velocity", () -> getVelocity()).withSize(4, 2).withPosition(0, 0)
 					.withWidget(BuiltInWidgets.kGraph);
-			shuffleboardTab.addBoolean("At setpoint", () -> atSetpoint()).withSize(1, 1).withPosition(0, 2)
+			shuffleboardTab.addBoolean("At setpoint", () -> atActuatorSetpoint()).withSize(1, 1).withPosition(0, 2)
 					.withWidget(BuiltInWidgets.kBooleanBox);
-			// shuffleboardTab.addNumber("Current draw", () ->
-			// m_neoFlywheelMaster.getOutputCurrent() +
-			// m_neoFlywheelFollower.getOutputCurrent());
-			// shuffleboardTab.addNumber("Setpoint", () ->
-			// getSetpoint()).withWidget(BuiltInWidgets.kTextView).withSize(1,
-			// 1).withPosition(5, 1);
 		}
 	}
 }
