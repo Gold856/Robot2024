@@ -37,6 +37,7 @@ public class SwerveModule {
 		configMotorController(m_driveMotor, kDriveSmartCurrentLimit, kDrivePeakCurrentLimit);
 		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
+		m_driveMotor.setOpenLoopRampRate(kRampRate);
 	}
 
 	/**
@@ -79,6 +80,15 @@ public class SwerveModule {
 	 */
 	public double getDriveSpeed() {
 		return m_driveMotor.getAppliedOutput();
+	}
+
+	/**
+	 * Gets the current drive motor temperature.
+	 * 
+	 * @return The temperature in degrees celcius
+	 */
+	public double getDriveTemperature() {
+		return m_driveMotor.getMotorTemperature();
 	}
 
 	/**
