@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 // import java.time.Duration;
@@ -12,20 +11,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FlywheelConstants;
 
 public class FlywheelSubsystem extends SubsystemBase {
-
-	private static FlywheelSubsystem s_subsystem;
-
-	public static FlywheelSubsystem get() {
-		return s_subsystem;
-	};
 
 	private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(FlywheelConstants.kMasterPort,
 			MotorType.kBrushless);
@@ -41,7 +31,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 	 */
 	public FlywheelSubsystem() {
 		// Initialize Motors
-		s_subsystem = this;
 		m_neoFlywheelMaster.restoreFactoryDefaults();
 		m_neoFlywheelMaster.setInverted(FlywheelConstants.kMasterInvert);
 		m_neoFlywheelMaster.setIdleMode(IdleMode.kCoast);
@@ -49,7 +38,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 		m_neoFlywheelMaster.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
 		m_neoFlywheelMaster.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
 				FlywheelConstants.kPeakCurrentDurationMillis);
-		m_neoFlywheelMaster.setSoftLimit(SoftLimitDirection.kForward, 0.0f);
 
 		m_neoFlywheelFollower.restoreFactoryDefaults();
 		m_neoFlywheelFollower.setIdleMode(IdleMode.kCoast);
@@ -59,7 +47,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 				FlywheelConstants.kPeakCurrentDurationMillis);
 		m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerOppose);
 
-		m_neoEncoderMaster.setPositionConversionFactor(1 / FlywheelConstants.kGearRatio);
 		m_neoEncoderMaster.setVelocityConversionFactor(1 / FlywheelConstants.kGearRatio);
 
 		m_neoController.setP(FlywheelConstants.kP);
@@ -83,14 +70,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 
 	public void setSpeed(double reverse) {
 		m_neoFlywheelMaster.set(reverse);
-	}
-
-	public void incrementSpeed() {
-		setVelocity(m_setVelocity + 50);
-	}
-
-	public void decrementSpeed() {
-		setVelocity(m_setVelocity - 50);
 	}
 
 	/**
@@ -119,10 +98,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 		m_neoController.setReference(m_setVelocity, ControlType.kVelocity, 0); // TODO change pidSlot?
 	}
 
-	public void setVelocityForNegatives() {
-		m_setVelocity = -5;
-	}
-
 	/**
 	 * @return Whether the flywheel is at its setpoint ABOVE 0
 	 */
@@ -130,13 +105,17 @@ public class FlywheelSubsystem extends SubsystemBase {
 		return Math.abs(getVelocity() - getSetpoint()) < 50;
 	}
 
-	public void configureShuffleboard(boolean inCompetitionMode) {
-		if (!inCompetitionMode) {
-			ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Flywheel");
-			shuffleboardTab.addNumber("Flywheel Velocity", () -> getVelocity()).withSize(4, 2).withPosition(0, 0)
-					.withWidget(BuiltInWidgets.kGraph);
-			shuffleboardTab.addBoolean("At setpoint", () -> atSetpoint()).withSize(1, 1).withPosition(0, 2)
-					.withWidget(BuiltInWidgets.kBooleanBox);
-		}
-	}
+	// public void configureShuffleboard(boolean inCompetitionMode) {
+	// if (!inCompetitionMode) {
+	// ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Flywheel");
+	// shuffleboardTab.addNumber("Flywheel Velocity", () ->
+	// getVelocity()).withSize(4, 2).withPosition(0, 0)
+	// .withWidget(BuiltInWidgets.kGraph);
+	// shuffleboardTab.addBoolean("At setpoint", () -> atSetpoint()).withSize(1,
+	// 1).withPosition(0, 2)
+	// .withWidget(BuiltInWidgets.kBooleanBox);
+	// }
+	// }
+
+	// TODO: Ask drive team on their preference for seeing this value (such as LEDs)
 }

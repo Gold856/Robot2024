@@ -14,8 +14,7 @@ public class FlywheelCommand extends Command {
 
 	public enum Operation {
 		SET_VELOCITY,
-		SETTLE,
-		REVERSE;
+		SETTLE;
 	}
 
 	/** Creates a new FlywheelCommand. */
@@ -23,17 +22,14 @@ public class FlywheelCommand extends Command {
 		m_flywheelParam = flywheelParam;
 		m_operation = operation;
 		// Use addRequirements() here to declare subsystem dependencies.
-		addRequirements(FlywheelSubsystem.get());
+		addRequirements(m_flywheelSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
 		if (m_operation == Operation.SET_VELOCITY) {
-			FlywheelSubsystem.get().setVelocity(m_flywheelParam);
-		} else if (m_operation == Operation.REVERSE) {
-			FlywheelSubsystem.get().setVelocityForNegatives();
-			FlywheelSubsystem.get().setSpeed(-0.5);
+			m_flywheelSubsystem.setVelocity(m_flywheelParam);
 		}
 	}
 
@@ -45,9 +41,6 @@ public class FlywheelCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		if (m_operation == Operation.REVERSE) {
-			FlywheelSubsystem.get().setSpeed(0);
-		}
 	}
 
 	// Returns true when the command should end.
@@ -56,10 +49,9 @@ public class FlywheelCommand extends Command {
 		if (m_operation == Operation.SET_VELOCITY) {
 			return true;
 		} else if (m_operation == Operation.SETTLE) {
-			return FlywheelSubsystem.get().atSetpoint();
-		} else if (m_operation == Operation.REVERSE) {
-			return false;
+			return m_flywheelSubsystem.atSetpoint();
 		}
-		return true; // TODO: This is robot 2022 code, why does it return true??
+		System.out.println("Unreachable code in FlywheelCommand");
+		return false; // unreachable code
 	}
 }
