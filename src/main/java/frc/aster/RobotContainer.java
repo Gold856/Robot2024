@@ -7,7 +7,11 @@ package frc.aster;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.aster.Constants.ControllerConstants;
@@ -17,13 +21,61 @@ import frc.aster.commands.drive.DriveCommand;
 import frc.aster.commands.drive.DriveDistanceCommand;
 import frc.aster.commands.drive.TurnCommand;
 import frc.aster.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem.Pose;
+import frc.robot.subsystems.PoseEstimationSubsystem;
 import frc.robot.subsystems.PoseEstimationSubsystemAdvanced;
 
 public class RobotContainer implements frc.common.RobotContainer {
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final PoseEstimationSubsystemAdvanced m_poseEstimationSubsystem = new PoseEstimationSubsystemAdvanced();
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
+
+	private final LimeLightSubsystem m_limeLightSubsystem = new PoseEstimationSubsystem() {
+		{
+			addPoseSupplier("BotPose@Odometry", () -> m_driveSubsystem.getPose());
+		}
+
+		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
+
+		@Override
+		public void periodic() {
+			super.periodic();
+			var pose = estimatedPose();
+			table.getEntry("Pose Estimated").setString("" + pose);
+			if (pose != null)
+				table.getEntry("BotPose'").setDoubleArray(toPose2DAdvantageScope(pose));
+			pose = m_driveSubsystem.getPose();
+			table.getEntry("BotPose@Odometry").setDoubleArray(toPose2DAdvantageScope(pose));
+			try {
+				pose = new Pose(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]);
+				table.getEntry("BotPose").setDoubleArray(toPose2DAdvantageScope(pose));
+			} catch (Exception e) {
+			}
+		}
+
+		@Override
+		public void recordPose(String entryName, Pose2d value) {
+			if (value != null && !(value instanceof Pose))
+				value = new Pose(value.getX(), value.getY(), value.getRotation().getDegrees());
+			if (value == null)
+				table.getEntry(entryName).setDoubleArray(new double[0]);
+			else
+				table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value));
+		}
+
+		@Override
+		public void recordString(String entryName, String value) {
+			table.getEntry(entryName).setString(value);
+		}
+
+		static double[] toPose2DAdvantageScope(Pose2d pose) {
+			return pose == null ? new double[0]
+					: new double[] { pose.getX() + 8.27, pose.getY() + 4.1,
+							pose.getRotation().getDegrees() * Math.PI / 180 };
+		}
+
+	};
 
 	public RobotContainer() {
 		m_poseEstimationSubsystem.addPoseSupplier("BotPose@Odometry",
@@ -48,8 +100,28 @@ public class RobotContainer implements frc.common.RobotContainer {
 				return 1 - m.values().iterator().next();
 			return 0.0;
 		};
-		Command[] samples = { new TurnCommand(turnSupplier, 2)
-				.andThen(new DriveDistanceCommand(driveSupplier, 0.1)),
+		Command[] samples = {
+				new TurnCommand(30, 3)
+						.andThen(new TurnCommand(-30, 3)),
+				new TurnCommand(new Translation2d(8.308467, 1.442593),
+						m_limeLightSubsystem,
+						3),
+				new TurnCommand("4",
+						m_limeLightSubsystem,
+						3),
+				new TurnCommand(turnSupplier, 2)
+						.andThen(new DriveDistanceCommand(driveSupplier, 0.1)),
+				new DriveDistanceCommand(1, 0.2)
+						.andThen(new DriveDistanceCommand(-1, 0.2)),
+				new DriveDistanceCommand(new Translation2d(8.308467, 1.442593), 1.2,
+						m_limeLightSubsystem, 0.2),
+				new DriveDistanceCommand("4", 1.5,
+						m_limeLightSubsystem, 0.05),
+				new TurnCommand(new Translation2d(8.308467, 1.442593),
+						m_limeLightSubsystem,
+						3).andThen(
+								new DriveDistanceCommand(new Translation2d(8.308467, 1.442593), 1.2,
+										m_limeLightSubsystem, 0.2)),
 				DriveCommand.createCommand(0.05, 1,
 						new Pose(1.0, 0, 0),
 						new Pose(0, 0, 0)),
