@@ -28,16 +28,16 @@ public class SwerveModule implements AutoCloseable {
 	private final RelativeEncoder m_driveEncoder;
 	private final CANSparkMax m_steerMotor;
 
-	public SwerveModule(int CANport, int drivePort, int steerPort, boolean inverted) {
+	public SwerveModule(int CANport, int drivePort, int steerPort) {
 		m_CANCoder = new CANcoder(CANport);
 		m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
 		m_PIDController.setIZone(kIz);
 		m_driveEncoder = m_driveMotor.getEncoder();
-		configMotorController(m_driveMotor);
-		m_driveMotor.setInverted(inverted);
-		configMotorController(m_steerMotor);
+		configMotorController(m_driveMotor, kDriveSmartCurrentLimit, kDrivePeakCurrentLimit);
+		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
+		m_driveMotor.setOpenLoopRampRate(kRampRate);
 	}
 
 	@Override
@@ -59,12 +59,12 @@ public class SwerveModule implements AutoCloseable {
 	 * 
 	 * @param motorController The CANSparkMax to configure
 	 */
-	private void configMotorController(CANSparkMax motorController) {
+	private void configMotorController(CANSparkMax motorController, int smartCurrentLimit, int peakCurrentLimit) {
 		motorController.restoreFactoryDefaults();
 		motorController.setIdleMode(IdleMode.kBrake);
 		motorController.enableVoltageCompensation(12);
-		motorController.setSmartCurrentLimit(kSmartCurrentLimit);
-		motorController.setSecondaryCurrentLimit(kPeakCurrentLimit);
+		motorController.setSmartCurrentLimit(smartCurrentLimit);
+		motorController.setSecondaryCurrentLimit(peakCurrentLimit);
 	}
 
 	/**
@@ -94,6 +94,15 @@ public class SwerveModule implements AutoCloseable {
 	 */
 	public double getDriveSpeed() {
 		return m_driveMotor.getAppliedOutput();
+	}
+
+	/**
+	 * Gets the current drive motor temperature.
+	 * 
+	 * @return The temperature in degrees celcius
+	 */
+	public double getDriveTemperature() {
+		return m_driveMotor.getMotorTemperature();
 	}
 
 	/**
@@ -138,10 +147,6 @@ public class SwerveModule implements AutoCloseable {
 	 * @param state The module state
 	 */
 	public void setModuleState(SwerveModuleState state) {
-		// Will allow the module to spin to 180 deg + target angle
-		// but swap drive speed if that is quicker than normal
-		state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getModuleAngle()));
-		// Set drive and steer speed
 		m_driveMotor.set(state.speedMetersPerSecond);
 		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
 	}

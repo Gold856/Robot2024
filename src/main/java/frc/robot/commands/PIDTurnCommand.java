@@ -44,7 +44,6 @@ public class PIDTurnCommand extends Command {
 	public void execute() {
 		double rot = m_driveSubsystem.getHeading().getDegrees();
 		double speed = m_contoller.calculate(rot);
-
 		m_driveSubsystem.setModuleStates(0, 0, speed, false);
 		SmartDashboard.putNumber("Heading", rot);
 		SmartDashboard.putNumber("Target", m_targetAngle);

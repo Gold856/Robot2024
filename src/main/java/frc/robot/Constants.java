@@ -104,10 +104,6 @@ public final class Constants {
 		/*** Distance between center of left wheel and center of right wheel */
 		public static final double kTrackWidth = 21.5;
 		public static final double kSteerPeriod = 0.02;
-		public static final boolean kFrontLeftDriveInverted = false;
-		public static final boolean kBackLeftDriveInverted = false;
-		public static final boolean kFrontRightDriveInverted = false;
-		public static final boolean kBackRightDriveInverted = false;
 		// Speed multiplier to make sure the robot doesn't crash into something when
 		// testing, because crashing into people's shins would be bad
 		public static final double kMaxSpeed = 1;
@@ -118,12 +114,17 @@ public final class Constants {
 
 		public static final double kMotorRotationsPerMeter = (1 / kGearRatio) * (Math.PI * kWheelDiameter);
 
-		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
-		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
-		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
-		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+		public static final Translation2d kFrontLeftLocation = new Translation2d(-0.381, 0.381); // -+
+		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, 0.381); // ++
+		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, -0.381); // --
+		public static final Translation2d kBackRightLocation = new Translation2d(0.381, -0.381); // +-
 
-		public static final int kSmartCurrentLimit = 55;
-		public static final int kPeakCurrentLimit = 65;
+		public static final int kDriveSmartCurrentLimit = 55;
+		public static final int kDrivePeakCurrentLimit = 65;
+		public static final int kSteerSmartCurrentLimit = 30;
+		public static final int kSteerPeakCurrentLimit = 35;
+
+		// The amount of time to go from 0 to full power in seconds
+		public static final double kRampRate = .1;
 	}
 }
