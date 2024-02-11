@@ -8,21 +8,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FlywheelSubsystem;
 
 public class FlywheelCommand extends Command {
-	private Operation m_operation;
-	FlywheelSubsystem m_flywheelSubsystem;
-	double m_flywheelParam;
+	private final Operation m_operation;
+	private final FlywheelSubsystem m_flywheelSubsystem;
+	private final double m_rpm;
 
 	public enum Operation {
+		/** Set the velocity and end immediately. */
 		SET_VELOCITY,
+		/** Set the velocity and end when at setpoint. */
 		SETTLE;
 	}
 
-	/** Creates a new FlywheelCommand. */
-	public FlywheelCommand(FlywheelSubsystem flywheelSubsytem, Operation operation, double flywheelParam) {
+	/**
+	 * Creates a new FlywheelCommand.
+	 * 
+	 * @param flywheelSubsytem The subsystem.
+	 * @param operation        The operation.
+	 * @param rpm              The RPM to spin the motor at.
+	 */
+	public FlywheelCommand(FlywheelSubsystem flywheelSubsytem, Operation operation, double rpm) {
 		m_flywheelSubsystem = flywheelSubsytem;
-		m_flywheelParam = flywheelParam;
+		m_rpm = rpm;
 		m_operation = operation;
-		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_flywheelSubsystem);
 	}
 
@@ -30,18 +37,8 @@ public class FlywheelCommand extends Command {
 	@Override
 	public void initialize() {
 		if (m_operation == Operation.SET_VELOCITY) {
-			m_flywheelSubsystem.setVelocity(m_flywheelParam);
+			m_flywheelSubsystem.setVelocity(m_rpm);
 		}
-	}
-
-	// Called every time the scheduler runs while the command is scheduled.
-	@Override
-	public void execute() {
-	}
-
-	// Called once the command ends or is interrupted.
-	@Override
-	public void end(boolean interrupted) {
 	}
 
 	// Returns true when the command should end.

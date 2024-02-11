@@ -1,25 +1,22 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.FlywheelConstants.*;
+
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
-// import java.time.Duration;
-// import java.time.Instant;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.FlywheelConstants;
 
 public class FlywheelSubsystem extends SubsystemBase {
 
-	private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(FlywheelConstants.kMasterPort,
+	private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(kMasterPort,
 			MotorType.kBrushless);
-	private final CANSparkMax m_neoFlywheelFollower = new CANSparkMax(FlywheelConstants.kFollowerPort,
+	private final CANSparkMax m_neoFlywheelFollower = new CANSparkMax(kFollowerPort,
 			MotorType.kBrushless);
 	private final SparkPIDController m_neoController = m_neoFlywheelMaster.getPIDController();
 	private final RelativeEncoder m_neoEncoderMaster = m_neoFlywheelMaster.getEncoder();
@@ -32,29 +29,29 @@ public class FlywheelSubsystem extends SubsystemBase {
 	public FlywheelSubsystem() {
 		// Initialize Motors
 		m_neoFlywheelMaster.restoreFactoryDefaults();
-		m_neoFlywheelMaster.setInverted(FlywheelConstants.kMasterInvert);
+		m_neoFlywheelMaster.setInverted(kMasterInvert);
 		m_neoFlywheelMaster.setIdleMode(IdleMode.kCoast);
 		m_neoFlywheelMaster.enableVoltageCompensation(12);
-		m_neoFlywheelMaster.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
-		m_neoFlywheelMaster.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
-				FlywheelConstants.kPeakCurrentDurationMillis);
+		m_neoFlywheelMaster.setSmartCurrentLimit(kSmartCurrentLimit);
+		m_neoFlywheelMaster.setSecondaryCurrentLimit(kPeakCurrentLimit,
+				kPeakCurrentDurationMillis);
 
 		m_neoFlywheelFollower.restoreFactoryDefaults();
 		m_neoFlywheelFollower.setIdleMode(IdleMode.kCoast);
 		m_neoFlywheelFollower.enableVoltageCompensation(12);
-		m_neoFlywheelFollower.setSmartCurrentLimit(FlywheelConstants.kSmartCurrentLimit);
-		m_neoFlywheelFollower.setSecondaryCurrentLimit(FlywheelConstants.kPeakCurrentLimit,
-				FlywheelConstants.kPeakCurrentDurationMillis);
-		m_neoFlywheelFollower.follow(m_neoFlywheelMaster, FlywheelConstants.kFollowerOppose);
+		m_neoFlywheelFollower.setSmartCurrentLimit(kSmartCurrentLimit);
+		m_neoFlywheelFollower.setSecondaryCurrentLimit(kPeakCurrentLimit,
+				kPeakCurrentDurationMillis);
+		m_neoFlywheelFollower.follow(m_neoFlywheelMaster, kFollowerOppose);
 
-		m_neoEncoderMaster.setVelocityConversionFactor(1 / FlywheelConstants.kGearRatio);
+		m_neoEncoderMaster.setVelocityConversionFactor(1 / kGearRatio);
 
-		m_neoController.setP(FlywheelConstants.kP);
-		m_neoController.setI(FlywheelConstants.kI);
-		m_neoController.setD(FlywheelConstants.kD);
-		m_neoController.setIZone(FlywheelConstants.kIz);
-		m_neoController.setFF(FlywheelConstants.kFF);
-		m_neoController.setOutputRange(FlywheelConstants.kMinOutput, FlywheelConstants.kMaxOutput);
+		m_neoController.setP(kP);
+		m_neoController.setI(kI);
+		m_neoController.setD(kD);
+		m_neoController.setIZone(kIz);
+		m_neoController.setFF(kFF);
+		m_neoController.setOutputRange(kMinOutput, kMaxOutput);
 	}
 
 	public void periodic() {
@@ -92,8 +89,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 	 * @param velocity Target velocity (rpm).
 	 */
 	public void setVelocity(double velocity) {
-		// System.out.println("VELOCITY:" + velocity);
-		// m_startTime = Instant.now();
 		m_setVelocity = velocity;
 		m_neoController.setReference(m_setVelocity, ControlType.kVelocity, 0); // TODO change pidSlot?
 	}
@@ -104,18 +99,5 @@ public class FlywheelSubsystem extends SubsystemBase {
 	public boolean atSetpoint() {
 		return Math.abs(getVelocity() - getSetpoint()) < 50;
 	}
-
-	// public void configureShuffleboard(boolean inCompetitionMode) {
-	// if (!inCompetitionMode) {
-	// ShuffleboardTab shuffleboardTab = Shuffleboard.getTab("Flywheel");
-	// shuffleboardTab.addNumber("Flywheel Velocity", () ->
-	// getVelocity()).withSize(4, 2).withPosition(0, 0)
-	// .withWidget(BuiltInWidgets.kGraph);
-	// shuffleboardTab.addBoolean("At setpoint", () -> atSetpoint()).withSize(1,
-	// 1).withPosition(0, 2)
-	// .withWidget(BuiltInWidgets.kBooleanBox);
-	// }
-	// }
-
 	// TODO: Ask drive team on their preference for seeing this value (such as LEDs)
 }
