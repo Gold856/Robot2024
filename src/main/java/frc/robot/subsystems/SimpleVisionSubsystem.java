@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -17,58 +19,72 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	private Pose3d m_filteredPose;
 	private double m_distance;
 	private double m_angle;
+	private MedianFilter m_angleMedian;
+	private LinearFilter m_angleFilter;
 
 	public SimpleVisionSubsystem() {
+		// m_angleMedian = new MedianFilter(10);
+		m_angleFilter = LinearFilter.singlePoleIIR(0.1, 0.02);
 		setupLimelight();
 		setupSubscription();
 	}
 
 	@Override
 	public void periodic() {
+		// get the data from limelight
 		updateRawPose();
+		// filter out garbage
 		updateFilteredPose();
+		// do the math right now to convert pose into
+		// angle/distance to target
 		updateSavedPositions();
 	}
 
+	// [Tag]x---- [robot points here]
+	// \ | /
+	// \ z |
+	// \ | /
+	// \A|B|
+	// \|/
+	// / ----- /
+	// / robot /
+	// --------
+	//
+	// Limelight gives us distances X and z, and angle B
+	// We want to compute A+B as the angle to target
+	//
 	private void updateSavedPositions() {
-		m_angle = getAngle();
-		m_distance = getDistance();
-		SmartDashboard.putNumber("visionAngle", m_angle);
-		SmartDashboard.putNumber("visionDistance", m_distance);
-		double a = Math.toDegrees(Math.atan2(m_filteredPose.getZ(), m_filteredPose.getX()));
+		double z = m_filteredPose.getZ();
+		double x = m_filteredPose.getX();
+		double a = Math.toDegrees(Math.atan2(z, x));
 		double b = Math.toDegrees(m_filteredPose.getRotation().getAngle()) + 90;
 		SmartDashboard.putNumber("a", a);
 		SmartDashboard.putNumber("b", b);
 		double angle;
-		if (m_filteredPose.getX() > 0) {
+		if (x > 0) {
 			angle = -180 - (a - b);
 		} else {
 			angle = -(a + b);
 		}
-		// SmartDashboard.putNumber("A + B", Math.min(45, (Math.max(-45, angle))));
-		SmartDashboard.putNumber("math angle", angle);
+		if (Math.abs(angle) < 45) {
+			m_angle = m_angleFilter.calculate(angle);
+			m_distance = z;
+		}
+		SmartDashboard.putNumber("limelight angle to turn", m_angle);
+		SmartDashboard.putNumber("limelight distance", m_distance);
 	}
 
 	// When a tag is in frame, returns the distance from the camera to the tag
-	double getDistance() {
-		// return something from filtered pose
-		return m_filteredPose.getZ();
+	public double getDistance() {
+		return m_distance;
 	}
 
 	// When a tag is in frame, returns:
 	// 0 if the tag is directly in front of camera
 	// an angle < 0 if the tag is left of camera
 	// an angle > 0 if the tag is right of camera
-	double getAngle() {
-		// for now,
-		// cheat and pretend that displacement is actually an angle
-		return -1 * m_filteredPose.getX();
-	}
-
-	private void updateFilteredPose() {
-		// TODO: add filtering
-		m_filteredPose = m_rawPose;
-
+	public double getAngle() {
+		return m_angle;
 	}
 
 	private void setupLimelight() {
@@ -86,8 +102,13 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	}
 
 	private void updateRawPose() {
-		// pull doubles from table
+		// pull doubles from table and store them in a Pose3d
 		m_rawPose = toPose3D(m_subscription.get());
+	}
+
+	private void updateFilteredPose() {
+		// TODO: add filtering
+		m_filteredPose = m_rawPose;
 	}
 
 	// From LimelightHelpers.java open source code

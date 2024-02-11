@@ -4,20 +4,24 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.commands.BangBangDriveDistance;
-import frc.robot.commands.DriveDistanceCommand;
-import frc.robot.commands.PIDTurnCommand;
-import frc.robot.commands.SetSteering;
+import frc.robot.commands.SimpleVisionAlignCommand;
+// import frc.robot.commands.BangBangDriveDistance;
+// import frc.robot.commands.DriveDistanceCommand;
+// import frc.robot.commands.PIDTurnCommand;
+// import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
+import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
@@ -32,22 +36,24 @@ public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
-	private final SimpleVisionSubsystem m_vision = new SimpleVisionSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
-	private final SimpleVisionSubsystem m_simpleVision = new SimpleVisionSubsystem();
+	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
-
 	public RobotContainer() {
 		// Configure the button bindings
-		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
-		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
-		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2, 0.01));
-		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
-		m_autoSelector.addOption("Knock Over Blocks",
-				CommandComposer.getBlocksAuto(m_driveSubsystem));
+		// m_autoSelector.addOption("Test Steering",
+		// SetSteering.getCalibrationCommand(m_driveSubsystem));
+		// m_autoSelector.addOption("PID Turn 90 degrees", new
+		// PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		// m_autoSelector.addOption("Bang Bang Drive 2 Meters", new
+		// BangBangDriveDistance(m_driveSubsystem, 2));
+		// m_autoSelector.addOption("PID Drive 2 Meters",
+		// DriveDistanceCommand.create(m_driveSubsystem, 2.0));
+		// m_autoSelector.addOption("Knock Over Blocks",
+		// CommandComposer.getBlocksAuto(m_driveSubsystem));
 
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
@@ -60,20 +66,19 @@ public class RobotContainer {
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
-		// new Trigger(() -> DriverStation.getMatchTime() >= 20)
-		// .onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		new Trigger(() -> DriverStation.getMatchTime() >= 20)
+				.onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_controller.getRawAxis(Axis.kLeftY),
 				() -> m_controller.getRawAxis(Axis.kLeftX),
-				() -> m_controller.getRawAxis(Axis.kRightTrigger),
-				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
+				() -> m_controller.getRawAxis(Axis.kRightX)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd().withTimeout(0.5));
+		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}
 
 	public Command getAutonomousCommand() {
-		return m_autoSelector.getSelected();
+		return new SimpleVisionAlignCommand(m_driveSubsystem, m_visionSubsystem);
+		// return m_autoSelector.getSelected();
 	}
 }
