@@ -40,14 +40,14 @@ public class BangBangDriveDistance extends Command {
 
 	@Override
 	public void initialize() {
-		double currentPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
+		double currentPosition = m_driveSubsystem.getPose().getX();
 		m_target = currentPosition + m_amount;
 	}
 
 	@Override
 	public void execute() {
 		double sign;
-		if (m_target > m_driveSubsystem.getModulePositions()[0].distanceMeters) {
+		if (m_target > m_driveSubsystem.getPose().getX()) {
 			sign = 1;
 		} else {
 			sign = -1;
@@ -79,6 +79,6 @@ public class BangBangDriveDistance extends Command {
 	}
 
 	private double getDiff() {
-		return Math.abs(m_target - m_driveSubsystem.getModulePositions()[0].distanceMeters);
+		return Math.abs(m_target - m_driveSubsystem.getPose().getX());
 	}
 }

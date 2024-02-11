@@ -143,7 +143,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
-		m_targetModuleStatePublisher.set(states);
 		m_field.setRobotPose(m_pose);
 		return states;
 	}
@@ -187,6 +186,15 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @param moduleStates The module states, in order of FL, FR, BL, BR
 	 */
 	public void setModuleStates(SwerveModuleState[] moduleStates) {
+		// Get the current module angles
+		double[] moduleAngles = { m_frontLeft.getModuleAngle(), m_frontRight.getModuleAngle(),
+				m_backLeft.getModuleAngle(), m_backRight.getModuleAngle() };
+		for (int i = 0; i < moduleStates.length; i++) {
+			// Optimize target module states
+			moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(moduleAngles[i]));
+		}
+		m_targetModuleStatePublisher.set(moduleStates);
+
 		m_frontLeft.setModuleState(moduleStates[0]);
 		m_frontRight.setModuleState(moduleStates[1]);
 		m_backLeft.setModuleState(moduleStates[2]);
@@ -227,10 +235,14 @@ public class DriveSubsystem extends SubsystemBase {
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
-		SmartDashboard.putNumber("Steer 1 motor current", m_frontLeft.getSteerCurrent());
-		SmartDashboard.putNumber("Steer 3 motor current", m_frontRight.getSteerCurrent());
-		SmartDashboard.putNumber("Steer 5 motor current", m_backRight.getSteerCurrent());
-		SmartDashboard.putNumber("Steer 7 motor current", m_backLeft.getSteerCurrent());
+		SmartDashboard.putNumber("Drive FR motor temperature", m_frontRight.getDriveTemperature());
+		SmartDashboard.putNumber("Drive BR motor temperature", m_backRight.getDriveTemperature());
+		SmartDashboard.putNumber("Drive BL motor temperature", m_backLeft.getDriveTemperature());
+		SmartDashboard.putNumber("Drive FL motor temperature", m_frontLeft.getDriveTemperature());
+		SmartDashboard.putNumber("Drive FR steer current", m_frontRight.getSteerCurrent());
+		SmartDashboard.putNumber("Drive BR steer current", m_backRight.getSteerCurrent());
+		SmartDashboard.putNumber("Drive BL steer current", m_backLeft.getSteerCurrent());
+		SmartDashboard.putNumber("Drive FL steer current", m_frontLeft.getSteerCurrent());
 	}
 
 	/**
@@ -239,15 +251,18 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @return A command to drive the robot.
 	 */
 	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
-			Supplier<Double> rotationAxis) {
+			Supplier<Double> rotationRight, Supplier<Double> rotationLeft) {
 		return run(() -> {
 			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
 			// input so slight movements don't move the robot
-			double fwdSpeed = -MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-			double strSpeed = -MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			double rotSpeed = -MathUtil.applyDeadband(rotationAxis.get(), ControllerConstants.kDeadzone);
-
-			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+			double fwdSpeed = -0.8 * MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+			double strSpeed = -0.8 * MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+			double rotSpeed = 0.6 * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
+					ControllerConstants.kDeadzone);
+			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true)); // TODO:
+																											// back to
+																											// field
+																											// oriented
 		});
 	}
 

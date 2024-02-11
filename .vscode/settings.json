@@ -30,10 +30,11 @@
 	"java.test.defaultConfig": "WPIlibUnitTests",
 	"C_Cpp.clang_format_fallbackStyle": "{BasedOnStyle: Google, ColumnLimit: 0, IndentWidth: 4, TabWidth: 4, UseTab: ForIndentation}",
 	"editor.codeActionsOnSave": {
-		"source.organizeImports": true
+		"source.organizeImports": "explicit"
 	},
 	"editor.formatOnSave": true,
 	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
-	"java.format.settings.url": "eclipse-formatter.xml"
+	"java.format.settings.url": "eclipse-formatter.xml",
+	"java.sources.organizeImports.staticStarThreshold": 1
 }
