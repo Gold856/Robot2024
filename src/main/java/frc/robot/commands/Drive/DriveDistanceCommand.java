@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.Drive;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -29,13 +29,13 @@ public class DriveDistanceCommand extends Command {
 
 	public static SequentialCommandGroup create(DriveSubsystem subsystem, double amount, double tolerance) {
 		return new SequentialCommandGroup(
-				new SetSteering(subsystem, 0),
+				new SetSteeringCommand(subsystem, 0),
 				new DriveDistanceCommand(subsystem, amount, tolerance));
 	}
 
 	public static SequentialCommandGroup create(DriveSubsystem subsystem, double amount) {
 		return new SequentialCommandGroup(
-				new SetSteering(subsystem, 0),
+				new SetSteeringCommand(subsystem, 0),
 				new DriveDistanceCommand(subsystem, amount, 0.1));
 	}
 

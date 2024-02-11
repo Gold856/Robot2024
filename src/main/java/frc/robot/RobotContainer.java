@@ -13,12 +13,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.commands.BangBangDriveDistance;
-import frc.robot.commands.DriveDistanceCommand;
-import frc.robot.commands.FlywheelCommand;
-import frc.robot.commands.FlywheelCommand.Operation;
-import frc.robot.commands.PIDTurnCommand;
-import frc.robot.commands.SetSteering;
+import frc.robot.commands.Drive.BangBangDriveDistanceCommand;
+import frc.robot.commands.Drive.DriveDistanceCommand;
+import frc.robot.commands.Drive.PIDTurnCommand;
+import frc.robot.commands.Drive.SetSteeringCommand;
+import frc.robot.commands.Flywheel.FlywheelCommand;
+import frc.robot.commands.Flywheel.FlywheelCommand.Operation;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
@@ -43,9 +43,10 @@ public class RobotContainer {
 
 	public RobotContainer() {
 		// Configure the button bindings
-		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
+		m_autoSelector.addOption("Test Steering", SetSteeringCommand.getCalibrationCommand(m_driveSubsystem));
 		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
-		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2, 0.01));
+		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
+				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
 		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
 		m_autoSelector.addOption("Knock Over Blocks",
 				CommandComposer.getBlocksAuto(m_driveSubsystem));

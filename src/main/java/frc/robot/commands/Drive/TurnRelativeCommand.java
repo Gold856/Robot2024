@@ -2,43 +2,45 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.Drive;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveTimeCommand extends Command {
+public class TurnRelativeCommand extends Command {
 	private DriveSubsystem m_driveSubsystem;
-	private double m_seconds;
-	private final Timer m_timer = new Timer();
-	private final double m_speed;
+	private double m_angle;
+	private PIDController m_controller;
 
 	/**
-	 * Creates a new DriveTimeCommand.
+	 * Creates a new TurnRelativeCommand.
 	 * 
-	 * @param subsystem The subsystem
-	 * @param seconds   Time to drive in seconds
-	 * @param speed     The speed in percent output
+	 * @param subsystem The drive subsystem.
+	 * @param angle     The angle in degrees.
 	 */
-	public DriveTimeCommand(DriveSubsystem subsystem, double seconds, double speed) {
+	public TurnRelativeCommand(DriveSubsystem subsystem, double angle) {
 		m_driveSubsystem = subsystem;
-		m_seconds = seconds;
-		m_speed = speed;
+		m_angle = angle;
+		m_controller = new PIDController(0.0075, 0, 0);
+		m_controller.enableContinuousInput(0, 360);
+		m_controller.setTolerance(5);
 		addRequirements(subsystem);
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		m_timer.restart();
+		m_controller.setSetpoint(m_driveSubsystem.getHeading().getDegrees() + m_angle);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(m_speed, 0, 0), true);
+		var moduleStates = m_driveSubsystem.calculateModuleStates(
+				new ChassisSpeeds(0, 0, m_controller.calculate(m_driveSubsystem.getHeading().getDegrees())), false);
+		m_driveSubsystem.setModuleStates(moduleStates);
 	}
 
 	// Called once the command ends or is interrupted.
@@ -50,6 +52,6 @@ public class DriveTimeCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return m_timer.get() >= m_seconds;
+		return m_controller.atSetpoint();
 	}
 }
