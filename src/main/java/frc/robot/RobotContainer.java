@@ -69,7 +69,6 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kRightTrigger),
 				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
 		m_controller.button(Button.kTriangle)
 				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
 						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second

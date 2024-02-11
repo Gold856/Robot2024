@@ -93,6 +93,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 	 * @return Whether the flywheel is at its setpoint ABOVE 0
 	 */
 	public boolean atSetpoint() {
-		return Math.abs(getVelocity() - getSetpoint()) < 50;
+		return Math.abs(getVelocity() - getSetpoint()) < kAllowedError;
 	}
 }
