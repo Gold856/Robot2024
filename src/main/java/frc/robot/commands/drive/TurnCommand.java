@@ -61,8 +61,8 @@ public class TurnCommand extends Command {
 	 *                       the angle error in degrees which is tolerable
 	 */
 	public TurnCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
-			LimeLightSubsystem limeLieghLightSubsystem, double angleTolerance) {
-		this(driveSubsystem, () -> limeLieghLightSubsystem.getRotation(targetPosition).getDegrees(), angleTolerance);
+			LimeLightSubsystem limeLightSubsystem, double angleTolerance) {
+		this(driveSubsystem, () -> limeLightSubsystem.getRotation(targetPosition).getDegrees(), angleTolerance);
 	}
 
 	/**
