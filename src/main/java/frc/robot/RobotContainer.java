@@ -20,7 +20,6 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveCommandAdvanced;
-import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
@@ -40,19 +39,16 @@ import frc.robot.subsystems.PoseEstimationSubsystem;
 public class RobotContainer implements frc.common.RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
+	protected final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	// private final LimeLightSubsystem m_limeLightSubsystem = new
 	// LimeLightSubsystem() {
 	private final LimeLightSubsystem m_limeLightSubsystem = new PoseEstimationSubsystem() {
+		{
+			addPoseSupplier("BotPose@Odometry", () -> m_driveSubsystem.getPose());
+		}
 
 		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
-
-		{
-			if (this instanceof PoseEstimationSubsystem)
-				((PoseEstimationSubsystem) this).addPoseSupplier("BotPose@Odometry",
-						() -> m_driveSubsystem.getPose());
-		}
 
 		@Override
 		public void periodic() {
@@ -131,6 +127,46 @@ public class RobotContainer implements frc.common.RobotContainer {
 
 	}
 
+	static class DriveDistanceCommand extends frc.robot.commands.drive.DriveDistanceCommand { // more code for debugging
+																								// purposes
+
+		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
+
+		public DriveDistanceCommand(DriveSubsystem driveSubsystem, double targetDistance, double distanceTolerance) {
+			super(driveSubsystem, targetDistance, distanceTolerance);
+		}
+
+		public DriveDistanceCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
+				double distanceToTarget,
+				LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance) {
+			super(driveSubsystem, targetPosition, distanceToTarget, limeLieghLightSubsystem, distanceTolerance);
+		}
+
+		public DriveDistanceCommand(DriveSubsystem driveSubsystem, String tagID, double distanceToTarget,
+				LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance) {
+			super(driveSubsystem, tagID, distanceToTarget, limeLieghLightSubsystem, distanceTolerance);
+		}
+
+		@Override
+		public void recordPose(String entryName, Pose2d value) {
+			if (value == null)
+				table.getEntry(entryName).setDoubleArray(new double[0]);
+			else
+				table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
+						value.getY(), value.getRotation().getDegrees()));
+		}
+
+		@Override
+		public void recordString(String entryName, String value) {
+			table.getEntry(entryName).setString(value);
+		}
+
+		static double[] toPose2DAdvantageScope(double x, double y, double yawInDegrees) {
+			return new double[] { x + 8.27, y + 4.1, yawInDegrees * Math.PI / 180 };
+		}
+
+	}
+
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
@@ -143,7 +179,8 @@ public class RobotContainer implements frc.common.RobotContainer {
 		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
 		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2, 0.01));
-		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
+		// m_autoSelector.addOption("PID Drive 2 Meters",
+		// DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
 		m_autoSelector.addOption("Knock Over Blocks",
 				CommandComposer.getBlocksAuto(m_driveSubsystem));
 
@@ -178,6 +215,17 @@ public class RobotContainer implements frc.common.RobotContainer {
 				new TurnCommand(m_driveSubsystem, "4",
 						m_limeLightSubsystem,
 						1),
+				new DriveDistanceCommand(m_driveSubsystem, 1, 0.05)
+						.andThen(new TurnCommand(m_driveSubsystem, -1, 0.05)),
+				new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.5,
+						m_limeLightSubsystem, 0.05),
+				new DriveDistanceCommand(m_driveSubsystem, "4", 1.5,
+						m_limeLightSubsystem, 0.05),
+				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
+						m_limeLightSubsystem,
+						1).andThen(
+								new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.5,
+										m_limeLightSubsystem, 0.05)),
 				new DriveCommandAdvanced(m_driveSubsystem, new Pose(1.0, 0, 0), 0.05, 1)
 						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)),
 				new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)
@@ -234,7 +282,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 				// m_poseEstimationSubsystem))
 		};
 		m_controller.button(Button.kX)
-				.whileTrue(samples[1]);
+				.whileTrue(samples[6]);
 	}
 
 	public Command getAutonomousCommand() {

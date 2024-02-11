@@ -32,7 +32,7 @@ public class TurnCommand extends Command {
 	 * the commencement of this {@code TurnCommand} (i.e., when the scheduler begins
 	 * to periodically execute this {@code TurnCommand}).
 	 */
-	private Supplier<Double> m_targetAngleCalculator;
+	private Supplier<Double> m_targetAngleSupplier;
 
 	/**
 	 * The {@code ProfiledPIDController} for controlling the rotational movement.
@@ -81,19 +81,19 @@ public class TurnCommand extends Command {
 	/**
 	 * Constructs a {@code TurnCommand}.
 	 * 
-	 * @param targetAngleCalculator
-	 *                              a {@code Supplier<Double>} that calculates the
-	 *                              target angle in degrees by which the robot
-	 *                              should rotate in the counter-clockwise direction
-	 *                              (used when the scheduler begins
-	 *                              to periodically execute this
-	 *                              {@code TurnCommand})
+	 * @param targetAngleSupplier
+	 *                            a {@code Supplier<Double>} that calculates the
+	 *                            target angle in degrees by which the robot
+	 *                            should rotate in the counter-clockwise direction
+	 *                            (used when the scheduler begins
+	 *                            to periodically execute this
+	 *                            {@code TurnCommand})
 	 * @param angleTolerance
-	 *                              the angle error in degrees which is tolerable
+	 *                            the angle error in degrees which is tolerable
 	 */
-	public TurnCommand(DriveSubsystem driveSubsystem, Supplier<Double> targetAngleCalculator, double angleTolerance) {
+	public TurnCommand(DriveSubsystem driveSubsystem, Supplier<Double> targetAngleSupplier, double angleTolerance) {
 		m_driveSubsystem = driveSubsystem;
-		m_targetAngleCalculator = targetAngleCalculator;
+		m_targetAngleSupplier = targetAngleSupplier;
 		var constraints = new TrapezoidProfile.Constraints(DriveConstants.kTurnMaxVelocity,
 				DriveConstants.kTurnMaxAcceleration);
 		m_turnController = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI,
@@ -113,7 +113,7 @@ public class TurnCommand extends Command {
 		double heading = m_driveSubsystem.getHeading().getDegrees();
 		double goal = heading;
 		try {
-			goal += m_targetAngleCalculator.get();
+			goal += m_targetAngleSupplier.get();
 		} catch (Exception e) {
 		}
 		m_turnController.reset(heading);
@@ -142,9 +142,8 @@ public class TurnCommand extends Command {
 		var pose = m_driveSubsystem.getPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString(
-				"drive", String.format("turn: execute - heading: %.1f, turn speed: %.1f", heading,
-						turnSpeed) + ", current pose: "
-						+ toString(m_driveSubsystem.getPose()));
+				"drive", String.format("turn: execute - heading: %.1f, turn speed: %.1f, current pose: %s", heading,
+						turnSpeed, toString(m_driveSubsystem.getPose())));
 	}
 
 	/**

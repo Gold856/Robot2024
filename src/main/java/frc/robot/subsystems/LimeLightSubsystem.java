@@ -232,6 +232,17 @@ public class LimeLightSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * Returns the distance to the specified target AprilTag
+	 * 
+	 * @param targetPosition the ID of the AprilTag
+	 * @return the distance to the specified target AprilTag
+	 */
+	public Double getDistance(String tagID) {
+		var pose = getPose(tagID);
+		return pose == null ? null : pose.getTranslation().getNorm();
+	}
+
+	/**
 	 * Returns the {@code Rotation2d} that is needed to turn the robot toward the
 	 * specified target position
 	 * 
