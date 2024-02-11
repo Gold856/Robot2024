@@ -17,6 +17,8 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveDistanceCommand;
+import frc.robot.commands.FlywheelCommand;
+import frc.robot.commands.FlywheelCommand.Operation;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
@@ -72,9 +74,9 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kRightX)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
-		// m_controller.button(Button.kTriangle)
-		// .onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
-		// 200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
+		m_controller.button(Button.kTriangle)
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
+						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}
