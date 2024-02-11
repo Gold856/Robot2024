@@ -7,12 +7,14 @@ import java.util.function.Supplier;
 // the WPILib BSD license file in the root directory of this project.
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.aster.Constants;
 import frc.aster.Constants.DriveConstants;
 import frc.aster.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 
 /**
  * The {@code DriveDistanceCommand} is responsible for moving the robot by a
@@ -55,6 +57,17 @@ public class DriveDistanceCommand extends Command {
 	 */
 	public DriveDistanceCommand(double targetDistance, double distanceTolerance) {
 		this(() -> targetDistance, distanceTolerance);
+	}
+
+	public DriveDistanceCommand(Translation2d targetPosition, double distanceToTarget,
+			LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance) {
+		this(() -> distanceToTarget - limeLieghLightSubsystem.getDistance(targetPosition),
+				distanceTolerance);
+	}
+
+	public DriveDistanceCommand(String tagID, double distanceToTarget,
+			LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance) {
+		this(() -> limeLieghLightSubsystem.getDistance(tagID) - distanceToTarget, distanceTolerance);
 	}
 
 	/**

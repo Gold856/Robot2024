@@ -3,11 +3,13 @@ package frc.aster.commands.drive;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.aster.Constants.DriveConstants;
 import frc.aster.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 
 /**
  * The {@code TurnCommand} rotates the robot by a specific angle in the
@@ -68,6 +70,16 @@ public class TurnCommand extends Command {
 		m_turnController.setTolerance(angleTolerance);
 		m_turnController.enableContinuousInput(-180, 180);
 		addRequirements(DriveSubsystem.get());
+	}
+
+	public TurnCommand(Translation2d targetPosition,
+			LimeLightSubsystem limeLieghLightSubsystem, double angleTolerance) {
+		this(() -> limeLieghLightSubsystem.getRotation(targetPosition).getDegrees(), angleTolerance);
+	}
+
+	public TurnCommand(String tagID,
+			LimeLightSubsystem limeLieghLightSubsystem, double angleTolerance) {
+		this(() -> limeLieghLightSubsystem.getRotation(tagID).getDegrees(), angleTolerance);
 	}
 
 	/**

@@ -264,7 +264,9 @@ public class LimeLightSubsystem extends SubsystemBase {
 	 */
 	public Rotation2d getRotation(String tagID) {
 		var pose = getPose(tagID);
-		return pose == null ? null : pose.getRotation();
+		return pose == null ? null
+				: pose.getTranslation().getAngle()
+						.minus(Rotation2d.fromDegrees(90));
 	}
 
 	/**
@@ -344,10 +346,11 @@ public class LimeLightSubsystem extends SubsystemBase {
 		n = n.path("Results").path("Fiducial");
 		var m = new TreeMap<String, double[]>();
 		n.forEach(e -> {
-			var i = e.path("t6t_cs").elements();
+			var i = e.path("t6t_rs").elements();
 			double v1 = i.next().asDouble();
 			i.next();
 			double v2 = i.next().asDouble();
+			i.next();
 			i.next();
 			double v3 = i.next().asDouble();
 			var v = new double[] { v1, v2, v3 };
