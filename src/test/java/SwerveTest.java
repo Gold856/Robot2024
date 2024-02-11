@@ -2,7 +2,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -24,11 +23,6 @@ public class SwerveTest {
 	static void setup() {
 		assert HAL.initialize(500, 0);
 		m_driveSubsystem = new DriveSubsystem();
-	}
-
-	@AfterAll
-	static void shutdown() {
-		m_driveSubsystem.close();
 	}
 
 	@Test

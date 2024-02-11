@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.aster.commands.drive.TurnCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.aster.subsystems.DriveSubsystem;
-import frc.common.PoseEstimationSubsystemAdvanced;
+import frc.robot.subsystems.PoseEstimationSubsystemAdvanced;
 import frc.robot.subsystems.PoseEstimationSubsystem.Pose;
 import frc.aster.commands.drive.DriveCommand;
 import frc.aster.Constants.ControllerConstants;
@@ -26,7 +26,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
 
 	public RobotContainer() {
-		m_poseEstimationSubsystem.addPoseSupplier("Pose2D@Odometry",
+		m_poseEstimationSubsystem.addPoseSupplier("BotPose@Odometry",
 				() -> m_driveSubsystem.getPose());
 		configureButtonBindings();
 	}

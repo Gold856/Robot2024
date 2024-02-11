@@ -1,4 +1,4 @@
-package frc.common;
+package frc.robot.subsystems;
 
 import java.io.File;
 import java.util.Arrays;
@@ -13,7 +13,6 @@ import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.networktables.TimestampedObject;
-import frc.robot.subsystems.PoseEstimationSubsystem;
 
 /**
  * The purpose of the {@code PoseEstimationSubsystem} is to provide the pose of
@@ -30,10 +29,15 @@ import frc.robot.subsystems.PoseEstimationSubsystem;
 public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 
 	/**
+	 * The path to the "deploy" directory in the project.
+	 */
+	public final static String s_deployPath = "." + File.separator + "src" + File.separator + "main" + File.separator
+			+ "deploy";
+	/**
 	 * The {@code NetworkTable} named "vision" which is used by this
 	 * {@code AprilTagSubsystem}.
 	 */
-	protected NetworkTable visionTable = NetworkTableInstance.getDefault().getTable("vision");
+	protected NetworkTable visionTable = NetworkTableInstance.getDefault().getTable("AdvantageScope");
 
 	/**
 	 * The {@code PoseCalculator}s for enhancing the accuracy of the estimated pose
@@ -48,7 +52,7 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 	public PoseEstimationSubsystemAdvanced() {
 		super();
 		try {
-			var m = new AprilTagMap(RobotContainer.s_deployPath + File.separator + "2024LimeLightMap.fmap");
+			var m = new AprilTagMap(s_deployPath + File.separator + "2024LimeLightMap.fmap");
 			m.forEach((k, v) -> m_aprilTagPoses.put(k, AprilTagMap.toPose(v)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -86,7 +90,7 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 		var pose = estimatedPose();
 		visionTable.getEntry("Pose Estimated").setString("" + pose);
 		if (pose != null)
-			visionTable.getEntry("Pose2D'").setDoubleArray(toPose2DAdvantageScope(pose.getX(),
+			visionTable.getEntry("BotPose'").setDoubleArray(toPose2DAdvantageScope(pose.getX(),
 					pose.getY(), pose.getRotation().getDegrees()));
 	}
 
@@ -97,7 +101,7 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 	protected TimestampedDoubleArray changedBotPose(NetworkTableEvent event) {
 		var botpose = super.changedBotPose(event);
 		if (botpose != null) {
-			visionTable.getEntry("Pose2D")
+			visionTable.getEntry("BotPose")
 					.setDoubleArray(toPose2DAdvantageScope(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]));
 		}
 		return botpose;

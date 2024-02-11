@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.common.PoseEstimationSubsystemAdvanced;
 import frc.robot.subsystems.PoseEstimationSubsystem.Pose;
 import frc.robot.subsystems.PoseEstimationSubsystem.PoseCalculator;
 
@@ -33,6 +32,8 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 
 	private PoseCalculator m_poseCalculator;
 
+	private DriveSubsystem m_driveSubsystem;
+
 	/**
 	 * Construcs a {@code LimeLightEmulationSubsystem}.
 	 * 
@@ -41,9 +42,10 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 	 * @param randomness a value (e.g., 0.01) the randomness of the robot modeling
 	 *                   the discrepancy between the theory and reality
 	 */
-	public LimeLightEmulationSubsystem(Pose2d pose, double randomness) {
+	public LimeLightEmulationSubsystem(Pose2d pose, double randomness, DriveSubsystem driveSubsystem) {
 		m_pose = pose;
 		m_randomness = randomness;
+		m_driveSubsystem = driveSubsystem;
 		m_limelightEmulator = new LimeLightEmulator(() -> {
 			return m_pose;
 		}, 0.165, 54.0, 0.2, 10.0, 0.1);
@@ -53,7 +55,7 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 
 			@Override
 			public Pose2d pose(Pose2d pose) {
-				var current = DriveSubsystem.get().getPose();
+				var current = m_driveSubsystem.getPose();
 				if (this.previous == null || pose == null) {
 					this.previous = current;
 					return pose;

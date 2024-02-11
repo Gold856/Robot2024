@@ -89,7 +89,7 @@ public class DriveCommand extends SequentialCommandGroup {
 			var targetPose = PoseEstimationSubsystem.getTargetPose(currentPose, targetPosition, distanceToTarget);
 			var transform = targetPose
 					.minus(currentPose);
-			PoseEstimationSubsystem.get().recordPose("Pose2D@Target", targetPose);
+			PoseEstimationSubsystem.get().recordPose("Target@Odomoetry", targetPose);
 			System.out.println(targetPose);
 			SmartDashboard.putString("transform", "" + transform);
 			return transform;

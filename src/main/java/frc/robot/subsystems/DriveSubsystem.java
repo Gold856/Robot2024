@@ -34,12 +34,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
 
-public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
-	/**
-	 * The only {code DriveSubsystem} instance in compliance with the singleton
-	 * design pattern.
-	 */
-	private static DriveSubsystem s_subsystem;
+public class DriveSubsystem extends SubsystemBase {
 
 	private final SwerveModule m_frontLeft;
 	private final SwerveModule m_frontRight;
@@ -61,15 +56,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
-		// Singleton
-		if (s_subsystem != null) {
-			try {
-				throw new Exception("Drive subsystem already initialized!");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		s_subsystem = this;
 		SmartDashboard.putData("Field", m_field);
 		m_posePublisher = NetworkTableInstance.getDefault().getProtobufTopic("/SmartDashboard/Pose", Pose2d.proto)
 				.publish();
@@ -108,23 +94,6 @@ public class DriveSubsystem extends SubsystemBase implements AutoCloseable {
 		m_gyro.zeroYaw();
 		resetEncoders();
 		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
-	}
-
-	@Override
-	public void close() {
-		m_frontLeft.close();
-		m_frontRight.close();
-		m_backLeft.close();
-		m_backRight.close();
-	}
-
-	/**
-	 * Returns the single {@code DriveSubsystem} instance.
-	 * 
-	 * @return the single {@code DriveSubsystem} instance
-	 */
-	public static DriveSubsystem get() {
-		return s_subsystem;
 	}
 
 	/**
