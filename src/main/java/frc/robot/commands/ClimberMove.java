@@ -9,7 +9,6 @@ import frc.robot.subsystems.ClimberSubsystem;
 
 public class ClimberMove extends Command {
 	private final ClimberSubsystem m_climberSubsystem;
-	private double m_speed;
 
 	public enum Operation {
 		ZERO,
@@ -21,35 +20,32 @@ public class ClimberMove extends Command {
 	private final Operation m_operation;
 
 	/** Creates a new ClimberMove. */
-	public ClimberMove(ClimberSubsystem subsystem, Operation operation, double speed) {
+	public ClimberMove(ClimberSubsystem subsystem, Operation operation) {
 		m_climberSubsystem = subsystem;
 		m_operation = operation;
-		m_speed = speed;
 		addRequirements(m_climberSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		m_climberSubsystem.setSpeed(m_speed);
+		if (m_operation == Operation.ZERO) {
+			m_climberSubsystem.setPosition(0, 0);
+		} else if (m_operation == Operation.MID) {
+			m_climberSubsystem.setPosition(50, 50);
+		} else if (m_operation == Operation.TOP) {
+			m_climberSubsystem.setPosition(100, 100);
+		}
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		if (m_operation == Operation.ZERO) {
-			m_climberSubsystem.setPosition(0, 0);
-		} else if (m_operation == Operation.MID) {
-			m_climberSubsystem.setPosition(1, 1);
-		} else if (m_operation == Operation.TOP) {
-			m_climberSubsystem.setPosition(2, 2);
-		}
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		m_climberSubsystem.setSpeed(0);
 	}
 
 	// Returns true when the command should end.
@@ -61,7 +57,7 @@ public class ClimberMove extends Command {
 			case STOP:
 				return true;
 			default:
-				return true;
+				return false;
 		}
 	}
 }
