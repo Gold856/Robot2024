@@ -78,7 +78,7 @@ void loop() {
 			break;
 		case 2:  // orange color -> Left Trigger -> Intake down  / Intake forward / Index forward w/ Sensor + Orange LED (Rest of Drive Team)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, BlinkingLights(colorIndex, noteColor, color(0, 0, 0)));
+				strip.setPixelColor(i, noteColor);
 			}
 			delay(150);
 			break;
@@ -96,7 +96,7 @@ void loop() {
 			break;
 		case 6:  // purple -> Amp LED (HP Command)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 0, 255), color(0,0,0));
+				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 0, 255), color(0, 0, 0)));
 			}
 			delay(150);
 			break;
