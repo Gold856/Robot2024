@@ -4,12 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
@@ -61,8 +63,8 @@ public class RobotContainer {
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
-		// new Trigger(() -> DriverStation.getMatchTime() >= 20)
-		// .onTrue(m_ArduinoSubsystem.setCode(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		new Trigger(() -> DriverStation.getMatchTime() <= 20)
+				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		// TODO: LEDs to add: Left Trigger -> Orange LED, with other stuff, BLUE WHEN
 		// SHOOT COMMANDS ARE DONE
 
@@ -72,6 +74,8 @@ public class RobotContainer {
 		m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
 		// LEDs for when you want HP to drop a note
 		m_driverController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.SOLID_RED));
+		// RainbowPartyFunTime Button
+		m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
