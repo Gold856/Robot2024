@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -170,16 +171,19 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		 * @return the artificial {@code Pose} that this {@code LimeLightEmulator}
 		 *         currently has
 		 */
-		Pose2d poseDetected() {
+		Entry<Pose2d, Collection<Integer>> poseDetected() {
 			Pose2d pose = this.poseSupplier.get();
-			if (visibleAprilTags(pose).size() == 0)
+			var tags = visibleAprilTags(pose);
+			if (tags.size() == 0)
 				return null;
-			else
-				return new Pose(
+			else {
+				pose = new Pose(
 						pose.getX() + (2 * positionalErrorBound * Math.random() - positionalErrorBound)
 								+ (Math.random() < this.poseOutlierProbability ? 2 : 0),
 						pose.getY() + (2 * positionalErrorBound * Math.random() - positionalErrorBound),
 						pose.getRotation().getDegrees() + (2 * angularErrorBound * Math.random() - angularErrorBound));
+				return Map.entry(pose, tags);
+			}
 		}
 
 		/**
@@ -245,9 +249,30 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		var p = toDoubleArray(m_limelightEmulator.poseDetected());
-		limelightTable.getEntry("botpose").setDoubleArray(p);
+		var e = m_limelightEmulator.poseDetected();
+		if (e != null) {
+			var p = toDoubleArray(e.getKey());
+			limelightTable.getEntry("botpose").setDoubleArray(p);
+			limelightTable.getEntry("json").setString(json(e.getKey(), e.getValue()));
+		}
 		m_pose = m_poseCalculator.pose(m_pose); // introduces a little delay
+	}
+
+	private String json(Pose2d pose, Collection<Integer> tagIDs) {
+		String s = "";
+		for (Integer tagID : tagIDs) {
+			if (s.length() > 0)
+				s += ", ";
+			var tagPose = this.m_limelightEmulator.aprilTagPoses.get(tagID);
+			Transform2d t = tagPose.minus(pose);
+			var tt = t.getTranslation().rotateBy(Rotation2d.fromDegrees(90));
+			s += String.format("{ \"fID\": %s, \"t6t_rs\": [%.1f, %.1f, %.1f, %.1f, %.1f, %.1f]}", "" + tagID,
+					tt.getX(), 0.0,
+					tt.getY(),
+					0.0, 0.0,
+					0.0);
+		}
+		return "{ \"Results\": {\"Fiducial\": [" + s + "]}}";
 	}
 
 	private double[] toDoubleArray(Pose2d poseDetected) {

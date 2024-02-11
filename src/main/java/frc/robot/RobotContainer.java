@@ -22,6 +22,7 @@ import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveCommandAdvanced;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
+import frc.robot.commands.drive.TagAlignCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimeLightEmulationSubsystem;
@@ -207,6 +208,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		Command[] samples = {
+				new TagAlignCommand(m_driveSubsystem, m_limeLightSubsystem, 3),
 				new TurnCommand(m_driveSubsystem, 30, 3)
 						.andThen(new TurnCommand(m_driveSubsystem, -30, 3)),
 				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
@@ -285,7 +287,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 				// m_poseEstimationSubsystem))
 		};
 		m_controller.button(Button.kX)
-				.whileTrue(samples[6]);
+				.whileTrue(samples[0]);
 	}
 
 	public Command getAutonomousCommand() {
