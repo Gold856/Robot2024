@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -19,12 +18,12 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	private Pose3d m_filteredPose;
 	private double m_distance;
 	private double m_angle;
-	private MedianFilter m_angleMedian;
-	private LinearFilter m_angleFilter;
+	private MedianFilter m_angleFilter;
+	// private LinearFilter m_angleFilter;
 
 	public SimpleVisionSubsystem() {
-		// m_angleMedian = new MedianFilter(10);
-		m_angleFilter = LinearFilter.singlePoleIIR(0.1, 0.02);
+		m_angleFilter = new MedianFilter(10);
+		// m_angleFilter = LinearFilter.singlePoleIIR(0.1, 0.02);
 		setupLimelight();
 		setupSubscription();
 	}
@@ -66,6 +65,8 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 		} else {
 			angle = -(a + b);
 		}
+
+		// ignore unrealistic answers
 		if (Math.abs(angle) < 45) {
 			m_angle = m_angleFilter.calculate(angle);
 			m_distance = z;

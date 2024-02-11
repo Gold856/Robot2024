@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
@@ -40,9 +41,18 @@ public class SimpleVisionAlignCommand extends Command {
 	@Override
 	public void execute() {
 		double currentAngle = m_visionSubsystem.getAngle();
+		double power = m_controller.calculate(currentAngle);
+		double powerLimit = .1;
+		if (power > powerLimit) {
+			power = powerLimit;
+		}
+		if (power < -powerLimit) {
+			power = -powerLimit;
+		}
 		var moduleStates = m_driveSubsystem.calculateModuleStates(
-				new ChassisSpeeds(0, 0, m_controller.calculate(currentAngle)), false);
+				new ChassisSpeeds(0, 0, power), false);
 		m_driveSubsystem.setModuleStates(moduleStates);
+		SmartDashboard.putNumber("error", m_controller.getPositionError());
 	}
 
 	// Called once the command ends or is interrupted.
