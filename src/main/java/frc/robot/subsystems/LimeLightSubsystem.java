@@ -281,14 +281,14 @@ public class LimeLightSubsystem extends SubsystemBase {
 	public Rotation2d getRotationToDetectedTags() {
 		if (m_tags == null)
 			return null;
-		Pose2d pose = summaryDetectedTags(m_tags.value.values());
+		Pose2d pose = average(m_tags.value.values());
 		return pose == null ? null
 				: pose.getTranslation().getAngle()
 						.minus(Rotation2d.fromDegrees(90));
 	}
 
-	private Pose2d summaryDetectedTags(Collection<double[]> values) {
-		if (values.size() == 0)
+	public static Pose2d average(Collection<double[]> values) {
+		if (values == null || values.size() == 0)
 			return null;
 		Translation2d t = null;
 		Rotation2d r = null;
@@ -299,7 +299,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 				t = new Translation2d(v[0], v[1]);
 				r = Rotation2d.fromDegrees(v[2]);
 			} else {
-				t.plus(new Translation2d(v[0], v[1]));
+				t = t.plus(new Translation2d(v[0], v[1]));
 				r = r.plus(Rotation2d.fromDegrees(v[2]));
 			}
 		}
