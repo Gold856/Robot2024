@@ -217,15 +217,18 @@ public class RobotContainer implements frc.common.RobotContainer {
 						3),
 				new SetSteering(m_driveSubsystem, 0).andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.2)
 						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.2))),
-				new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.5,
-						m_limeLightSubsystem, 0.05),
+				new SetSteering(m_driveSubsystem, 0)
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.2,
+								m_limeLightSubsystem, 0.2)),
 				new DriveDistanceCommand(m_driveSubsystem, "4", 1.5,
 						m_limeLightSubsystem, 0.05),
 				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
 						m_limeLightSubsystem,
-						1).andThen(
-								new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.5,
-										m_limeLightSubsystem, 0.05)),
+						3).andThen(
+								new SetSteering(m_driveSubsystem, 0)
+										.andThen(new DriveDistanceCommand(m_driveSubsystem,
+												new Translation2d(8.308467, 1.442593), 1.2,
+												m_limeLightSubsystem, 0.2))),
 				new DriveCommandAdvanced(m_driveSubsystem, new Pose(1.0, 0, 0), 0.05, 1)
 						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)),
 				new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)
@@ -282,7 +285,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 				// m_poseEstimationSubsystem))
 		};
 		m_controller.button(Button.kX)
-				.whileTrue(samples[1]);
+				.whileTrue(samples[6]);
 	}
 
 	public Command getAutonomousCommand() {
