@@ -133,4 +133,20 @@ public final class Constants {
 		public static final double kGearRatio = 1 / 2;
 		public static final double kAllowedError = 50;
 	}
+
+	public static final class IntakeConstants {
+		public static final int kMasterPort = 3;
+		public static final int kFollowerPort = 4;
+		public static final int kSmartCurrentLimit = 60;
+		public static final int kPeakCurrentLimit = 60;
+		public static final boolean kFollowerOppose = false;
+		public static final int kGearRatio = 60;
+		public static final int kP = 0;
+		public static final int kI = 0;
+		public static final int kIz = 0;
+		public static final int kD = 0;
+		public static final int kFF = 0;
+		public static final double kMinOutput = -1;
+		public static final double kMaxOutput = 1;
+	}
 }

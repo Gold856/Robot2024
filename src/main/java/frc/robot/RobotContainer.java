@@ -15,13 +15,12 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveDistanceCommand;
-import frc.robot.commands.FlywheelCommand;
-import frc.robot.commands.FlywheelCommand.Operation;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -36,6 +35,7 @@ public class RobotContainer {
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
+	private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -68,11 +68,9 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kLeftX),
 				() -> m_controller.getRawAxis(Axis.kRightTrigger),
 				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
-		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
-						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
-		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_controller.button(Button.kCircle).onTrue(m_intakeSubsystem.forwardIntakeCommand());
+		m_controller.button(Button.kTriangle).onTrue(m_intakeSubsystem.reverseIntakeCommand());
+		m_controller.button(Button.kSquare).onTrue(m_intakeSubsystem.stopIntakeCommand());
 		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}
 
