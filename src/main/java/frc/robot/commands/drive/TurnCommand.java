@@ -9,7 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.PoseEstimationSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 
 /**
  * The {@code TurnCommand} rotates the robot by a specific angle in the
@@ -61,8 +61,21 @@ public class TurnCommand extends Command {
 	 *                       the angle error in degrees which is tolerable
 	 */
 	public TurnCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
-			PoseEstimationSubsystem poseEstimationSubsystem, double angleTolerance) {
-		this(driveSubsystem, () -> poseEstimationSubsystem.getRotation(targetPosition).getDegrees(), angleTolerance);
+			LimeLightSubsystem limeLieghLightSubsystem, double angleTolerance) {
+		this(driveSubsystem, () -> limeLieghLightSubsystem.getRotation(targetPosition).getDegrees(), angleTolerance);
+	}
+
+	/**
+	 * Constructs a {@code TurnCommand}.
+	 * 
+	 * @param tagID
+	 *                       the ID of the target AprilTag
+	 * @param angleTolerance
+	 *                       the angle error in degrees which is tolerable
+	 */
+	public TurnCommand(DriveSubsystem driveSubsystem, String tagID,
+			LimeLightSubsystem limeLieghLightSubsystem, double angleTolerance) {
+		this(driveSubsystem, () -> limeLieghLightSubsystem.getRotation(tagID).getDegrees(), angleTolerance);
 	}
 
 	/**
@@ -105,6 +118,7 @@ public class TurnCommand extends Command {
 		}
 		m_turnController.reset(heading);
 		m_turnController.setGoal(goal);
+
 		var pose = m_driveSubsystem.getPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString(
@@ -122,8 +136,9 @@ public class TurnCommand extends Command {
 	public void execute() {
 		double heading = m_driveSubsystem.getHeading().getDegrees();
 		double turnSpeed = m_turnController.calculate(heading);
-		turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
+		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(0, 0, turnSpeed, true);
+
 		var pose = m_driveSubsystem.getPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString(
@@ -141,6 +156,7 @@ public class TurnCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		m_driveSubsystem.setModuleStates(0, 0, 0, true);
+
 		recordString("drive",
 				String.format("turn: end - %s : heading: %.1f, target heading: %.1f, current pose: %s",
 						(interrupted ? "interrupted" : "completed"), m_driveSubsystem.getHeading().getDegrees(),
@@ -172,6 +188,24 @@ public class TurnCommand extends Command {
 	}
 
 	/**
+	 * Records the specified value in the specified entry in a {@code NetworkTable}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	public void recordPose(String entryName, Pose2d value) {
+	}
+
+	/**
+	 * Records the specified value in the specified entry in a {@code NetworkTable}.
+	 * 
+	 * @param entryName the name of the entry
+	 * @param value     the value to record
+	 */
+	public void recordString(String entryName, String value) {
+	}
+
+	/**
 	 * Returns a string representation of the specified {@code Pose2d}.
 	 * 
 	 * @param pose a {@code Pose2d}
@@ -191,24 +225,6 @@ public class TurnCommand extends Command {
 	 */
 	public static String toString(double x, double y, double yawInDegrees) {
 		return String.format("[%.2f, %.2f, %.1f degrees]", x, y, yawInDegrees);
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void recordPose(String entryName, Pose2d value) {
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void recordString(String entryName, String value) {
 	}
 
 }

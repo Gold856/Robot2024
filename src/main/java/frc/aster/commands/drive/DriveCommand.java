@@ -12,8 +12,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.PoseEstimationSubsystem;
 import frc.aster.subsystems.DriveSubsystem;
+import frc.robot.subsystems.PoseEstimationSubsystem;
 
 /**
  * The {@code DriveCommand} is responsible for moving the robot from the current
@@ -89,7 +89,7 @@ public class DriveCommand extends SequentialCommandGroup {
 			var targetPose = PoseEstimationSubsystem.getTargetPose(currentPose, targetPosition, distanceToTarget);
 			var transform = targetPose
 					.minus(currentPose);
-			PoseEstimationSubsystem.get().recordPose("Target@Odomoetry", targetPose);
+			// PoseEstimationSubsystem.get().recordPose("Target@Odomoetry", targetPose);
 			System.out.println(targetPose);
 			SmartDashboard.putString("transform", "" + transform);
 			return transform;

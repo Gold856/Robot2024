@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -11,11 +14,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.PoseEstimationSubsystem.Pose;
+import frc.robot.subsystems.LimeLightSubsystem.Pose;
 import frc.robot.subsystems.PoseEstimationSubsystem.PoseCalculator;
+import frc.robot.subsystems.PoseEstimationSubsystemAdvanced.AprilTagMap;
 
 public class LimeLightEmulationSubsystem extends SubsystemBase {
 
+	/**
+	 * The path to the "deploy" directory in the project.
+	 */
+	public final static String s_deployPath = "." + File.separator + "src" + File.separator + "main" + File.separator
+			+ "deploy";
 	/**
 	 * The {@code NetworkTable} named "limelight" which is used by this
 	 * {@code LimeLightEmulationSubsystem}.
@@ -46,9 +55,16 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		m_pose = pose;
 		m_randomness = randomness;
 		m_driveSubsystem = driveSubsystem;
+		Map<Integer, Pose2d> aprilTagPoses = new TreeMap<Integer, Pose2d>();
+		try {
+			var m = new AprilTagMap(s_deployPath + File.separator + "2024LimeLightMap.fmap");
+			m.forEach((k, v) -> aprilTagPoses.put(k, AprilTagMap.toPose(v)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		m_limelightEmulator = new LimeLightEmulator(() -> {
 			return m_pose;
-		}, 0.165, 54.0, 0.2, 10.0, 0.1);
+		}, 0.165, 54.0, 0.2, 10.0, 0.1, aprilTagPoses);
 		m_poseCalculator = new PoseCalculator() {
 
 			Pose2d previous = null;
@@ -67,7 +83,6 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 			}
 
 		};
-
 	}
 
 	/**
@@ -110,6 +125,12 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		private double poseOutlierProbability;
 
 		/**
+		 * A {@code Map} that maps the ID of each AprilTag to the {@code Pose2d} of that
+		 * AprilTag.
+		 */
+		protected Map<Integer, Pose2d> aprilTagPoses;
+
+		/**
 		 * Constructs a {@code LimeLightEmulator}.
 		 * 
 		 * @param poseSupplier
@@ -132,13 +153,14 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		 */
 		public LimeLightEmulator(Supplier<Pose2d> poseSupplier, double aprilTagWidth,
 				double limelightFieldOfViewInDegrees, double positionalErrorBound, double angularErrorBoundInDegrees,
-				double poseOutlierProbability) {
+				double poseOutlierProbability, Map<Integer, Pose2d> aprilTagPoses) {
 			this.poseSupplier = poseSupplier;
 			this.aprilTagWidth = aprilTagWidth;
 			this.limelightFieldOfView = limelightFieldOfViewInDegrees;
 			this.positionalErrorBound = positionalErrorBound;
 			this.angularErrorBound = angularErrorBoundInDegrees;
 			this.poseOutlierProbability = poseOutlierProbability;
+			this.aprilTagPoses = aprilTagPoses;
 		}
 
 		/**
@@ -172,7 +194,7 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		 */
 		Collection<Integer> visibleAprilTags(Pose2d pose) {
 			LinkedList<Integer> visibleAprilTags = new LinkedList<Integer>();
-			for (Entry<Integer, Pose2d> e : PoseEstimationSubsystem.get().aprilTagPoses().entrySet())
+			for (Entry<Integer, Pose2d> e : aprilTagPoses.entrySet())
 				if (isVisible(e.getValue(), pose))
 					visibleAprilTags.add(e.getKey());
 			return visibleAprilTags;
@@ -223,7 +245,6 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		PoseEstimationSubsystemAdvanced.get().recordPose("Pose2D@Field", m_pose);
 		var p = toDoubleArray(m_limelightEmulator.poseDetected());
 		limelightTable.getEntry("botpose").setDoubleArray(p);
 		m_pose = m_poseCalculator.pose(m_pose); // introduces a little delay

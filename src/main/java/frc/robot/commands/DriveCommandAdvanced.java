@@ -65,7 +65,7 @@ public class DriveCommandAdvanced extends DriveCommand {
 			Translation2d translation2d, double distanceToTarget, double distanceTolerance,
 			double angleTolerance) {
 		super(driveSubsystem, () -> {
-			var pose = poseEstimationSubsystem.estimatedPose();
+			// var pose = poseEstimationSubsystem.estimatedPose();
 			// poseEstimationSubsystem.recordPose("Target", targetPose);
 			// return driveSubsystem.getPose().plus(targetPose.minus(pose));
 			return null;
