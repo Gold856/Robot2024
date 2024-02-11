@@ -81,8 +81,8 @@ public class DriveDistanceCommand extends Command {
 	 *                       the angle error in degrees which is tolerable
 	 */
 	public DriveDistanceCommand(DriveSubsystem driveSubsystem, String tagID, double distanceToTarget,
-			LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance) {
-		this(driveSubsystem, () -> distanceToTarget - limeLieghLightSubsystem.getDistance(tagID), // TODO: negation
+			LimeLightSubsystem limeLightSubsystem, double distanceTolerance) {
+		this(driveSubsystem, () -> distanceToTarget - limeLightSubsystem.getDistance(tagID), // TODO: negation
 				distanceTolerance);
 	}
 
