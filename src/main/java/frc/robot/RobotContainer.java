@@ -63,6 +63,8 @@ public class RobotContainer {
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
+		// Should have RainbowPartyFunTime in the last 20 seconds of a match
+		// TODO: Check if this can be overridden LED buttons
 		new Trigger(() -> DriverStation.getMatchTime() <= 20)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		// TODO: LEDs to add: Left Trigger -> Orange LED, with other stuff, BLUE WHEN
