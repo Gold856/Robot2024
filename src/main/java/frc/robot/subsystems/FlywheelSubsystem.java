@@ -13,11 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class FlywheelSubsystem extends SubsystemBase {
-
-	private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(kMasterPort,
-			MotorType.kBrushless);
-	private final CANSparkMax m_neoFlywheelFollower = new CANSparkMax(kFollowerPort,
-			MotorType.kBrushless);
+	private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(kMasterPort, MotorType.kBrushless);
+	private final CANSparkMax m_neoFlywheelFollower = new CANSparkMax(kFollowerPort, MotorType.kBrushless);
 	private final SparkPIDController m_neoController = m_neoFlywheelMaster.getPIDController();
 	private final RelativeEncoder m_neoEncoderMaster = m_neoFlywheelMaster.getEncoder();
 
@@ -62,7 +59,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 		if (m_setVelocity == 0 && Math.abs(m_neoEncoderMaster.getVelocity()) > 0.05) {
 			m_neoFlywheelMaster.stopMotor();
 		}
-
 	}
 
 	public void setSpeed(double reverse) {
@@ -90,7 +86,7 @@ public class FlywheelSubsystem extends SubsystemBase {
 	 */
 	public void setVelocity(double velocity) {
 		m_setVelocity = velocity;
-		m_neoController.setReference(m_setVelocity, ControlType.kVelocity, 0); // TODO change pidSlot?
+		m_neoController.setReference(m_setVelocity, ControlType.kVelocity);
 	}
 
 	/**
@@ -99,5 +95,4 @@ public class FlywheelSubsystem extends SubsystemBase {
 	public boolean atSetpoint() {
 		return Math.abs(getVelocity() - getSetpoint()) < 50;
 	}
-	// TODO: Ask drive team on their preference for seeing this value (such as LEDs)
 }
