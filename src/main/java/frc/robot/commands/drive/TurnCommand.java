@@ -136,6 +136,7 @@ public class TurnCommand extends Command {
 	public void execute() {
 		double heading = m_driveSubsystem.getHeading().getDegrees();
 		double turnSpeed = m_turnController.calculate(heading);
+		turnSpeed = -turnSpeed; // TODO: negation
 		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(0, 0, turnSpeed, true);
 
