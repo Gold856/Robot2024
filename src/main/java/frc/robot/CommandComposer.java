@@ -16,5 +16,4 @@ public class CommandComposer {
 				DriveDistanceCommand.create(m_driveSubsystem, 2.125),
 				DriveDistanceCommand.create(m_driveSubsystem, -2.5));
 	}
-
 }

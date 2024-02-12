@@ -75,7 +75,7 @@ public class RobotContainer {
 		// LEDs for when you want COOP
 		m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
 		// LEDs for when you want HP to drop a note
-		m_driverController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
+		m_operatorController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
 		// RainbowPartyFunTime Button
 		m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
