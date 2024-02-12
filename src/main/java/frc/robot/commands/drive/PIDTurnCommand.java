@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.drive;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,7 +44,6 @@ public class PIDTurnCommand extends Command {
 	public void execute() {
 		double rot = m_driveSubsystem.getHeading().getDegrees();
 		double speed = m_contoller.calculate(rot);
-
 		m_driveSubsystem.setModuleStates(0, 0, speed, false);
 		SmartDashboard.putNumber("Heading", rot);
 		SmartDashboard.putNumber("Target", m_targetAngle);

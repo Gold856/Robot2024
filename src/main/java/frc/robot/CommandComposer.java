@@ -2,7 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.DriveDistanceCommand;
+import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class CommandComposer {
@@ -16,5 +16,4 @@ public class CommandComposer {
 				DriveDistanceCommand.create(m_driveSubsystem, 2.125),
 				DriveDistanceCommand.create(m_driveSubsystem, -2.5));
 	}
-
 }
