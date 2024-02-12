@@ -240,7 +240,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 	 */
 	public Double getDistance(String tagID) {
 		var pose = getPose(tagID);
-		return pose == null ? null : pose.getTranslation().minus(estimatedPose().getTranslation()).getNorm();
+		return pose == null ? null : pose.getTranslation().getNorm();
 	}
 
 	/**

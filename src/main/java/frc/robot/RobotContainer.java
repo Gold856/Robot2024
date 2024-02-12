@@ -19,7 +19,6 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.BangBangDriveDistance;
-import frc.robot.commands.DriveCommandAdvanced;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.commands.drive.TagAlignCommand;
@@ -165,10 +164,22 @@ public class RobotContainer implements frc.common.RobotContainer {
 			super(driveSubsystem, targetPose, distanceTolerance, angleTolerance);
 		}
 
-		public DriveCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
-				double distanceToTarget, LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance,
+		public DriveCommand(DriveSubsystem driveSubsystem, Pose2d targetPose,
+				LimeLightSubsystem limeLightSubsystem, double distanceTolerance,
 				double angleTolerance) {
-			super(driveSubsystem, () -> limeLieghLightSubsystem.getTargetPose(targetPosition, distanceToTarget),
+			super(driveSubsystem,
+					() -> driveSubsystem.getPose().plus(targetPose.minus(limeLightSubsystem.estimatedPose())),
+					distanceTolerance, angleTolerance);
+		}
+
+		public DriveCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
+				double distanceToTarget, LimeLightSubsystem limeLightSubsystem, double distanceTolerance,
+				double angleTolerance) {
+
+			super(driveSubsystem,
+					() -> driveSubsystem.getPose()
+							.plus(limeLightSubsystem.getTargetPose(targetPosition, distanceToTarget)
+									.minus(limeLightSubsystem.estimatedPose())),
 					distanceTolerance, angleTolerance);
 		}
 
@@ -233,26 +244,48 @@ public class RobotContainer implements frc.common.RobotContainer {
 						m_limeLightSubsystem, 5).andThen(
 								new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.2,
 										m_limeLightSubsystem, 0.2)),
-				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.2, 5)
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
-				new TagAlignCommand(m_driveSubsystem, m_limeLightSubsystem, 5),
 				new TurnCommand(m_driveSubsystem, "4",
 						m_limeLightSubsystem,
 						3).andThen(
 								new DriveDistanceCommand(m_driveSubsystem, "4", 1.5,
 										m_limeLightSubsystem, 0.2)),
-				new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.85, 3.0, 0), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6, 3.0, 0), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.44, 3.5, 90), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.44, 3.7, 90), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(4.2, 1.5, -120), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1))
+				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.2, 5)
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
+				new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.85, 3.0, 0), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6, 3.0, 0), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.44, 3.5, 90), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.44, 3.7, 90), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(4.2, 1.5, -120), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
+				new DriveCommand(m_driveSubsystem, new Translation2d(7.87, 1.45),
+						1.2, m_limeLightSubsystem, 0.2, 5)
+								.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.0, 0.0, 0), m_limeLightSubsystem,
+										0.2, 5))
+								.andThen(new DriveCommand(m_driveSubsystem, new Translation2d(7.87,
+										1.45), 1.2, m_limeLightSubsystem,
+										0.05,
+										1))
+								.andThen(
+										new DriveCommand(m_driveSubsystem, new Pose(6.0, 1.45, 0), m_limeLightSubsystem,
+												0.2, 5))
+								.andThen(new DriveCommand(m_driveSubsystem, new Translation2d(7.87,
+										1.45), 1.2, m_limeLightSubsystem,
+										0.05,
+										1))
+								.andThen(
+										new DriveCommand(m_driveSubsystem, new Pose(6.0, 2.92, 0), m_limeLightSubsystem,
+												0.2, 5))
+								.andThen(new DriveCommand(m_driveSubsystem, new Translation2d(7.87,
+										1.45), 1.2, m_limeLightSubsystem,
+										0.05,
+										1)),
+				new TagAlignCommand(m_driveSubsystem, m_limeLightSubsystem, 5)
 		};
 		m_controller.button(Button.kX)
-				.whileTrue(samples[2]);
+				.whileTrue(samples[0]);
 	}
 
 	public Command getAutonomousCommand() {
