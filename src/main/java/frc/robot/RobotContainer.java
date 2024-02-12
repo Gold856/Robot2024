@@ -12,12 +12,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.commands.SimpleVisionAlignCommand;
-// import frc.robot.commands.BangBangDriveDistance;
-// import frc.robot.commands.DriveDistanceCommand;
-// import frc.robot.commands.PIDTurnCommand;
-// import frc.robot.commands.SetSteering;
+import frc.robot.commands.drive.BangBangDriveDistanceCommand;
+import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.PIDTurnCommand;
+import frc.robot.commands.drive.SetSteeringCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
 /**
@@ -28,27 +29,28 @@ import frc.robot.subsystems.SimpleVisionSubsystem;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
+	private final CommandGenericHID m_driverController = new CommandGenericHID(
+			ControllerConstants.kDriverControllerPort);
+	private final CommandGenericHID m_operatorController = new CommandGenericHID(
+			ControllerConstants.kOperatorControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
-	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
+	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
+	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
 	public RobotContainer() {
 		// Configure the button bindings
-		// m_autoSelector.addOption("Test Steering",
-		// SetSteering.getCalibrationCommand(m_driveSubsystem));
-		// m_autoSelector.addOption("PID Turn 90 degrees", new
-		// PIDTurnCommand(m_driveSubsystem, 90, 0.5));
-		// m_autoSelector.addOption("Bang Bang Drive 2 Meters", new
-		// BangBangDriveDistance(m_driveSubsystem, 2));
-		// m_autoSelector.addOption("PID Drive 2 Meters",
-		// DriveDistanceCommand.create(m_driveSubsystem, 2.0));
-		// m_autoSelector.addOption("Knock Over Blocks",
-		// CommandComposer.getBlocksAuto(m_driveSubsystem));
+		m_autoSelector.addOption("Test Steering", SetSteeringCommand.getCalibrationCommand(m_driveSubsystem));
+		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
+				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
+		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
+		m_autoSelector.addOption("Knock Over Blocks",
+				CommandComposer.getBlocksAuto(m_driveSubsystem));
 
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
