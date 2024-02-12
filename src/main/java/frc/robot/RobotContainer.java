@@ -17,11 +17,14 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveDistanceCommand;
+import frc.robot.commands.FlywheelCommand;
+import frc.robot.commands.FlywheelCommand.Operation;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FlywheelSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -38,6 +41,7 @@ public class RobotContainer {
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
+	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -80,15 +84,16 @@ public class RobotContainer {
 		m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> m_driverController.getRawAxis(Axis.kLeftY),
-				() -> m_driverController.getRawAxis(Axis.kLeftX),
-				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
-				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
-		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_driverController.button(Button.kTriangle)
-				.onTrue(m_driveSubsystem.alignModulesToZeroComamnd().withTimeout(0.5));
-		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+				() -> m_controller.getRawAxis(Axis.kLeftY),
+				() -> m_controller.getRawAxis(Axis.kLeftX),
+				() -> m_controller.getRawAxis(Axis.kRightTrigger),
+				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
+		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_controller.button(Button.kTriangle)
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
+						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
+		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}
 
 	public Command getAutonomousCommand() {
