@@ -84,16 +84,16 @@ public class RobotContainer {
 		m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> m_controller.getRawAxis(Axis.kLeftY),
-				() -> m_controller.getRawAxis(Axis.kLeftX),
-				() -> m_controller.getRawAxis(Axis.kRightTrigger),
-				() -> m_controller.getRawAxis(Axis.kLeftTrigger)));
-		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle)
+				() -> m_driverController.getRawAxis(Axis.kLeftY),
+				() -> m_driverController.getRawAxis(Axis.kLeftX),
+				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
+				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
+		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_driverController.button(Button.kTriangle)
 				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
 						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
-		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}
 
 	public Command getAutonomousCommand() {
