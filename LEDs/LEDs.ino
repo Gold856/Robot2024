@@ -90,7 +90,7 @@ void loop() {
 			break;
 		case 5:  // yellow -> Coop LED (HP Command)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, color(255, 255, 0));
+				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 255, 0), color(0, 0, 0)));
 			}
 			delay(150);
 			break;

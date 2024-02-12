@@ -22,7 +22,7 @@ public class ArduinoSubsystem extends SubsystemBase {
 		SOLID_BLUE((byte) 3),
 		BLINKING_YELLOW((byte) 4),
 		BLINKING_PURPLE((byte) 5),
-		SOLID_RED((byte) 6),
+		BLINKING_RED((byte) 6),
 		DEFAULT((byte) 20);
 
 		public byte code;
