@@ -70,42 +70,40 @@ void loop() {
 		case 0:         // reset code
 			colorIndex = 0;
 			pattern = -1;
-		case 1:
+		case 1:  // RainbowPartyFunTime!!
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, RainbowPartyFunTime(colorIndex, i));
 			}
 			delay(75);
 			break;
-		case 2:  // blinking orange note color
+		case 2:  // orange color -> Left Trigger -> Intake down  / Intake forward / Index forward w/ Sensor + Orange LED (Rest of Drive Team)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, BlinkingLights(colorIndex, noteColor, color(0, 0, 0)));
+				strip.setPixelColor(i, noteColor);
 			}
 			delay(150);
 			break;
-		case 3:  // blinking white
-			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, TheaterLights(colorIndex, i, color(255, 255, 255), color(0, 0, 0)));
-			}
-			delay(150);
-			break;
-		case 4:  // solid blue
+		case 3:  // blue -> after all shoot commands (ready to shoot) (Rest of Drive Team)
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, color(0, 0, 255));
 			}
 			delay(150);
 			break;
-		case 5:  // yellow
+		case 5:  // yellow -> Coop LED (HP Command)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, color(255, 255, 0));
+				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 255, 0), color(0, 0, 0)));
 			}
 			delay(150);
 			break;
-		case 6:  // purple
+		case 6:  // purple -> Amp LED (HP Command)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, color(255, 0, 255));
+				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 0, 255), color(0, 0, 0)));
 			}
 			delay(150);
 			break;
+		case 7:  // Red, for when HP should drop a note (HP Command)
+			for (int i = 0; i < LED_COUNT; i++) {
+				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 0, 0), color(0, 0, 0)));
+			}
 		default:  // display team color
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, teamColor);
