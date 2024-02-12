@@ -1,3 +1,13 @@
+// How to set up (aka what to do if LEDs are not working):
+// #1 Make sure the correct board is selected (Arduino Nano), the right comm is selected (changes per pc)
+// #2 LED_PIN (check on the board to see what the LEDs are plugged into and change the constant)
+// #3 What the type of LEDs they are, though we usually use Neopixels they might be different, check with electrical,
+// 	  the other type is making sure that the pixel type flags are correct (whether the original LEDs are RBG, BRG, GRB, etc)
+// #4 Try to change the bootloader (you can find this in the IDE under Tools -> Processor)
+// #5 Is the Bitstream right?
+// #6 The code itself is likely fine so try not to touch that, if anything change the inline commmands in RobotContainer
+// #7 It should tell you if it isn't but just in case make sure your libraries are downloaded and updated
+
 #include <Adafruit_NeoPixel.h>
 #include <Wire.h>
 // Which pin on the Arduino is connected to the NeoPixels?
