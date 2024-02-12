@@ -45,6 +45,14 @@ public class DriveDistanceCommand extends Command {
 	private ProfiledPIDController m_controller;
 
 	/**
+	 * The position of the robot at the commencement of this
+	 * {@code DriveDistanceCommand} (i.e.,
+	 * when the scheduler begins to periodically execute this {@code
+	 * DriveDistanceCommand}).
+	 */
+	private Translation2d m_startPosition;
+
+	/**
 	 * Constructs a new {@code DriveDistanceCommand} whose purpose is to move the
 	 * robot by the specified distance.
 	 * 
@@ -68,7 +76,7 @@ public class DriveDistanceCommand extends Command {
 	 */
 	public DriveDistanceCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition, double distanceToTarget,
 			LimeLightSubsystem limeLightSubsystem, double distanceTolerance) {
-		this(driveSubsystem, () -> distanceToTarget - limeLightSubsystem.getDistance(targetPosition), // TODO: negation
+		this(driveSubsystem, () -> limeLightSubsystem.getDistance(targetPosition) - distanceToTarget,
 				distanceTolerance);
 	}
 
@@ -82,7 +90,7 @@ public class DriveDistanceCommand extends Command {
 	 */
 	public DriveDistanceCommand(DriveSubsystem driveSubsystem, String tagID, double distanceToTarget,
 			LimeLightSubsystem limeLightSubsystem, double distanceTolerance) {
-		this(driveSubsystem, () -> distanceToTarget - limeLightSubsystem.getDistance(tagID), // TODO: negation
+		this(driveSubsystem, () -> limeLightSubsystem.getDistance(tagID) - distanceToTarget,
 				distanceTolerance);
 	}
 
@@ -120,22 +128,23 @@ public class DriveDistanceCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		var starEncoderPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
-		var targetEncoderPosition = starEncoderPosition;
+		m_startPosition = m_driveSubsystem.getPose().getTranslation();
+		double targetDistance = 0;
 		try {
-			targetEncoderPosition += m_targetDistanceSupplier.get();
+			targetDistance += m_targetDistanceSupplier.get();
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		m_controller.reset(starEncoderPosition);
-		m_controller.setGoal(targetEncoderPosition);
+		m_controller.reset(0);
+		m_controller.setGoal(targetDistance);
 
 		var pose = m_driveSubsystem.getPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString("drive",
 				String.format(
-						"distance: initialize - encoder position: %.1f, target encoder position: %.1f, current pose: %s",
-						starEncoderPosition,
-						targetEncoderPosition, TurnCommand.toString(pose)));
+						"distance: initialize - current distance: %.1f, target distance: %.1f, current pose: %s",
+						0.0,
+						m_controller.getGoal().position, TurnCommand.toString(pose)));
 	}
 
 	/**
@@ -144,8 +153,8 @@ public class DriveDistanceCommand extends Command {
 	 */
 	@Override
 	public void execute() {
-		var encoderPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
-		double speed = m_controller.calculate(encoderPosition);
+		double distance = travelDistance();
+		double speed = m_controller.calculate(distance);
 		// speed = TurnCommand.applyThreshold(speed, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(speed, 0, 0, false);
 
@@ -153,9 +162,23 @@ public class DriveDistanceCommand extends Command {
 		recordPose("BotPose@Odometry", pose);
 		recordString("drive",
 				String.format(
-						"distance: execute - encoder position: %.1f, speed: %.1f, current pose: %s",
-						encoderPosition,
+						"distance: execute - current distance: %.1f, target distance: %.1f, speed: %.1f, current pose: %s",
+						distance, m_controller.getGoal().position,
 						speed, TurnCommand.toString(m_driveSubsystem.getPose())));
+	}
+
+	/**
+	 * Calculates the travel distance of the robot.
+	 * 
+	 * @return the travel distance of the robot
+	 */
+	private double travelDistance() {
+		var p = m_driveSubsystem.getPose();
+		var t = p.getTranslation().minus(m_startPosition);
+		double d = t.getNorm();
+		if (d == 0)
+			return 0;
+		return Math.abs(p.getRotation().minus(t.getAngle()).getDegrees()) < 90 ? d : -d;
 	}
 
 	/**
@@ -172,9 +195,9 @@ public class DriveDistanceCommand extends Command {
 
 		recordString("drive",
 				String.format(
-						"distance: end - %s, encoder position: %.1f, target encoder position: %.1f, current pose: %s",
-						(interrupted ? "interrupted" : "completed"),
-						m_driveSubsystem.getModulePositions()[0].distanceMeters, m_controller.getGoal().position,
+						"distance: end - %s, current distance: %.1f, target distance: %.1f, current pose: %s",
+						(interrupted ? "interrupted" : "completed"), travelDistance(),
+						m_controller.getGoal().position,
 						TurnCommand.toString(m_driveSubsystem.getPose())));
 	}
 

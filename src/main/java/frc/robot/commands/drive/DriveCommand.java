@@ -31,9 +31,8 @@ public class DriveCommand extends Command {
 	private DriveSubsystem m_driveSubsystem;
 
 	/**
-	 * The
-	 * {@code Supplier<Pose2d>} that calculates the target pose to which the robot
-	 * should move.
+	 * The {@code Supplier<Pose2d>} that calculates the target pose to which the
+	 * robot should move.
 	 * This is used at the commencement of this {@code DriveCommand} (i.e.,
 	 * when the scheduler begins to periodically execute this {@code
 	 * DriveCommand}).
@@ -135,13 +134,13 @@ public class DriveCommand extends Command {
 		m_controllerX.setGoal(targetPose.getX());
 		m_controllerY.setGoal(targetPose.getY());
 		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
+
 		recordPose("BotPose@Odometry", pose);
 		recordPose("Target@Odometry", targetPose);
 		recordString(
 				"drive",
 				String.format(
 						"initialize - current pose: %s, target pose: %s", toString(pose), toString(targetPose)));
-
 	}
 
 	/**
@@ -156,11 +155,6 @@ public class DriveCommand extends Command {
 		double speedYaw = m_controllerYaw.calculate(pose.getRotation().getDegrees());
 		// speedX = applyThreshold(speedX, DriveConstants.kMinSpeed);
 		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
-		speedX = -speedX;
-		speedY = -speedY;
-		speedX = 0;
-		speedY = 0;
-		speedYaw = -speedYaw;
 		m_driveSubsystem.setModuleStates(speedX,
 				speedY, speedYaw, true);
 		recordPose("BotPose@Odometry", pose);
@@ -196,7 +190,7 @@ public class DriveCommand extends Command {
 	 */
 	@Override
 	public boolean isFinished() {
-		return /* m_controllerX.atGoal() && m_controllerY.atGoal() && */ m_controllerYaw.atGoal();
+		return m_controllerX.atGoal() && m_controllerY.atGoal() && m_controllerYaw.atGoal();
 	}
 
 	/**

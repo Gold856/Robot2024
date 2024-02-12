@@ -49,8 +49,6 @@ public class RobotContainer implements frc.common.RobotContainer {
 			addPoseSupplier("BotPose@Odometry", () -> m_driveSubsystem.getPose());
 		}
 
-		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
-
 		@Override
 		public void periodic() {
 			super.periodic();
@@ -69,30 +67,41 @@ public class RobotContainer implements frc.common.RobotContainer {
 
 		@Override
 		public void recordPose(String entryName, Pose2d value) {
-			if (value != null && !(value instanceof Pose))
-				value = new Pose(value.getX(), value.getY(), value.getRotation().getDegrees());
-			if (value == null)
-				table.getEntry(entryName).setDoubleArray(new double[0]);
-			else
-				table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value));
+			RobotContainer.this.recordPose(entryName, value);
 		}
 
 		@Override
 		public void recordString(String entryName, String value) {
-			table.getEntry(entryName).setString(value);
-		}
-
-		static double[] toPose2DAdvantageScope(Pose2d pose) {
-			return pose == null ? new double[0]
-					: new double[] { pose.getX() + 8.27, pose.getY() + 4.1,
-							pose.getRotation().getDegrees() * Math.PI / 180 };
+			RobotContainer.this.recordString(entryName, value);
 		}
 
 	};
 
-	static class TurnCommand extends frc.robot.commands.drive.TurnCommand { // more code for debugging purposes
+	protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
 
-		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
+	public void recordPose(String entryName, Pose2d value) {
+		if (value == null)
+			table.getEntry(entryName).setDoubleArray(new double[0]);
+		else
+			table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
+					value.getY(), value.getRotation().getDegrees()));
+	}
+
+	public void recordString(String entryName, String value) {
+		table.getEntry(entryName).setString(value);
+	}
+
+	static double[] toPose2DAdvantageScope(double x, double y, double yawInDegrees) {
+		return new double[] { x + 8.27, y + 4.1, yawInDegrees * Math.PI / 180 };
+	}
+
+	static double[] toPose2DAdvantageScope(Pose2d pose) {
+		return pose == null ? new double[0]
+				: new double[] { pose.getX() + 8.27, pose.getY() + 4.1,
+						pose.getRotation().getDegrees() * Math.PI / 180 };
+	}
+
+	class TurnCommand extends frc.robot.commands.drive.TurnCommand { // more code for debugging
 
 		public TurnCommand(DriveSubsystem driveSubsystem, double targetAlgnle, double angleTolerance) {
 			super(driveSubsystem, targetAlgnle, angleTolerance);
@@ -110,28 +119,17 @@ public class RobotContainer implements frc.common.RobotContainer {
 
 		@Override
 		public void recordPose(String entryName, Pose2d value) {
-			if (value == null)
-				table.getEntry(entryName).setDoubleArray(new double[0]);
-			else
-				table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
-						value.getY(), value.getRotation().getDegrees()));
+			RobotContainer.this.recordPose(entryName, value);
 		}
 
 		@Override
 		public void recordString(String entryName, String value) {
-			table.getEntry(entryName).setString(value);
-		}
-
-		static double[] toPose2DAdvantageScope(double x, double y, double yawInDegrees) {
-			return new double[] { x + 8.27, y + 4.1, yawInDegrees * Math.PI / 180 };
+			RobotContainer.this.recordString(entryName, value);
 		}
 
 	}
 
-	static class DriveDistanceCommand extends frc.robot.commands.drive.DriveDistanceCommand { // more code for debugging
-																								// purposes
-
-		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
+	class DriveDistanceCommand extends frc.robot.commands.drive.DriveDistanceCommand { // more code for debugging
 
 		public DriveDistanceCommand(DriveSubsystem driveSubsystem, double targetDistance, double distanceTolerance) {
 			super(driveSubsystem, targetDistance, distanceTolerance);
@@ -150,20 +148,38 @@ public class RobotContainer implements frc.common.RobotContainer {
 
 		@Override
 		public void recordPose(String entryName, Pose2d value) {
-			if (value == null)
-				table.getEntry(entryName).setDoubleArray(new double[0]);
-			else
-				table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
-						value.getY(), value.getRotation().getDegrees()));
+			RobotContainer.this.recordPose(entryName, value);
 		}
 
 		@Override
 		public void recordString(String entryName, String value) {
-			table.getEntry(entryName).setString(value);
+			RobotContainer.this.recordString(entryName, value);
 		}
 
-		static double[] toPose2DAdvantageScope(double x, double y, double yawInDegrees) {
-			return new double[] { x + 8.27, y + 4.1, yawInDegrees * Math.PI / 180 };
+	}
+
+	class DriveCommand extends frc.robot.commands.drive.DriveCommand { // more code for debugging
+
+		public DriveCommand(DriveSubsystem driveSubsystem, Pose2d targetPose, double distanceTolerance,
+				double angleTolerance) {
+			super(driveSubsystem, targetPose, distanceTolerance, angleTolerance);
+		}
+
+		public DriveCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
+				double distanceToTarget, LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance,
+				double angleTolerance) {
+			super(driveSubsystem, () -> limeLieghLightSubsystem.getTargetPose(targetPosition, distanceToTarget),
+					distanceTolerance, angleTolerance);
+		}
+
+		@Override
+		public void recordPose(String entryName, Pose2d value) {
+			RobotContainer.this.recordPose(entryName, value);
+		}
+
+		@Override
+		public void recordString(String entryName, String value) {
+			RobotContainer.this.recordString(entryName, value);
 		}
 
 	}
@@ -206,39 +222,27 @@ public class RobotContainer implements frc.common.RobotContainer {
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd().withTimeout(0.5));
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		// m_controller.button(Button.kX).onTrue(new
+		// DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		Command[] samples = {
-				new TagAlignCommand(m_driveSubsystem, m_limeLightSubsystem, 3),
-				new TurnCommand(m_driveSubsystem, 30, 3)
-						.andThen(new TurnCommand(m_driveSubsystem, -30, 3)),
+				new TurnCommand(m_driveSubsystem, 45, 5)
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.2))
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.2))
+						.andThen(new TurnCommand(m_driveSubsystem, -45, 5)),
 				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
-						m_limeLightSubsystem,
-						3),
+						m_limeLightSubsystem, 5).andThen(
+								new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.2,
+										m_limeLightSubsystem, 0.2)),
+				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.2, 5)
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
+				new TagAlignCommand(m_driveSubsystem, m_limeLightSubsystem, 5),
 				new TurnCommand(m_driveSubsystem, "4",
 						m_limeLightSubsystem,
-						3),
-				new SetSteering(m_driveSubsystem, 0).andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.2)
-						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.2))),
-				new SetSteering(m_driveSubsystem, 0)
-						.andThen(new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.2,
-								m_limeLightSubsystem, 0.2)),
-				new DriveDistanceCommand(m_driveSubsystem, "4", 1.5,
-						m_limeLightSubsystem, 0.05),
-				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
-						m_limeLightSubsystem,
 						3).andThen(
-								new SetSteering(m_driveSubsystem, 0)
-										.andThen(new DriveDistanceCommand(m_driveSubsystem,
-												new Translation2d(8.308467, 1.442593), 1.2,
-												m_limeLightSubsystem, 0.2))),
-				new DriveCommandAdvanced(m_driveSubsystem, new Pose(1.0, 0, 0), 0.05, 1)
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)),
-				new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(1, 1.0, 0), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(1.44, 1.5, 90), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(1.44, 1.7, 90), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(-0.8, -0.5, -120), 0.05, 1))
-						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)),
+								new DriveDistanceCommand(m_driveSubsystem, "4", 1.5,
+										m_limeLightSubsystem, 0.2)),
 				new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1)
 						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.85, 3.0, 0), 0.05, 1))
 						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6, 3.0, 0), 0.05, 1))
@@ -246,48 +250,9 @@ public class RobotContainer implements frc.common.RobotContainer {
 						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.44, 3.7, 90), 0.05, 1))
 						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(4.2, 1.5, -120), 0.05, 1))
 						.andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(0, 0, 0), 0.05, 1))
-				// ,
-				// new DriveCommandAdvanced(m_driveSubsystem, m_poseEstimationSubsystem, new
-				// Translation2d(7.87, 1.45),
-				// 1.2, 0.05, 1)
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.0, 0.0, 0),
-				// 0.05, 1))
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Translation2d(7.87,
-				// 1.45), 1.2,
-				// 0.05,
-				// 1))
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.0, 1.45, 0),
-				// 0.05, 1))
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Translation2d(7.87,
-				// 1.45), 1.2,
-				// 0.05,
-				// 1))
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.0, 2.92, 0),
-				// 0.05, 1))
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Translation2d(7.87,
-				// 1.45), 1.2,
-				// 0.05,
-				// 1)),
-				// new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.85, 3.0, 0), 0.05, 1,
-				// m_poseEstimationSubsystem)
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6, 3.0, 0),
-				// 0.05, 1,
-				// m_poseEstimationSubsystem))
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.44, 3.5, 90),
-				// 0.05, 1,
-				// m_poseEstimationSubsystem))
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.44, 3.7, 90),
-				// 0.05, 1,
-				// m_poseEstimationSubsystem))
-				// .andThen(new DriveCommandAdvanced(m_driveSubsystem, new Pose(4.2, 1.5, -120),
-				// 0.05, 1,
-				// m_poseEstimationSubsystem))
-				// .andThen(
-				// new DriveCommandAdvanced(m_driveSubsystem, new Pose(6.85, 3.0, 0), 0.05, 1,
-				// m_poseEstimationSubsystem))
 		};
 		m_controller.button(Button.kX)
-				.whileTrue(samples[0]);
+				.whileTrue(samples[2]);
 	}
 
 	public Command getAutonomousCommand() {

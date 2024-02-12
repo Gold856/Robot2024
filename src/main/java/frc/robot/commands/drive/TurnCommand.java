@@ -110,7 +110,8 @@ public class TurnCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		double heading = m_driveSubsystem.getHeading().getDegrees();
+		// double heading = m_driveSubsystem.getHeading().getDegrees();
+		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
 		double goal = heading;
 		try {
 			goal += m_targetAngleSupplier.get();
@@ -134,9 +135,10 @@ public class TurnCommand extends Command {
 	 */
 	@Override
 	public void execute() {
-		double heading = m_driveSubsystem.getHeading().getDegrees();
+		// double heading = m_driveSubsystem.getHeading().getDegrees();
+		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
 		double turnSpeed = m_turnController.calculate(heading);
-		turnSpeed = -turnSpeed; // TODO: negation
+		// turnSpeed = -turnSpeed; // TODO: negation
 		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(0, 0, turnSpeed, true);
 
@@ -155,11 +157,12 @@ public class TurnCommand extends Command {
 	 */
 	@Override
 	public void end(boolean interrupted) {
+		// double heading = m_driveSubsystem.getHeading().getDegrees();
+		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
 		m_driveSubsystem.setModuleStates(0, 0, 0, true);
-
 		recordString("drive",
 				String.format("turn: end - %s : heading: %.1f, target heading: %.1f, current pose: %s",
-						(interrupted ? "interrupted" : "completed"), m_driveSubsystem.getHeading().getDegrees(),
+						(interrupted ? "interrupted" : "completed"), heading,
 						m_turnController.getGoal().position, toString(m_driveSubsystem.getPose())));
 	}
 

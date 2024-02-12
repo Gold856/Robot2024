@@ -256,6 +256,23 @@ public class LimeLightSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * Calculates the target {@code Pose2d} based on the current pose of the robot
+	 * and the specified target position and distance to the target.
+	 * 
+	 * @param targetPosition   the target position whose x and y-coordinate values
+	 *                         are in meters
+	 * @param distanceToTarget the desired distance to the target
+	 * @return the target {@code Pose2d} calculated based on the current pose of the
+	 *         robot
+	 *         and the specified target position and distance to the target
+	 * @throw UnsupportedOperationException if the current robot pose and
+	 *        the target are at the same location
+	 */
+	public Pose2d getTargetPose(Translation2d target, double distanceToTarget) {
+		return estimatedPose() == null ? null : getTargetPose(estimatedPose(), target, distanceToTarget);
+	}
+
+	/**
 	 * Returns the {@code Rotation2d} that is needed to turn the robot toward the
 	 * specified AprilTag
 	 * 
