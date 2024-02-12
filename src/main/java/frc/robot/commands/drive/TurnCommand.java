@@ -121,7 +121,6 @@ public class TurnCommand extends Command {
 		m_turnController.setGoal(goal);
 
 		var pose = m_driveSubsystem.getCorrectedPose();
-		recordPose("BotPose@Odometry", pose);
 		recordString(
 				"drive",
 				String.format("turn: initialize - heading: %.1f, target heading: %.1f, current pose: %s", heading,
@@ -141,9 +140,6 @@ public class TurnCommand extends Command {
 		// turnSpeed = -turnSpeed; // NEGATION if positive turnSpeed: clockwise rotation
 		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(0, 0, turnSpeed, true);
-
-		var pose = m_driveSubsystem.getCorrectedPose();
-		recordPose("BotPose@Odometry", pose);
 		recordString(
 				"drive", String.format("turn: execute - heading: %.1f, turn speed: %.1f, current pose: %s", heading,
 						turnSpeed, toString(m_driveSubsystem.getCorrectedPose())));

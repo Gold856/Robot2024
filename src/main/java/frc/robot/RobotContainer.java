@@ -55,8 +55,10 @@ public class RobotContainer implements frc.common.RobotContainer {
 			table.getEntry("Pose Estimated").setString("" + pose);
 			if (pose != null)
 				table.getEntry("BotPose'").setDoubleArray(Pose.toPose2DAdvantageScope(pose));
-			pose = m_driveSubsystem.getCorrectedPose();
-			table.getEntry("BotPose@Odometry").setDoubleArray(Pose.toPose2DAdvantageScope(pose));
+			table.getEntry("BotPose@Odometry")
+					.setDoubleArray(Pose.toPose2DAdvantageScope(m_driveSubsystem.getPose()));
+			table.getEntry("BotPose'@Odometry")
+					.setDoubleArray(Pose.toPose2DAdvantageScope(m_driveSubsystem.getCorrectedPose()));
 			try {
 				pose = new Pose(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]);
 				table.getEntry("BotPose").setDoubleArray(Pose.toPose2DAdvantageScope(pose));
@@ -279,7 +281,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 				new TagAlignCommand(m_driveSubsystem, m_limeLightSubsystem, 5)
 		};
 		m_controller.button(Button.kX)
-				.whileTrue(samples[4]);
+				.whileTrue(samples[0]);
 	}
 
 	public Command getAutonomousCommand() {

@@ -135,7 +135,6 @@ public class DriveCommand extends Command {
 		m_controllerY.setGoal(targetPose.getY());
 		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
 
-		recordPose("BotPose@Odometry", pose);
 		recordPose("Target@Odometry", targetPose);
 		recordString(
 				"drive",
@@ -157,7 +156,6 @@ public class DriveCommand extends Command {
 		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(speedX,
 				speedY, speedYaw, true);
-		recordPose("BotPose@Odometry", pose);
 		recordString(
 				"drive", "execute - velocities :" + toString(speedX, speedY, speedYaw) + ", pose: "
 						+ toString(m_driveSubsystem.getCorrectedPose()));

@@ -139,7 +139,6 @@ public class DriveDistanceCommand extends Command {
 		m_controller.setGoal(targetDistance);
 
 		var pose = m_driveSubsystem.getCorrectedPose();
-		recordPose("BotPose@Odometry", pose);
 		recordString("drive",
 				String.format(
 						"distance: initialize - current distance: %.1f, target distance: %.1f, current pose: %s",
@@ -157,9 +156,6 @@ public class DriveDistanceCommand extends Command {
 		double speed = m_controller.calculate(distance);
 		// speed = TurnCommand.applyThreshold(speed, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(speed, 0, 0, false);
-
-		var pose = m_driveSubsystem.getCorrectedPose();
-		recordPose("BotPose@Odometry", pose);
 		recordString("drive",
 				String.format(
 						"distance: execute - current distance: %.1f, target distance: %.1f, speed: %.1f, current pose: %s",
