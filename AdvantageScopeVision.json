@@ -1,86 +1,86 @@
 {
-	"version": "3.0.2",
-	"layout": [
-		{
-			"type": 5,
-			"fields": [],
-			"listFields": [
-				[
-					{
-						"type": "Arrow (Center)",
-						"key": "NT:/AdvantageScope/BotPose",
-						"sourceTypeIndex": 0,
-						"sourceType": 5
-					},
-					{
-						"type": "Ghost",
-						"key": "NT:/AdvantageScope/BotPose'",
-						"sourceTypeIndex": 0,
-						"sourceType": 5
-					},
-					{
-						"type": "Arrow (Center)",
-						"key": "NT:/AdvantageScope/BotPose@Odometry",
-						"sourceTypeIndex": 0,
-						"sourceType": 5
-					},
-					{
-						"type": "Robot",
-						"key": "NT:/AdvantageScope/BotPose@Field",
-						"sourceTypeIndex": 0,
-						"sourceType": 5
-					},
-					{
-						"type": "Ghost",
-						"key": "NT:/AdvantageScope/BotPose'@Odometry",
-						"sourceTypeIndex": 0,
-						"sourceType": 5
-					}
-				]
-			],
-			"options": {
-				"game": "2024 Field",
-				"unitDistance": "meters",
-				"unitRotation": "radians",
-				"origin": "right",
-				"size": 0.75,
-				"allianceBumpers": "auto",
-				"allianceOrigin": "blue",
-				"orientation": "blue left, red right"
-			},
-			"configHidden": false,
-			"title": "Odometry"
-		},
-		{
-			"type": 6,
-			"fields": [],
-			"listFields": [
-				[],
-				[
-					{
-						"type": "Robot",
-						"key": "NT:/AdvantageScope/BotPose'",
-						"sourceTypeIndex": 0,
-						"sourceType": 5
-					}
-				]
-			],
-			"options": {
-				"field": "2024 Field",
-				"alliance": "blue",
-				"robot": "2024 KitBot",
-				"unitDistance": "meters",
-				"unitRotation": "radians",
-				"cameraIndex": 0,
-				"fov": 50
-			},
-			"configHidden": false,
-			"title": "3D Field"
-		},
-		{
-			"type": 3,
-			"field": "NT:/AdvantageScope/drive",
-			"title": "Console"
-		}
-	]
+  "version": "3.0.2",
+  "layout": [
+    {
+      "type": 5,
+      "fields": [],
+      "listFields": [
+        [
+          {
+            "type": "Arrow (Center)",
+            "key": "NT:/AdvantageScope/BotPose",
+            "sourceTypeIndex": 0,
+            "sourceType": 5
+          },
+          {
+            "type": "Ghost",
+            "key": "NT:/AdvantageScope/BotPose'",
+            "sourceTypeIndex": 0,
+            "sourceType": 5
+          },
+          {
+            "type": "Arrow (Center)",
+            "key": "NT:/AdvantageScope/BotPose@Odometry",
+            "sourceTypeIndex": 0,
+            "sourceType": 5
+          },
+          {
+            "type": "Robot",
+            "key": "NT:/AdvantageScope/BotPose@Field",
+            "sourceTypeIndex": 0,
+            "sourceType": 5
+          },
+          {
+            "type": "Ghost",
+            "key": "NT:/AdvantageScope/BotPose'@Odometry",
+            "sourceTypeIndex": 0,
+            "sourceType": 5
+          }
+        ]
+      ],
+      "options": {
+        "game": "2024 Field",
+        "unitDistance": "meters",
+        "unitRotation": "radians",
+        "origin": "right",
+        "size": 0.75,
+        "allianceBumpers": "auto",
+        "allianceOrigin": "blue",
+        "orientation": "blue left, red right"
+      },
+      "configHidden": false,
+      "title": "Odometry"
+    },
+    {
+      "type": 6,
+      "fields": [],
+      "listFields": [
+        [],
+        [
+          {
+            "type": "Robot",
+            "key": "NT:/AdvantageScope/BotPose@Field",
+            "sourceTypeIndex": 0,
+            "sourceType": 5
+          }
+        ]
+      ],
+      "options": {
+        "field": "2024 Field",
+        "alliance": "blue",
+        "robot": "2024 KitBot",
+        "unitDistance": "meters",
+        "unitRotation": "radians",
+        "cameraIndex": 0,
+        "fov": 50
+      },
+      "configHidden": false,
+      "title": "3D Field"
+    },
+    {
+      "type": 3,
+      "field": "NT:/AdvantageScope/drive",
+      "title": "Console"
+    }
+  ]
 }
