@@ -31,6 +31,13 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 	 * {@code LimeLightEmulationSubsystem}.
 	 */
 	protected NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
+
+	/**
+	 * The {@code NetworkTable} named "limelight" which is used by this
+	 * {@code LimeLightEmulationSubsystem}.
+	 */
+	protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
+
 	/**
 	 * The {@code Pose2d} representing the pose of the robot on the field.
 	 */
@@ -72,7 +79,7 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 
 			@Override
 			public Pose2d pose(Pose2d pose) {
-				var current = m_driveSubsystem.getPose();
+				var current = m_driveSubsystem.getCorrectedPose();
 				if (this.previous == null || pose == null) {
 					this.previous = current;
 					return pose;
@@ -80,6 +87,9 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 				var t = current.minus(this.previous).times(Math.random() * m_randomness * 2 - m_randomness + 1);
 				var refined = pose.plus(t);
 				this.previous = current;
+
+				table.getEntry("BotPose@Field")
+						.setDoubleArray(LimeLightSubsystem.Pose.toPose2DAdvantageScope(refined));
 				return refined;
 			}
 

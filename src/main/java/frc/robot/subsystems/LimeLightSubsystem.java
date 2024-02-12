@@ -74,6 +74,32 @@ public class LimeLightSubsystem extends SubsystemBase {
 					|| Double.isNaN(getRotation().getRadians());
 		}
 
+		/**
+		 * Converts the specified {@code Pose2d} into the {@code double} array
+		 * representation that AdvatageScope takes
+		 * 
+		 * @param pose a {@code Pose2d}
+		 * @return a {@code double} array representation of the specified {@code Pose2d}
+		 */
+		public static double[] toPose2DAdvantageScope(Pose2d pose) {
+			return pose == null ? new double[0]
+					: new double[] { pose.getX() + 8.27, pose.getY() + 4.1,
+							pose.getRotation().getDegrees() * Math.PI / 180 };
+		}
+
+		/**
+		 * Converts the specified pose data into the {@code double} array
+		 * representation that AdvatageScope takes
+		 * 
+		 * @param x            the x-coordinate value
+		 * @param y            the y-coordinate value
+		 * @param yawInDegrees the yaw in degrees
+		 * @return a {@code double} array representation of the specified pose data
+		 */
+		public static double[] toPose2DAdvantageScope(double x, double y, double yawInDegrees) {
+			return new double[] { x + 8.27, y + 4.1, yawInDegrees * Math.PI / 180 };
+		}
+
 	}
 
 	protected static final Pose2d DEFAULT_POSE = new Pose(0, 0, 0);

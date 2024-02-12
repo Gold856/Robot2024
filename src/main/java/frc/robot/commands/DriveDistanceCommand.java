@@ -41,7 +41,7 @@ public class DriveDistanceCommand extends Command {
 
 	@Override
 	public void initialize() {
-		double currentPosition = m_driveSubsystem.getPose().getX();
+		double currentPosition = m_driveSubsystem.getCorrectedPose().getX();
 		// With optimize off, encoder distance always increases
 		// m_target = currentPosition + Math.abs(m_amount);
 		// m_targetDirection = Math.signum(m_amount);
@@ -53,7 +53,7 @@ public class DriveDistanceCommand extends Command {
 	@Override
 	public void execute() {
 		SmartDashboard.putNumber("err", m_controller.getPositionError());
-		var out = m_controller.calculate(m_driveSubsystem.getPose().getX());
+		var out = m_controller.calculate(m_driveSubsystem.getCorrectedPose().getX());
 		SmartDashboard.putNumber("out", out);
 		SmartDashboard.putNumber("Setpoint Position", m_controller.getSetpoint().position);
 		SmartDashboard.putNumber("Setpoint Velocity", m_controller.getSetpoint().velocity);

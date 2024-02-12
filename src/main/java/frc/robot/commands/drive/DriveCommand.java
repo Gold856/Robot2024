@@ -122,7 +122,7 @@ public class DriveCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		Pose2d pose = m_driveSubsystem.getPose();
+		Pose2d pose = m_driveSubsystem.getCorrectedPose();
 		var targetPose = pose;
 		try {
 			targetPose = m_targetPoseSupplier.get();
@@ -149,7 +149,7 @@ public class DriveCommand extends Command {
 	 */
 	@Override
 	public void execute() {
-		Pose2d pose = m_driveSubsystem.getPose();
+		Pose2d pose = m_driveSubsystem.getCorrectedPose();
 		double speedX = m_controllerX.calculate(pose.getX());
 		double speedY = m_controllerY.calculate(pose.getY());
 		double speedYaw = m_controllerYaw.calculate(pose.getRotation().getDegrees());
@@ -160,7 +160,7 @@ public class DriveCommand extends Command {
 		recordPose("BotPose@Odometry", pose);
 		recordString(
 				"drive", "execute - velocities :" + toString(speedX, speedY, speedYaw) + ", pose: "
-						+ toString(m_driveSubsystem.getPose()));
+						+ toString(m_driveSubsystem.getCorrectedPose()));
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class DriveCommand extends Command {
 		recordString("drive",
 				"end - : " + (interrupted ? "interrupted"
 						: "completed") + String.format(" - current: %s, target: %s",
-								"" + toString(m_driveSubsystem.getPose()),
+								"" + toString(m_driveSubsystem.getCorrectedPose()),
 								toString(m_controllerX.getGoal().position, m_controllerY.getGoal().position,
 										m_controllerYaw.getGoal().position)));
 	}

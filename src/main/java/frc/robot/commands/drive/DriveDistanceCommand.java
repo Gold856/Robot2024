@@ -128,7 +128,7 @@ public class DriveDistanceCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		m_startPosition = m_driveSubsystem.getPose().getTranslation();
+		m_startPosition = m_driveSubsystem.getCorrectedPose().getTranslation();
 		double targetDistance = 0;
 		try {
 			targetDistance += m_targetDistanceSupplier.get();
@@ -138,7 +138,7 @@ public class DriveDistanceCommand extends Command {
 		m_controller.reset(0);
 		m_controller.setGoal(targetDistance);
 
-		var pose = m_driveSubsystem.getPose();
+		var pose = m_driveSubsystem.getCorrectedPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString("drive",
 				String.format(
@@ -158,13 +158,13 @@ public class DriveDistanceCommand extends Command {
 		// speed = TurnCommand.applyThreshold(speed, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(speed, 0, 0, false);
 
-		var pose = m_driveSubsystem.getPose();
+		var pose = m_driveSubsystem.getCorrectedPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString("drive",
 				String.format(
 						"distance: execute - current distance: %.1f, target distance: %.1f, speed: %.1f, current pose: %s",
 						distance, m_controller.getGoal().position,
-						speed, TurnCommand.toString(m_driveSubsystem.getPose())));
+						speed, TurnCommand.toString(m_driveSubsystem.getCorrectedPose())));
 	}
 
 	/**
@@ -173,12 +173,8 @@ public class DriveDistanceCommand extends Command {
 	 * @return the travel distance of the robot
 	 */
 	private double travelDistance() {
-		var p = m_driveSubsystem.getPose();
-		var t = p.getTranslation().minus(m_startPosition);
-		double d = t.getNorm();
-		if (d == 0)
-			return 0;
-		return Math.abs(p.getRotation().minus(t.getAngle()).getDegrees()) < 90 ? d : -d;
+		double d = m_driveSubsystem.getCorrectedPose().getTranslation().minus(m_startPosition).getNorm();
+		return m_controller.getGoal().position < 0 ? -d : d;
 	}
 
 	/**
@@ -198,7 +194,7 @@ public class DriveDistanceCommand extends Command {
 						"distance: end - %s, current distance: %.1f, target distance: %.1f, current pose: %s",
 						(interrupted ? "interrupted" : "completed"), travelDistance(),
 						m_controller.getGoal().position,
-						TurnCommand.toString(m_driveSubsystem.getPose())));
+						TurnCommand.toString(m_driveSubsystem.getCorrectedPose())));
 	}
 
 	/**

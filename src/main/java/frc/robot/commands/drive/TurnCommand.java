@@ -111,7 +111,7 @@ public class TurnCommand extends Command {
 	@Override
 	public void initialize() {
 		// double heading = m_driveSubsystem.getHeading().getDegrees();
-		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
+		double heading = m_driveSubsystem.getCorrectedPose().getRotation().getDegrees();
 		double goal = heading;
 		try {
 			goal += m_targetAngleSupplier.get();
@@ -120,7 +120,7 @@ public class TurnCommand extends Command {
 		m_turnController.reset(heading);
 		m_turnController.setGoal(goal);
 
-		var pose = m_driveSubsystem.getPose();
+		var pose = m_driveSubsystem.getCorrectedPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString(
 				"drive",
@@ -136,17 +136,17 @@ public class TurnCommand extends Command {
 	@Override
 	public void execute() {
 		// double heading = m_driveSubsystem.getHeading().getDegrees();
-		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
+		double heading = m_driveSubsystem.getCorrectedPose().getRotation().getDegrees();
 		double turnSpeed = m_turnController.calculate(heading);
-		// turnSpeed = -turnSpeed; // TODO: negation
+		// turnSpeed = -turnSpeed; // NEGATION if positive turnSpeed: clockwise rotation
 		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(0, 0, turnSpeed, true);
 
-		var pose = m_driveSubsystem.getPose();
+		var pose = m_driveSubsystem.getCorrectedPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString(
 				"drive", String.format("turn: execute - heading: %.1f, turn speed: %.1f, current pose: %s", heading,
-						turnSpeed, toString(m_driveSubsystem.getPose())));
+						turnSpeed, toString(m_driveSubsystem.getCorrectedPose())));
 	}
 
 	/**
@@ -158,12 +158,12 @@ public class TurnCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		// double heading = m_driveSubsystem.getHeading().getDegrees();
-		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
+		double heading = m_driveSubsystem.getCorrectedPose().getRotation().getDegrees();
 		m_driveSubsystem.setModuleStates(0, 0, 0, true);
 		recordString("drive",
 				String.format("turn: end - %s : heading: %.1f, target heading: %.1f, current pose: %s",
 						(interrupted ? "interrupted" : "completed"), heading,
-						m_turnController.getGoal().position, toString(m_driveSubsystem.getPose())));
+						m_turnController.getGoal().position, toString(m_driveSubsystem.getCorrectedPose())));
 	}
 
 	/**

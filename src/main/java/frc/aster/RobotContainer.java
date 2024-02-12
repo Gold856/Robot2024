@@ -44,12 +44,12 @@ public class RobotContainer implements frc.common.RobotContainer {
 			var pose = estimatedPose();
 			table.getEntry("Pose Estimated").setString("" + pose);
 			if (pose != null)
-				table.getEntry("BotPose'").setDoubleArray(toPose2DAdvantageScope(pose));
+				table.getEntry("BotPose'").setDoubleArray(Pose.toPose2DAdvantageScope(pose));
 			pose = m_driveSubsystem.getPose();
-			table.getEntry("BotPose@Odometry").setDoubleArray(toPose2DAdvantageScope(pose));
+			table.getEntry("BotPose@Odometry").setDoubleArray(Pose.toPose2DAdvantageScope(pose));
 			try {
 				pose = new Pose(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]);
-				table.getEntry("BotPose").setDoubleArray(toPose2DAdvantageScope(pose));
+				table.getEntry("BotPose").setDoubleArray(Pose.toPose2DAdvantageScope(pose));
 			} catch (Exception e) {
 			}
 		}
@@ -61,18 +61,12 @@ public class RobotContainer implements frc.common.RobotContainer {
 			if (value == null)
 				table.getEntry(entryName).setDoubleArray(new double[0]);
 			else
-				table.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value));
+				table.getEntry(entryName).setDoubleArray(Pose.toPose2DAdvantageScope(value));
 		}
 
 		@Override
 		public void recordString(String entryName, String value) {
 			table.getEntry(entryName).setString(value);
-		}
-
-		static double[] toPose2DAdvantageScope(Pose2d pose) {
-			return pose == null ? new double[0]
-					: new double[] { pose.getX() + 8.27, pose.getY() + 4.1,
-							pose.getRotation().getDegrees() * Math.PI / 180 };
 		}
 
 	};

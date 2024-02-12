@@ -185,7 +185,7 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 		var pose = estimatedPose();
 		visionTable.getEntry("Pose Estimated").setString("" + pose);
 		if (pose != null)
-			visionTable.getEntry("BotPose'").setDoubleArray(toPose2DAdvantageScope(pose.getX(),
+			visionTable.getEntry("BotPose'").setDoubleArray(Pose.toPose2DAdvantageScope(pose.getX(),
 					pose.getY(), pose.getRotation().getDegrees()));
 	}
 
@@ -197,7 +197,8 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 		var botpose = super.changedBotPose(event);
 		if (botpose != null) {
 			visionTable.getEntry("BotPose")
-					.setDoubleArray(toPose2DAdvantageScope(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]));
+					.setDoubleArray(
+							Pose.toPose2DAdvantageScope(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]));
 		}
 		return botpose;
 	}
@@ -246,21 +247,6 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 	}
 
 	/**
-	 * Constructs a {@code double} array for AdvantageScope from the specified
-	 * values.
-	 * 
-	 * @param x            the x-coordinate value of the pose of the robot
-	 * @param y            the y-coordinate value of the pose of the robot
-	 * @param yawInDegrees the yaw value (i.e., the orientation relative to the
-	 *                     positive x-axis) of the pose of the robot
-	 * @return a {@code double} array for AdvantageScope regarding the pose of the
-	 *         robot.
-	 */
-	static double[] toPose2DAdvantageScope(double x, double y, double yawInDegrees) {
-		return new double[] { x + 8.27, y + 4.1, yawInDegrees * Math.PI / 180 };
-	}
-
-	/**
 	 * Returns a string representation of the specified {@code Map}.
 	 * 
 	 * @param m a {@code Map} that maps the ID of each recognized AprilTag to a
@@ -290,7 +276,7 @@ public class PoseEstimationSubsystemAdvanced extends PoseEstimationSubsystem {
 		if (value == null)
 			visionTable.getEntry(entryName).setDoubleArray(new double[0]);
 		else
-			visionTable.getEntry(entryName).setDoubleArray(toPose2DAdvantageScope(value.getX(),
+			visionTable.getEntry(entryName).setDoubleArray(Pose.toPose2DAdvantageScope(value.getX(),
 					value.getY(), value.getRotation().getDegrees()));
 	}
 
