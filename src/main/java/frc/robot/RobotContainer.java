@@ -15,12 +15,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.commands.drive.BangBangDriveDistanceCommand;
-import frc.robot.commands.drive.DriveDistanceCommand;
-import frc.robot.commands.drive.PIDTurnCommand;
-import frc.robot.commands.drive.SetSteeringCommand;
-import frc.robot.commands.flywheel.FlywheelCommand;
-import frc.robot.commands.flywheel.FlywheelCommand.Operation;
+import frc.robot.commands.Drive.BangBangDriveDistanceCommand;
+import frc.robot.commands.Drive.DriveDistanceCommand;
+import frc.robot.commands.Drive.PIDTurnCommand;
+import frc.robot.commands.Drive.SetSteeringCommand;
+import frc.robot.commands.Flywheel.FlywheelCommand;
+import frc.robot.commands.Flywheel.FlywheelCommand.Operation;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
@@ -81,8 +81,11 @@ public class RobotContainer {
 		m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
 		// LEDs for when you want HP to drop a note
 		m_operatorController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
-		// RainbowPartyFunTime Button
-		m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		// DEFAULT Button
+		m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
+		// RainbowPartyFunTime
+		m_operatorController.button(Button.kShare)
+				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
