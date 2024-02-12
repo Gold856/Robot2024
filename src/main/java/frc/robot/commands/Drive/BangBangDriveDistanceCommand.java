@@ -1,4 +1,4 @@
-package frc.robot.commands.Drive;
+package frc.robot.commands.drive;
 
 import static frc.robot.Constants.DriveConstants.*;
 
