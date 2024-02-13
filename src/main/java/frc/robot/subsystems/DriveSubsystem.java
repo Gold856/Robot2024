@@ -144,10 +144,8 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Heading", getHeading().getRadians());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
-		// SwerveDriveKinematics.desaturateWheelSpeeds(previousStates == null ? states :
-		// mean(states, previousStates),
-		// kMaxSpeed);
+		SwerveDriveKinematics.desaturateWheelSpeeds(previousStates == null ? states : mean(states, previousStates),
+				kMaxSpeed);
 
 		previousStates = states;
 		m_targetModuleStatePublisher.set(states);
@@ -155,20 +153,15 @@ public class DriveSubsystem extends SubsystemBase {
 		return states;
 	}
 
-	// Not currently used but a potential solution for spinning wheels when there is
-	// about 90 degree change in angle.
-	// private SwerveModuleState[] mean(SwerveModuleState[] states,
-	// SwerveModuleState[] states2) {
-	// return new SwerveModuleState[] { mean(states[0], states2[0]), mean(states[1],
-	// states2[1]),
-	// mean(states[2], states2[2]), mean(states[3], states2[3]) };
-	// }
+	private SwerveModuleState[] mean(SwerveModuleState[] states, SwerveModuleState[] states2) {
+		return new SwerveModuleState[] { mean(states[0], states2[0]), mean(states[1], states2[1]),
+				mean(states[2], states2[2]), mean(states[3], states2[3]) };
+	}
 
-	// private SwerveModuleState mean(SwerveModuleState s1, SwerveModuleState s2) {
-	// return new SwerveModuleState((s1.speedMetersPerSecond +
-	// s2.speedMetersPerSecond) / 2,
-	// s1.angle.plus(s2.angle).div(2));
-	// }
+	private SwerveModuleState mean(SwerveModuleState s1, SwerveModuleState s2) {
+		return new SwerveModuleState((s1.speedMetersPerSecond + s2.speedMetersPerSecond) / 2,
+				s1.angle.plus(s2.angle).div(2));
+	}
 
 	/**
 	 * Updates the sim pose.

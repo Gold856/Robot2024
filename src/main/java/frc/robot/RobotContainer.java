@@ -26,7 +26,6 @@ import frc.robot.commands.drive.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
-import frc.robot.subsystems.PoseEstimationSubsystemAdvanced;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -45,7 +44,6 @@ public class RobotContainer {
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
-	private final PoseEstimationSubsystemAdvanced m_poseEstimationSubsystem = new PoseEstimationSubsystemAdvanced();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -62,9 +60,6 @@ public class RobotContainer {
 
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
-
-		m_poseEstimationSubsystem.addPoseSupplier("BotPose@Odometry",
-				() -> m_driveSubsystem.getPose());
 	}
 
 	static class Pose extends Pose2d {
@@ -134,7 +129,7 @@ public class RobotContainer {
 			@Override
 			public void execute() {
 				super.execute();
-				// m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
+				m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
 			}
 
 			@Override
@@ -144,17 +139,8 @@ public class RobotContainer {
 			}
 		}, new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 30), 0.05, 1)
 				.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
-						1)),
-				new DriveCommandSample(m_driveSubsystem, new Pose(0, 1, 0), 0.05, 1)
-						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
-								1)),
-				new DriveCommandSample(m_driveSubsystem, new Pose(1, 1, 0), 0.05, 1)
-						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
-								1)),
-				new DriveCommandSample(m_driveSubsystem, new Pose(1, 1, 45), 0.05, 1)
-						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
-								1)) };
-		m_driverController.button(Button.kX).whileTrue(samples[1]);
+						1)) };
+		m_driverController.button(Button.kX).whileTrue(samples[0]);
 
 		// // Indexer Button Mappings
 		// m_operatorController.button(Button.kSquare).onTrue(new
