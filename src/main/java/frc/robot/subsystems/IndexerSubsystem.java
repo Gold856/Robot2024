@@ -11,9 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
 
 public class IndexerSubsystem extends SubsystemBase {
-
 	private CANSparkMax m_indexerMotor;
-	private static IndexerSubsystem instance;
 
 	/**
 	 * Creates a new IndexerSubsystem.
@@ -28,7 +26,6 @@ public class IndexerSubsystem extends SubsystemBase {
 		m_indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerSmartCurrentLimit);
 		m_indexerMotor.setSecondaryCurrentLimit(IndexerConstants.kIndexerPeakCurrentLimit);
 	}
-
 
 	public void periodic() {
 	}
