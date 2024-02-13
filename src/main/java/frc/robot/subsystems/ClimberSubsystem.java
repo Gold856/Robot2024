@@ -39,6 +39,7 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_leftMotor.setSmartCurrentLimit(ClimbConstants.kSmartCurrentLimit);
 		m_leftMotor.setSecondaryCurrentLimit(ClimbConstants.kSecondaryCurrentLimit);
 		m_leftMotor.setSoftLimit(SoftLimitDirection.kForward, 100);
+		m_leftMotor.setSoftLimit(SoftLimitDirection.kForward, 0);
 
 		m_rightMotor.restoreFactoryDefaults();
 		m_rightMotor.setInverted(ClimbConstants.kRightInvert);
@@ -47,6 +48,7 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_rightMotor.setSmartCurrentLimit(ClimbConstants.kSmartCurrentLimit);
 		m_rightMotor.setSecondaryCurrentLimit(ClimbConstants.kSecondaryCurrentLimit);
 		m_rightMotor.setSoftLimit(SoftLimitDirection.kForward, 100);
+		m_rightMotor.setSoftLimit(SoftLimitDirection.kForward, 0);
 
 		m_leftPidController.setP(ClimbConstants.kP);
 		m_leftPidController.setI(ClimbConstants.kI);
@@ -96,19 +98,6 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_leftEncoder.setPosition(0);
 		m_rightEncoder.setPosition(0);
 		setPosition(0, 0);
-	}
-
-	public void setSpeed(double speedLeft, double speedRight) {
-		setSpeedLeft(speedLeft);
-		setSpeedRight(speedRight);
-	}
-
-	public void setSpeedLeft(double speed) {
-		m_leftMotor.set(speed);
-	}
-
-	public void setSpeedRight(double speed) {
-		m_rightMotor.set(speed);
 	}
 
 	public double getOutputCurrent() {

@@ -34,13 +34,11 @@ public class ClimberDriveCommand extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_climberSubsystem.setSpeed(
-				Math.signum(m_left.get())
-						* Math.min(Math.abs(MathUtil.applyDeadband(m_left.get(), ControllerConstants.kDeadzone)),
-								ClimbConstants.kMaxClimberDriveSpeed),
-				Math.signum(m_right.get())
-						* Math.min(Math.abs(MathUtil.applyDeadband(m_right.get(), ControllerConstants.kDeadzone)),
-								ClimbConstants.kMaxClimberDriveSpeed));
+		m_climberSubsystem.setPosition(
+				Math.abs(MathUtil.applyDeadband(Math.min(m_left.get(), 0), ControllerConstants.kDeadzone)
+						* ClimbConstants.kMaxExtension),
+				Math.abs(MathUtil.applyDeadband(Math.min(m_right.get(), 0), ControllerConstants.kDeadzone)
+						* ClimbConstants.kMaxExtension));
 	}
 
 	// Called once the command ends or is interrupted.
