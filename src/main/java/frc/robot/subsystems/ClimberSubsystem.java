@@ -103,4 +103,9 @@ public class ClimberSubsystem extends SubsystemBase {
 	public double getOutputCurrent() {
 		return Math.max(Math.abs(m_leftMotor.getOutputCurrent()), Math.abs(m_rightMotor.getOutputCurrent()));
 	}
+
+	public boolean atZero() {
+		return (Math.abs(0 - getrightPosition()) <= ClimbConstants.ktolerance)
+				&& (Math.abs(0 - getleftPosition()) <= ClimbConstants.ktolerance);
+	}
 }

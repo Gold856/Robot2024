@@ -8,11 +8,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.FlywheelSubsystem;
 
 public class FlywheelCommand extends Command {
-	private final Operation m_operation;
+	private final FlywheelOperation m_operation;
 	private final FlywheelSubsystem m_flywheelSubsystem;
 	private final double m_rpm;
 
-	public enum Operation {
+	public enum FlywheelOperation {
 		/** Set the velocity and end immediately. */
 		SET_VELOCITY,
 		/** Set the velocity and end when at setpoint. */
@@ -26,7 +26,7 @@ public class FlywheelCommand extends Command {
 	 * @param operation        The operation.
 	 * @param rpm              The RPM to spin the motor at.
 	 */
-	public FlywheelCommand(FlywheelSubsystem flywheelSubsytem, Operation operation, double rpm) {
+	public FlywheelCommand(FlywheelSubsystem flywheelSubsytem, FlywheelOperation operation, double rpm) {
 		m_flywheelSubsystem = flywheelSubsytem;
 		m_rpm = rpm;
 		m_operation = operation;
@@ -36,7 +36,7 @@ public class FlywheelCommand extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		if (m_operation == Operation.SET_VELOCITY) {
+		if (m_operation == FlywheelOperation.SET_VELOCITY) {
 			m_flywheelSubsystem.setVelocity(m_rpm);
 		}
 	}
@@ -44,9 +44,9 @@ public class FlywheelCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		if (m_operation == Operation.SET_VELOCITY) {
+		if (m_operation == FlywheelOperation.SET_VELOCITY) {
 			return true;
-		} else if (m_operation == Operation.SETTLE) {
+		} else if (m_operation == FlywheelOperation.SETTLE) {
 			return m_flywheelSubsystem.atSetpoint();
 		}
 		System.out.println("Unreachable code in FlywheelCommand");
