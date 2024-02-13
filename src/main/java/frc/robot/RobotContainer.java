@@ -14,16 +14,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
+import frc.robot.commands.drive.BangBangDriveDistance;
+import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.PIDTurnCommand;
+import frc.robot.commands.drive.SetSteering;
 import frc.robot.commands.drive.TurnCommand;
-import frc.robot.commands.indexer.IndexWithSensorCommand;
-import frc.robot.commands.indexer.IndexerCommand;
-import frc.robot.commands.indexer.IndexerStopCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -54,19 +54,13 @@ public class RobotContainer {
 
 	public RobotContainer() {
 		// Configure the button bindings
+		m_autoSelector.addOption("Test Steering", SetSteering.getCalibrationCommand(m_driveSubsystem));
+		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		m_autoSelector.addOption("Bang Bang Drive 2 Meters", new BangBangDriveDistance(m_driveSubsystem, 2, 0.01));
+		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
+		m_autoSelector.addOption("Knock Over Blocks",
+				CommandComposer.getBlocksAuto(m_driveSubsystem));
 
-		/*
-		 * m_autoSelector.addOption("Test Steering",
-		 * SetSteering.getCalibrationCommand(m_driveSubsystem));
-		 * m_autoSelector.addOption("PID Turn 90 degrees", new
-		 * PIDTurnCommand(m_driveSubsystem, 90, 0.5));
-		 * m_autoSelector.addOption("Bang Bang Drive 2 Meters", new
-		 * BangBangDriveDistance(m_driveSubsystem, 2, 0.01));
-		 * m_autoSelector.addOption("PID Drive 2 Meters",
-		 * DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
-		 * m_autoSelector.addOption("Knock Over Blocks",
-		 * CommandComposer.getBlocksAuto(m_driveSubsystem));
-		 */
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
 
@@ -153,8 +147,7 @@ public class RobotContainer {
 			}
 		}, new TurnCommand(m_driveSubsystem, 30, 1)
 				.andThen(new TurnCommand(m_driveSubsystem, -30, 1)),
-				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
-						m_poseEstimationSubsystem,
+				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), m_poseEstimationSubsystem,
 						1) };
 		m_driverController.button(Button.kX).whileTrue(samples[1]);
 
@@ -171,15 +164,6 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return new SequentialCommandGroup(
-				IndexerCommand.getFowardCommand(m_indexerSubsystem),
-				new WaitCommand(5),
-				IndexerCommand.getReverseCommand(m_indexerSubsystem),
-				new WaitCommand(5),
-				new IndexerStopCommand(m_indexerSubsystem),
-				new WaitCommand(5),
-				new IndexWithSensorCommand(m_indexerSubsystem)
-
-		);
+		return m_autoSelector.getSelected();
 	}
 }
