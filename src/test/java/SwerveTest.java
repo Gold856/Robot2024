@@ -70,19 +70,19 @@ public class SwerveTest {
 	@Test
 	void testPose() {
 		System.out
-				.println(m_driveSubsystem.getCorrectedPose() + "     "
+				.println(m_driveSubsystem.getPose() + "     "
 						+ Arrays.toString(m_driveSubsystem.getModulePositions()));
 		for (int i = 0; i < 5; i++) {
 			m_driveSubsystem.setModuleStates(0.5, 0, 0, true);
 		}
 		System.out
-				.println(m_driveSubsystem.getCorrectedPose() + "     "
+				.println(m_driveSubsystem.getPose() + "     "
 						+ Arrays.toString(m_driveSubsystem.getModulePositions()));
 		for (int i = 0; i < 11; i++) {
 			m_driveSubsystem.setModuleStates(0, 0, 0.3, true);
 		}
 		System.out
-				.println(m_driveSubsystem.getCorrectedPose() + "     "
+				.println(m_driveSubsystem.getPose() + "     "
 						+ Arrays.toString(m_driveSubsystem.getModulePositions()));
 	}
 
