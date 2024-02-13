@@ -79,7 +79,7 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 
 			@Override
 			public Pose2d pose(Pose2d pose) {
-				var current = m_driveSubsystem.getCorrectedPose();
+				var current = m_driveSubsystem.getPose();
 				if (this.previous == null || pose == null) {
 					this.previous = current;
 					return pose;

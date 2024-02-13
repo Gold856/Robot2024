@@ -45,7 +45,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 	// LimeLightSubsystem() {
 	private final LimeLightSubsystem m_limeLightSubsystem = new PoseEstimationSubsystem() {
 		{
-			addPoseSupplier("BotPose@Odometry", () -> m_driveSubsystem.getCorrectedPose());
+			addPoseSupplier("BotPose@Odometry", () -> m_driveSubsystem.getPose());
 		}
 
 		@Override
@@ -58,7 +58,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 			table.getEntry("BotPose@Odometry")
 					.setDoubleArray(Pose.toPose2DAdvantageScope(m_driveSubsystem.getPose()));
 			table.getEntry("BotPose'@Odometry")
-					.setDoubleArray(Pose.toPose2DAdvantageScope(m_driveSubsystem.getCorrectedPose()));
+					.setDoubleArray(Pose.toPose2DAdvantageScope(m_driveSubsystem.getPose()));
 			try {
 				pose = new Pose(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]);
 				table.getEntry("BotPose").setDoubleArray(Pose.toPose2DAdvantageScope(pose));
@@ -160,7 +160,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 				LimeLightSubsystem limeLightSubsystem, double distanceTolerance,
 				double angleTolerance) {
 			super(driveSubsystem,
-					() -> driveSubsystem.getCorrectedPose().plus(targetPose.minus(limeLightSubsystem.estimatedPose())),
+					() -> driveSubsystem.getPose().plus(targetPose.minus(limeLightSubsystem.estimatedPose())),
 					distanceTolerance, angleTolerance);
 		}
 
@@ -169,7 +169,7 @@ public class RobotContainer implements frc.common.RobotContainer {
 				double angleTolerance) {
 
 			super(driveSubsystem,
-					() -> driveSubsystem.getCorrectedPose()
+					() -> driveSubsystem.getPose()
 							.plus(limeLightSubsystem.getTargetPose(targetPosition, distanceToTarget)
 									.minus(limeLightSubsystem.estimatedPose())),
 					distanceTolerance, angleTolerance);
@@ -228,6 +228,14 @@ public class RobotContainer implements frc.common.RobotContainer {
 		// m_controller.button(Button.kX).onTrue(new
 		// DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		Command[] samples = {
+				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.2, 5)
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
+				new TurnCommand(m_driveSubsystem, 45, 5)
+						.andThen(new TurnCommand(m_driveSubsystem, -45, 5)),
+				new DriveDistanceCommand(m_driveSubsystem, 1, 0.2)
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.2)),
 				new TurnCommand(m_driveSubsystem, 45, 5)
 						.andThen(new TurnCommand(m_driveSubsystem, -45, 5))
 						.andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.2))
@@ -236,19 +244,6 @@ public class RobotContainer implements frc.common.RobotContainer {
 						.andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.2))
 						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.2))
 						.andThen(new TurnCommand(m_driveSubsystem, -45, 5)),
-				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
-						m_limeLightSubsystem, 5).andThen(
-								new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.2,
-										m_limeLightSubsystem, 0.2)),
-				new TurnCommand(m_driveSubsystem, "4",
-						m_limeLightSubsystem,
-						3).andThen(
-								new DriveDistanceCommand(m_driveSubsystem, "4", 1.5,
-										m_limeLightSubsystem, 0.2)),
-				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.2, 5)
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
 				new DriveCommand(m_driveSubsystem, new Translation2d(7.87, 1.45),
 						1.2, m_limeLightSubsystem, 0.2, 5)
 								.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.0, 0.0, 0), m_limeLightSubsystem,
@@ -271,6 +266,19 @@ public class RobotContainer implements frc.common.RobotContainer {
 										1.45), 1.2, m_limeLightSubsystem,
 										0.05,
 										1)),
+				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
+						m_limeLightSubsystem, 5).andThen(
+								new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.2,
+										m_limeLightSubsystem, 0.2)),
+				new TurnCommand(m_driveSubsystem, "4",
+						m_limeLightSubsystem,
+						3).andThen(
+								new DriveDistanceCommand(m_driveSubsystem, "4", 1.5,
+										m_limeLightSubsystem, 0.2)),
+				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.2, 5)
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.2, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
 				new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)
 						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.85, 3.0, 0), 0.2, 5))
 						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6, 3.0, 0), 0.2, 5))

@@ -128,11 +128,6 @@ public class DriveSubsystem extends SubsystemBase {
 		return m_pose;
 	}
 
-	public Pose2d getCorrectedPose() {
-		var pose = getPose(); // TODO: check if correction is made properly
-		return new Pose2d(-pose.getX(), -pose.getY(), pose.getRotation());
-	}
-
 	/**
 	 * Calculates the modules states needed for the robot to achieve the target
 	 * chassis speed.

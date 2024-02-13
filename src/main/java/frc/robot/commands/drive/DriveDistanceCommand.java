@@ -128,7 +128,7 @@ public class DriveDistanceCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		m_startPosition = m_driveSubsystem.getCorrectedPose().getTranslation();
+		m_startPosition = m_driveSubsystem.getPose().getTranslation();
 		double targetDistance = 0;
 		try {
 			targetDistance += m_targetDistanceSupplier.get();
@@ -138,7 +138,7 @@ public class DriveDistanceCommand extends Command {
 		m_controller.reset(0);
 		m_controller.setGoal(targetDistance);
 
-		var pose = m_driveSubsystem.getCorrectedPose();
+		var pose = m_driveSubsystem.getPose();
 		recordString("drive",
 				String.format(
 						"distance: initialize - current distance: %.1f, target distance: %.1f, current pose: %s",
@@ -160,7 +160,7 @@ public class DriveDistanceCommand extends Command {
 				String.format(
 						"distance: execute - current distance: %.1f, target distance: %.1f, speed: %.1f, current pose: %s",
 						distance, m_controller.getGoal().position,
-						speed, TurnCommand.toString(m_driveSubsystem.getCorrectedPose())));
+						speed, TurnCommand.toString(m_driveSubsystem.getPose())));
 	}
 
 	/**
@@ -169,7 +169,7 @@ public class DriveDistanceCommand extends Command {
 	 * @return the travel distance of the robot
 	 */
 	private double travelDistance() {
-		double d = m_driveSubsystem.getCorrectedPose().getTranslation().minus(m_startPosition).getNorm();
+		double d = m_driveSubsystem.getPose().getTranslation().minus(m_startPosition).getNorm();
 		return m_controller.getGoal().position < 0 ? -d : d;
 	}
 
@@ -190,7 +190,7 @@ public class DriveDistanceCommand extends Command {
 						"distance: end - %s, current distance: %.1f, target distance: %.1f, current pose: %s",
 						(interrupted ? "interrupted" : "completed"), travelDistance(),
 						m_controller.getGoal().position,
-						TurnCommand.toString(m_driveSubsystem.getCorrectedPose())));
+						TurnCommand.toString(m_driveSubsystem.getPose())));
 	}
 
 	/**
