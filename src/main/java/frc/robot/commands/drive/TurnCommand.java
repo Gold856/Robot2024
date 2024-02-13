@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -79,7 +80,6 @@ public class TurnCommand extends Command {
 	 *                              the angle error in degrees which is tolerable
 	 */
 	public TurnCommand(DriveSubsystem driveSubsystem, Supplier<Double> targetAngleCalculator, double angleTolerance) {
-		m_driveSubsystem = driveSubsystem;
 		m_targetAngleCalculator = targetAngleCalculator;
 		var constraints = new TrapezoidProfile.Constraints(DriveConstants.kTurnMaxVelocity,
 				DriveConstants.kTurnMaxAcceleration);
@@ -105,6 +105,9 @@ public class TurnCommand extends Command {
 		}
 		m_turnController.reset(heading);
 		m_turnController.setGoal(goal);
+		SmartDashboard.putString("drive",
+				String.format("turn: initialize - heading: %.1f, target heading: %.1f", heading,
+						goal));
 		var pose = m_driveSubsystem.getPose();
 		recordPose("BotPose@Odometry", pose);
 		recordString(
@@ -141,9 +144,9 @@ public class TurnCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		m_driveSubsystem.setModuleStates(0, 0, 0, true);
-		recordString("drive",
+		SmartDashboard.putString("drive",
 				String.format("turn: end - %s : heading: %.1f, target heading: %.1f, current pose: %s",
-						(interrupted ? "interrupted" : "completed"), m_driveSubsystem.getHeading().getDegrees(),
+						(interrupted ? "interrupted" : "completed"), m_driveSubsystem.getHeading(),
 						m_turnController.getGoal().position, toString(m_driveSubsystem.getPose())));
 	}
 
