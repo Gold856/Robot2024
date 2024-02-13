@@ -72,7 +72,9 @@ public class RobotContainer {
 				() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
 		m_operatorController.povUp()
-				.onTrue(new ClimberPresetCommand(m_climberSubsystem));
+				.onTrue(new ClimberPresetCommand(m_climberSubsystem,
+						() -> m_operatorController.getRawAxis(Axis.kLeftY),
+						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
 		// m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		// m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());

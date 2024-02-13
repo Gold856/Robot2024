@@ -4,15 +4,23 @@
 
 package frc.robot.commands.climber;
 
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ClimbConstants;
+import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class ClimberPresetCommand extends Command {
 	private final ClimberSubsystem m_climberSubsystem;
+	private final Supplier<Double> m_left;
+	private final Supplier<Double> m_right;
 
 	/** Creates a new ClimberMove. */
-	public ClimberPresetCommand(ClimberSubsystem subsystem) {
+	public ClimberPresetCommand(ClimberSubsystem subsystem, Supplier<Double> left, Supplier<Double> right) {
+		m_left = left;
+		m_right = right;
 		m_climberSubsystem = subsystem;
 		addRequirements(m_climberSubsystem);
 	}
@@ -20,13 +28,10 @@ public class ClimberPresetCommand extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		System.out.println("command ran");
 		if (m_climberSubsystem.atZero()) {
 			m_climberSubsystem.setPosition(ClimbConstants.kMaxExtension, ClimbConstants.kMaxExtension);
-			System.out.println("up");
 		} else {
 			m_climberSubsystem.setPosition(0, 0);
-			System.out.println("down");
 		}
 	}
 
@@ -43,6 +48,11 @@ public class ClimberPresetCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return m_climberSubsystem.atleftSetpoint() && m_climberSubsystem.atrightSetpoint();
+		if (MathUtil.applyDeadband(m_left.get(), ControllerConstants.kDeadzone) == 0
+				|| MathUtil.applyDeadband(m_right.get(), ControllerConstants.kDeadzone) == 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

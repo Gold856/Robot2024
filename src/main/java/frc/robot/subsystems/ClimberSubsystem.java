@@ -105,7 +105,7 @@ public class ClimberSubsystem extends SubsystemBase {
 	}
 
 	public boolean atZero() {
-		return (Math.abs(0 - getrightPosition()) <= ClimbConstants.ktolerance)
-				&& (Math.abs(0 - getleftPosition()) <= ClimbConstants.ktolerance);
+		return ((Math.abs(getrightPosition()) <= ClimbConstants.ktolerance)
+				&& (Math.abs(getleftPosition()) <= ClimbConstants.ktolerance));
 	}
 }
