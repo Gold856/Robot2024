@@ -7,13 +7,12 @@ import java.util.function.Supplier;
 // the WPILib BSD license file in the root directory of this project.
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.LimeLightSubsystem;
 
 /**
  * The {@code DriveDistanceCommand} is responsible for moving the robot by a
@@ -56,6 +55,8 @@ public class DriveDistanceCommand extends Command {
 	 * Constructs a new {@code DriveDistanceCommand} whose purpose is to move the
 	 * robot by the specified distance.
 	 * 
+	 * @param driveSubsystem    the {@code DriveSubsystem} to be used by the
+	 *                          {@code DriveDistanceCommand}
 	 * @param targetDistance
 	 *                          the target distance in meters that the robot should
 	 *                          move
@@ -67,37 +68,11 @@ public class DriveDistanceCommand extends Command {
 	}
 
 	/**
-	 * Constructs a {@code TurnCommand}.
-	 * 
-	 * @param targetPosition
-	 *                       the target position
-	 * @param angleTolerance
-	 *                       the angle error in degrees which is tolerable
-	 */
-	public DriveDistanceCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition, double distanceToTarget,
-			LimeLightSubsystem limeLightSubsystem, double distanceTolerance) {
-		this(driveSubsystem, () -> limeLightSubsystem.getDistance(targetPosition) - distanceToTarget,
-				distanceTolerance);
-	}
-
-	/**
-	 * Constructs a {@code TurnCommand}.
-	 * 
-	 * @param tagID
-	 *                       the ID of the target AprilTag
-	 * @param angleTolerance
-	 *                       the angle error in degrees which is tolerable
-	 */
-	public DriveDistanceCommand(DriveSubsystem driveSubsystem, String tagID, double distanceToTarget,
-			LimeLightSubsystem limeLightSubsystem, double distanceTolerance) {
-		this(driveSubsystem, () -> limeLightSubsystem.getDistance(tagID) - distanceToTarget,
-				distanceTolerance);
-	}
-
-	/**
 	 * Constructs a new {@code DriveDistanceCommand} whose purpose is to move the
 	 * robot by the specified distance.
 	 * 
+	 * @param driveSubsystem         the {@code DriveSubsystem} to be used by the
+	 *                               {@code DriveDistanceCommand}
 	 * @param targetDistanceSupplier
 	 *                               a {@code Supplier<Double>} that calculates
 	 *                               the target distance in meters that the robot
@@ -139,11 +114,11 @@ public class DriveDistanceCommand extends Command {
 		m_controller.setGoal(targetDistance);
 
 		var pose = m_driveSubsystem.getPose();
-		recordString("drive",
+		SmartDashboard.putString("drive",
 				String.format(
 						"distance: initialize - current distance: %.1f, target distance: %.1f, current pose: %s",
 						0.0,
-						m_controller.getGoal().position, TurnCommand.toString(pose)));
+						m_controller.getGoal().position, "" + pose));
 	}
 
 	/**
@@ -154,13 +129,14 @@ public class DriveDistanceCommand extends Command {
 	public void execute() {
 		double distance = travelDistance();
 		double speed = m_controller.calculate(distance);
-		// speed = TurnCommand.applyThreshold(speed, DriveConstants.kMinSpeed);
+		// speed = TurnCommand.applyThreshold(speed, DriveConstants.kMinSpeed); // for
+		// convergence
 		m_driveSubsystem.setModuleStates(speed, 0, 0, false);
-		recordString("drive",
+		SmartDashboard.putString("drive",
 				String.format(
 						"distance: execute - current distance: %.1f, target distance: %.1f, speed: %.1f, current pose: %s",
 						distance, m_controller.getGoal().position,
-						speed, TurnCommand.toString(m_driveSubsystem.getPose())));
+						speed, "" + m_driveSubsystem.getPose()));
 	}
 
 	/**
@@ -184,13 +160,11 @@ public class DriveDistanceCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		m_driveSubsystem.setModuleStates(0, 0, 0, true);
-
-		recordString("drive",
+		SmartDashboard.putString("drive",
 				String.format(
 						"distance: end - %s, current distance: %.1f, target distance: %.1f, current pose: %s",
 						(interrupted ? "interrupted" : "completed"), travelDistance(),
-						m_controller.getGoal().position,
-						TurnCommand.toString(m_driveSubsystem.getPose())));
+						m_controller.getGoal().position, "" + m_driveSubsystem.getPose()));
 	}
 
 	/**
@@ -204,21 +178,4 @@ public class DriveDistanceCommand extends Command {
 		return m_controller.atGoal();
 	}
 
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void recordPose(String entryName, Pose2d value) {
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void recordString(String entryName, String value) {
-	}
 }

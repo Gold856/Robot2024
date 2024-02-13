@@ -123,8 +123,8 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @return The pose of the robot.
 	 */
 	public Pose2d getPose() {
-		if (Robot.isSimulation()) // TODO: may be necessary to behave like the swervebot
-			return new Pose2d(-m_pose.getX(), -m_pose.getY(), m_pose.getRotation());
+		if (Robot.isSimulation()) // NECESSARY to behave like the swervebot
+			return new Pose2d(m_pose.getX(), m_pose.getY(), m_pose.getRotation().times(-1));
 		return m_pose;
 	}
 

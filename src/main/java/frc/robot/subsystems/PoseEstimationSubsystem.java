@@ -293,36 +293,10 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 		public void update(Collection<PoseCalculator> poseCalculators) {
 			if (poseCalculators.size() > 0) {
 				Stream<Pose2d> poses = poseCalculators.stream().map(c -> c.pose(estimatedPose));
-				estimatedPose = average(poses.toList().toArray(new Pose2d[0]));
+				estimatedPose = Pose.average(poses.toList().toArray(new Pose2d[0]));
 			}
 		}
 
-		/**
-		 * Returns the average of the specified {@code Pose2d}s.
-		 * 
-		 * @param poses
-		 *              {@code Pose}s
-		 * @return the average of the specified {@code Pose2d}s
-		 */
-		public static Pose2d average(Pose2d... poses) {
-			if (poses == null || poses.length == 0)
-				return null;
-			double x = 0;
-			double y = 0;
-			double yaw = 0;
-			int count = 0;
-			for (var pose : poses) {
-				if (pose != null) {
-					x += pose.getX();
-					y += pose.getY();
-					yaw += pose.getRotation().getDegrees();
-					count++;
-				}
-			}
-			if (count == 0)
-				return null;
-			return new Pose2d(x / poses.length, y / poses.length, Rotation2d.fromDegrees(yaw / poses.length));
-		}
 	}
 
 	/**

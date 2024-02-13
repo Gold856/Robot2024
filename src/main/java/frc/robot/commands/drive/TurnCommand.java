@@ -3,13 +3,11 @@ package frc.robot.commands.drive;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.LimeLightSubsystem;
 
 /**
  * The {@code TurnCommand} rotates the robot by a specific angle in the
@@ -22,7 +20,7 @@ import frc.robot.subsystems.LimeLightSubsystem;
 public class TurnCommand extends Command {
 
 	/**
-	 * The {@code DriveSubsystem} used by this {@code DriveCommand}.
+	 * The {@code DriveSubsystem} used by this {@code TurnCommand}.
 	 */
 	private DriveSubsystem m_driveSubsystem;
 
@@ -42,6 +40,8 @@ public class TurnCommand extends Command {
 	/**
 	 * Constructs a {@code TurnCommand}.
 	 * 
+	 * @param driveSubsystem the {@code DriveSubsystem} to be used by the
+	 *                       {@code TurnCommand}
 	 * @param targetAngle
 	 *                       the target angle in degrees by which the robot should
 	 *                       rotate in the counter-clockwise direction
@@ -55,32 +55,8 @@ public class TurnCommand extends Command {
 	/**
 	 * Constructs a {@code TurnCommand}.
 	 * 
-	 * @param targetPosition
-	 *                       the target position
-	 * @param angleTolerance
-	 *                       the angle error in degrees which is tolerable
-	 */
-	public TurnCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
-			LimeLightSubsystem limeLightSubsystem, double angleTolerance) {
-		this(driveSubsystem, () -> limeLightSubsystem.getRotation(targetPosition).getDegrees(), angleTolerance);
-	}
-
-	/**
-	 * Constructs a {@code TurnCommand}.
-	 * 
-	 * @param tagID
-	 *                       the ID of the target AprilTag
-	 * @param angleTolerance
-	 *                       the angle error in degrees which is tolerable
-	 */
-	public TurnCommand(DriveSubsystem driveSubsystem, String tagID,
-			LimeLightSubsystem limeLightSubsystem, double angleTolerance) {
-		this(driveSubsystem, () -> limeLightSubsystem.getRotation(tagID).getDegrees(), angleTolerance);
-	}
-
-	/**
-	 * Constructs a {@code TurnCommand}.
-	 * 
+	 * @param driveSubsystem      the {@code DriveSubsystem} to be used by the
+	 *                            {@code TurnCommand}
 	 * @param targetAngleSupplier
 	 *                            a {@code Supplier<Double>} that calculates the
 	 *                            target angle in degrees by which the robot
@@ -110,7 +86,6 @@ public class TurnCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		// double heading = m_driveSubsystem.getHeading().getDegrees();
 		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
 		double goal = heading;
 		try {
@@ -121,10 +96,10 @@ public class TurnCommand extends Command {
 		m_turnController.setGoal(goal);
 
 		var pose = m_driveSubsystem.getPose();
-		recordString(
+		SmartDashboard.putString(
 				"drive",
 				String.format("turn: initialize - heading: %.1f, target heading: %.1f, current pose: %s", heading,
-						goal, toString(pose)));
+						goal, "" + pose));
 
 	}
 
@@ -134,15 +109,14 @@ public class TurnCommand extends Command {
 	 */
 	@Override
 	public void execute() {
-		// double heading = m_driveSubsystem.getHeading().getDegrees();
 		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
 		double turnSpeed = m_turnController.calculate(heading);
 		turnSpeed = -turnSpeed; // NEGATION if positive turnSpeed: clockwise rotation
-		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
+		turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed); // for convergence
 		m_driveSubsystem.setModuleStates(0, 0, turnSpeed, true);
-		recordString(
+		SmartDashboard.putString(
 				"drive", String.format("turn: execute - heading: %.1f, turn speed: %.1f, current pose: %s", heading,
-						turnSpeed, toString(m_driveSubsystem.getPose())));
+						turnSpeed, "" + m_driveSubsystem.getPose()));
 	}
 
 	/**
@@ -153,13 +127,12 @@ public class TurnCommand extends Command {
 	 */
 	@Override
 	public void end(boolean interrupted) {
-		// double heading = m_driveSubsystem.getHeading().getDegrees();
 		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
 		m_driveSubsystem.setModuleStates(0, 0, 0, true);
-		recordString("drive",
+		SmartDashboard.putString("drive",
 				String.format("turn: end - %s : heading: %.1f, target heading: %.1f, current pose: %s",
 						(interrupted ? "interrupted" : "completed"), heading,
-						m_turnController.getGoal().position, toString(m_driveSubsystem.getPose())));
+						m_turnController.getGoal().position, "" + m_driveSubsystem.getPose()));
 	}
 
 	/**
@@ -184,46 +157,6 @@ public class TurnCommand extends Command {
 	 */
 	public static double applyThreshold(double value, double threshold) {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void recordPose(String entryName, Pose2d value) {
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void recordString(String entryName, String value) {
-	}
-
-	/**
-	 * Returns a string representation of the specified {@code Pose2d}.
-	 * 
-	 * @param pose a {@code Pose2d}
-	 * @return a string representation of the specified {@code Pose2d}.
-	 */
-	public static String toString(Pose2d pose) {
-		return toString(pose.getX(), pose.getY(), pose.getRotation().getDegrees());
-	}
-
-	/**
-	 * Returns a string representation of the specified values.
-	 * 
-	 * @param x            the x-coordinate value
-	 * @param y            the y-coordinate value
-	 * @param yawInDegrees the yaw in degrees
-	 * @return a string representation of the specified values.
-	 */
-	public static String toString(double x, double y, double yawInDegrees) {
-		return String.format("[%.2f, %.2f, %.1f degrees]", x, y, yawInDegrees);
 	}
 
 }

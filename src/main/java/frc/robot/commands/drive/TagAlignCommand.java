@@ -1,16 +1,19 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.LimeLightSubsystem;
 
 /**
- * The {@code TurnCommand} rotates the robot by a specific angle in the
- * counter-clockwise direction. It utilizes a {@code ProfiledPIDController} to
- * maintain precision in the rotational movement.
+ * The {@code TagAlignCommand} rotates the robot to the mid point of the
+ * detected AprilTags. It utilizes a {@code ProfiledPIDController} to maintain
+ * precision in the rotational movement.
  * 
  * @author Andrew Hwang (u.andrew.h@gmail.com)
  * @author Jeong-Hyon Hwang (jhhbrown@gmail.com)
@@ -18,7 +21,7 @@ import frc.robot.subsystems.LimeLightSubsystem;
 public class TagAlignCommand extends Command {
 
 	/**
-	 * The {@code DriveSubsystem} used by this {@code DriveCommand}.
+	 * The {@code DriveSubsystem} used by this {@code TagAlignCommand}.
 	 */
 	private DriveSubsystem m_driveSubsystem;
 
@@ -27,20 +30,16 @@ public class TagAlignCommand extends Command {
 	 */
 	private ProfiledPIDController m_turnController;
 
-	private LimeLightSubsystem m_limeLightSubsystem;
-
 	/**
-	 * Constructs a {@code TurnCommand}.
+	 * Constructs a {@code TagAlignCommand}.
 	 * 
-	 * @param tagID
-	 *                       the ID of the target AprilTag
+	 * @param driveSubsystem the {@code DriveSubsystem} used by the
+	 *                       {@code TagAlignCommand}
 	 * @param angleTolerance
 	 *                       the angle error in degrees which is tolerable
 	 */
-	public TagAlignCommand(DriveSubsystem driveSubsystem,
-			LimeLightSubsystem limeLightSubsystem, double angleTolerance) {
+	public TagAlignCommand(DriveSubsystem driveSubsystem, double angleTolerance) {
 		m_driveSubsystem = driveSubsystem;
-		m_limeLightSubsystem = limeLightSubsystem;
 		var constraints = new TrapezoidProfile.Constraints(DriveConstants.kTurnMaxVelocity,
 				DriveConstants.kTurnMaxAcceleration);
 		m_turnController = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI,
@@ -52,39 +51,39 @@ public class TagAlignCommand extends Command {
 	}
 
 	/**
-	 * Is invoked at the commencement of this {@code TurnCommand} (i.e, when the
-	 * scheduler begins to periodically execute this {@code TurnCommand}).
+	 * Is invoked at the commencement of this {@code TagAlignCommand} (i.e, when the
+	 * scheduler begins to periodically execute this {@code TagAlignCommand}).
 	 */
 	@Override
 	public void initialize() {
-		double heading = m_driveSubsystem.getHeading().getDegrees();
+		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
 		double goal = heading;
-		try {
-			goal += m_limeLightSubsystem.getRotationToDetectedTags().getDegrees();
-		} catch (Exception e) {
-		}
+		var t = transformationToTagPosition();
+		if (t != null)
+			goal += t.getRotation().getDegrees();
 		m_turnController.reset(heading);
 		m_turnController.setGoal(goal);
 	}
 
 	/**
-	 * Is invoked periodically by the scheduler until this {@code TurnCommand} is
-	 * either ended or interrupted.
+	 * Is invoked periodically by the scheduler until this {@code TagAlignCommand}
+	 * is either ended or interrupted.
 	 */
 	@Override
 	public void execute() {
-		double heading = m_driveSubsystem.getHeading().getDegrees();
+		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
 		double turnSpeed = m_turnController.calculate(heading);
-		turnSpeed = -turnSpeed; // TODO: negation
-		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed);
+		turnSpeed = -turnSpeed; // NEGATION if positive turnSpeed: clockwise rotation
+		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed); // for
+		// convergence
 		m_driveSubsystem.setModuleStates(0, 0, turnSpeed, true);
 	}
 
 	/**
-	 * Is invoked once this {@code TurnCommand} is either ended or interrupted.
+	 * Is invoked once this {@code TagAlignCommand} is either ended or interrupted.
 	 * 
 	 * @param interrupted
-	 *                    indicates if this {@code TurnCommand} was interrupted
+	 *                    indicates if this {@code TagAlignCommand} was interrupted
 	 */
 	@Override
 	public void end(boolean interrupted) {
@@ -92,10 +91,10 @@ public class TagAlignCommand extends Command {
 	}
 
 	/**
-	 * Determines whether or not this {@code TurnCommand} needs to end.
+	 * Determines whether or not this {@code TagAlignCommand} needs to end.
 	 * 
-	 * @return {@code true} if this {@code TurnCommand} needs to end; {@code false}
-	 *         otherwise
+	 * @return {@code true} if this {@code TagAlignCommand} needs to end;
+	 *         {@code false} otherwise
 	 */
 	@Override
 	public boolean isFinished() {
@@ -113,6 +112,20 @@ public class TagAlignCommand extends Command {
 	 */
 	public static double applyThreshold(double value, double threshold) {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
+	}
+
+	/**
+	 * Finds the transformation that maps the current robot pose to the mid point of
+	 * the detectedA prilTags.
+	 * 
+	 * @return the transformation that maps the current robot pose to the mid point
+	 *         of the detected AprilTags
+	 */
+	public static Transform2d transformationToTagPosition() {
+		var a = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_robotspace")
+				.getDoubleArray(new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
+		var tagPosition = new Translation2d(a[0], a[2]).rotateBy(Rotation2d.fromDegrees(-90));
+		return tagPosition.getNorm() == 0 ? null : new Transform2d(tagPosition, tagPosition.getAngle());
 	}
 
 }

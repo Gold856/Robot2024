@@ -21,7 +21,10 @@ import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
+import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.TagAlignCommand;
+import frc.robot.commands.drive.TagDistanceAlignCommand;
+import frc.robot.commands.drive.TurnCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimeLightEmulationSubsystem;
@@ -92,63 +95,6 @@ public class RobotContainer implements frc.common.RobotContainer {
 		table.getEntry(entryName).setString(value);
 	}
 
-	class TurnCommand extends frc.robot.commands.drive.TurnCommand { // more code for debugging
-
-		public TurnCommand(DriveSubsystem driveSubsystem, double targetAlgnle, double angleTolerance) {
-			super(driveSubsystem, targetAlgnle, angleTolerance);
-		}
-
-		public TurnCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
-				LimeLightSubsystem limeLieghLightSubsystem, double angleTolerance) {
-			super(driveSubsystem, targetPosition, limeLieghLightSubsystem, angleTolerance);
-		}
-
-		public TurnCommand(DriveSubsystem driveSubsystem, String tagID,
-				LimeLightSubsystem limeLieghLightSubsystem, double angleTolerance) {
-			super(driveSubsystem, tagID, limeLieghLightSubsystem, angleTolerance);
-		}
-
-		@Override
-		public void recordPose(String entryName, Pose2d value) {
-			RobotContainer.this.recordPose(entryName, value);
-		}
-
-		@Override
-		public void recordString(String entryName, String value) {
-			RobotContainer.this.recordString(entryName, value);
-		}
-
-	}
-
-	class DriveDistanceCommand extends frc.robot.commands.drive.DriveDistanceCommand { // more code for debugging
-
-		public DriveDistanceCommand(DriveSubsystem driveSubsystem, double targetDistance, double distanceTolerance) {
-			super(driveSubsystem, targetDistance, distanceTolerance);
-		}
-
-		public DriveDistanceCommand(DriveSubsystem driveSubsystem, Translation2d targetPosition,
-				double distanceToTarget,
-				LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance) {
-			super(driveSubsystem, targetPosition, distanceToTarget, limeLieghLightSubsystem, distanceTolerance);
-		}
-
-		public DriveDistanceCommand(DriveSubsystem driveSubsystem, String tagID, double distanceToTarget,
-				LimeLightSubsystem limeLieghLightSubsystem, double distanceTolerance) {
-			super(driveSubsystem, tagID, distanceToTarget, limeLieghLightSubsystem, distanceTolerance);
-		}
-
-		@Override
-		public void recordPose(String entryName, Pose2d value) {
-			RobotContainer.this.recordPose(entryName, value);
-		}
-
-		@Override
-		public void recordString(String entryName, String value) {
-			RobotContainer.this.recordString(entryName, value);
-		}
-
-	}
-
 	class DriveCommand extends frc.robot.commands.drive.DriveCommand { // more code for debugging
 
 		public DriveCommand(DriveSubsystem driveSubsystem, Pose2d targetPose, double distanceTolerance,
@@ -175,22 +121,11 @@ public class RobotContainer implements frc.common.RobotContainer {
 					distanceTolerance, angleTolerance);
 		}
 
-		@Override
-		public void recordPose(String entryName, Pose2d value) {
-			RobotContainer.this.recordPose(entryName, value);
-		}
-
-		@Override
-		public void recordString(String entryName, String value) {
-			RobotContainer.this.recordString(entryName, value);
-		}
-
 	}
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
-
 	public RobotContainer() {
 		if (RobotBase.isSimulation())
 			new LimeLightEmulationSubsystem(new Pose(6, 1.45, 0), 0.01, m_driveSubsystem);
@@ -228,68 +163,64 @@ public class RobotContainer implements frc.common.RobotContainer {
 		// m_controller.button(Button.kX).onTrue(new
 		// DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		Command[] samples = {
-				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.2, 5)
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
 				new TurnCommand(m_driveSubsystem, 45, 5)
 						.andThen(new TurnCommand(m_driveSubsystem, -45, 5)),
-				new DriveDistanceCommand(m_driveSubsystem, 1, 0.2)
-						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.2)),
+				new DriveDistanceCommand(m_driveSubsystem, 1, 0.1)
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.1)),
+				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.1, 5)
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.1, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.1, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.1, 5)),
+				new TagAlignCommand(m_driveSubsystem, 5),
+				new TagDistanceAlignCommand(m_driveSubsystem, 2, 0.1, 5),
 				new TurnCommand(m_driveSubsystem, 45, 5)
 						.andThen(new TurnCommand(m_driveSubsystem, -45, 5))
-						.andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.2))
-						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.2))
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.1))
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.1))
 						.andThen(new TurnCommand(m_driveSubsystem, 45, 5))
-						.andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.2))
-						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.2))
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.1))
+						.andThen(new DriveDistanceCommand(m_driveSubsystem, -1, 0.1))
 						.andThen(new TurnCommand(m_driveSubsystem, -45, 5)),
 				new DriveCommand(m_driveSubsystem, new Translation2d(7.87, 1.45),
-						1.2, m_limeLightSubsystem, 0.2, 5)
+						1.2, m_limeLightSubsystem, 0.1, 5)
+								.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.5, 0.0, 0), m_limeLightSubsystem,
+										0.1, 5))
 								.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.0, 0.0, 0), m_limeLightSubsystem,
-										0.2, 5))
+										0.1, 5))
 								.andThen(new DriveCommand(m_driveSubsystem, new Translation2d(7.87,
 										1.45), 1.2, m_limeLightSubsystem,
-										0.05,
-										1))
+										0.1,
+										5))
+								.andThen(
+										new DriveCommand(m_driveSubsystem, new Pose(6.5, 1.45, 0), m_limeLightSubsystem,
+												0.1, 5))
 								.andThen(
 										new DriveCommand(m_driveSubsystem, new Pose(6.0, 1.45, 0), m_limeLightSubsystem,
-												0.2, 5))
+												0.1, 5))
 								.andThen(new DriveCommand(m_driveSubsystem, new Translation2d(7.87,
 										1.45), 1.2, m_limeLightSubsystem,
-										0.05,
-										1))
+										0.1,
+										5))
+								.andThen(
+										new DriveCommand(m_driveSubsystem, new Pose(6.5, 2.92, 0), m_limeLightSubsystem,
+												0.1, 5))
 								.andThen(
 										new DriveCommand(m_driveSubsystem, new Pose(6.0, 2.92, 0), m_limeLightSubsystem,
-												0.2, 5))
+												0.1, 5))
 								.andThen(new DriveCommand(m_driveSubsystem, new Translation2d(7.87,
 										1.45), 1.2, m_limeLightSubsystem,
-										0.05,
-										1)),
-				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593),
-						m_limeLightSubsystem, 5).andThen(
-								new DriveDistanceCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), 1.2,
-										m_limeLightSubsystem, 0.2)),
-				new TurnCommand(m_driveSubsystem, "4",
-						m_limeLightSubsystem,
-						3).andThen(
-								new DriveDistanceCommand(m_driveSubsystem, "4", 1.5,
-										m_limeLightSubsystem, 0.2)),
-				new DriveCommand(m_driveSubsystem, new Pose(1.0, 0, 0), 0.2, 5)
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 0), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
-				new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.85, 3.0, 0), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6, 3.0, 0), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.44, 3.5, 90), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.44, 3.7, 90), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(4.2, 1.5, -120), 0.2, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.2, 5)),
-				new TagAlignCommand(m_driveSubsystem, m_limeLightSubsystem, 5)
+										0.1,
+										5)),
+				new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.1, 5)
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.85, 3.0, 0), 0.1, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6, 3.0, 0), 0.1, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.44, 3.5, 90), 0.1, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(6.44, 3.7, 90), 0.1, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(4.2, 1.5, -120), 0.1, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.1, 5))
 		};
 		m_controller.button(Button.kX)
-				.whileTrue(samples[0]);
+				.whileTrue(samples[2]);
 	}
 
 	public Command getAutonomousCommand() {

@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -134,12 +135,10 @@ public class DriveCommand extends Command {
 		m_controllerX.setGoal(targetPose.getX());
 		m_controllerY.setGoal(targetPose.getY());
 		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
-
-		recordPose("Target@Odometry", targetPose);
-		recordString(
+		SmartDashboard.putString(
 				"drive",
 				String.format(
-						"initialize - current pose: %s, target pose: %s", toString(pose), toString(targetPose)));
+						"initialize - current pose: %s, target pose: %s", "" + pose, "" + targetPose));
 	}
 
 	/**
@@ -157,9 +156,10 @@ public class DriveCommand extends Command {
 		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(speedX,
 				speedY, speedYaw, true);
-		recordString(
-				"drive", "execute - velocities :" + toString(speedX, speedY, speedYaw) + ", pose: "
-						+ toString(m_driveSubsystem.getPose()));
+		SmartDashboard.putString(
+				"drive",
+				String.format("execute - velocities: [%.2f, %.2f, %.1f degrees], pose: %s",
+						speedX, speedY, speedYaw, "" + m_driveSubsystem.getPose()));
 	}
 
 	/**
@@ -172,13 +172,12 @@ public class DriveCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		m_driveSubsystem.setModuleStates(0, 0, 0, true);
-		recordPose("Target@Odometry", null);
-		recordString("drive",
+		SmartDashboard.putString("drive",
 				"end - : " + (interrupted ? "interrupted"
-						: "completed") + String.format(" - current: %s, target: %s",
-								"" + toString(m_driveSubsystem.getPose()),
-								toString(m_controllerX.getGoal().position, m_controllerY.getGoal().position,
-										m_controllerYaw.getGoal().position)));
+						: "completed") + String.format(" - current: %s, target: [%.2f, %.2f, %.1f degrees]",
+								"" + m_driveSubsystem.getPose(),
+								m_controllerX.getGoal().position, m_controllerY.getGoal().position,
+								m_controllerYaw.getGoal().position));
 	}
 
 	/**
@@ -204,45 +203,4 @@ public class DriveCommand extends Command {
 	public static double applyThreshold(double value, double threshold) {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
 	}
-
-	/**
-	 * Returns a string representation of the specified {@code Pose2d}.
-	 * 
-	 * @param pose a {@code Pose2d}
-	 * @return a string representation of the specified {@code Pose2d}.
-	 */
-	public static String toString(Pose2d pose) {
-		return toString(pose.getX(), pose.getY(), pose.getRotation().getDegrees());
-	}
-
-	/**
-	 * Returns a string representation of the specified values.
-	 * 
-	 * @param x            the x-coordinate value
-	 * @param y            the y-coordinate value
-	 * @param yawInDegrees the yaw in degrees
-	 * @return a string representation of the specified values.
-	 */
-	public static String toString(double x, double y, double yawInDegrees) {
-		return String.format("[%.2f, %.2f, %.1f degrees]", x, y, yawInDegrees);
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void recordPose(String entryName, Pose2d value) {
-	}
-
-	/**
-	 * Records the specified value in the specified entry in a {@code NetworkTable}.
-	 * 
-	 * @param entryName the name of the entry
-	 * @param value     the value to record
-	 */
-	public void recordString(String entryName, String value) {
-	}
-
 }

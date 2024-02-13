@@ -72,7 +72,7 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		}
 		m_limelightEmulator = new LimeLightEmulator(() -> {
 			return m_pose;
-		}, 0.165, 54.0, 0.2, 10.0, 0.1, aprilTagPoses);
+		}, 0.165, 54.0, 3, 0.2, 10.0, 0.1, aprilTagPoses);
 		m_poseCalculator = new PoseCalculator() {
 
 			Pose2d previous = null;
@@ -121,6 +121,11 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		private double limelightFieldOfView;
 
 		/**
+		 * The maximum distance for AprilTag detection.
+		 */
+		private double distanceLimit;
+
+		/**
 		 * The bound for artificial positional errors.
 		 */
 		private double positionalErrorBound;
@@ -152,6 +157,9 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		 * @param limelightFieldOfViewInDegrees
 		 *                                      the field of view of the LimeLight in
 		 *                                      degrees (e.g., 54)
+		 * @param distanceLimit
+		 *                                      the maximum distance for AprilTag
+		 *                                      detection (e.g., 3)
 		 * @param positionalErrorBound
 		 *                                      the bound for artificial positional
 		 *                                      errors (e.g., 0.2)
@@ -163,11 +171,13 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		 *                                      outliers occur (e.g., 0.1)
 		 */
 		public LimeLightEmulator(Supplier<Pose2d> poseSupplier, double aprilTagWidth,
-				double limelightFieldOfViewInDegrees, double positionalErrorBound, double angularErrorBoundInDegrees,
+				double limelightFieldOfViewInDegrees, double distanceLimit, double positionalErrorBound,
+				double angularErrorBoundInDegrees,
 				double poseOutlierProbability, Map<Integer, Pose2d> aprilTagPoses) {
 			this.poseSupplier = poseSupplier;
 			this.aprilTagWidth = aprilTagWidth;
 			this.limelightFieldOfView = limelightFieldOfViewInDegrees;
+			this.distanceLimit = distanceLimit;
 			this.positionalErrorBound = positionalErrorBound;
 			this.angularErrorBound = angularErrorBoundInDegrees;
 			this.poseOutlierProbability = poseOutlierProbability;
@@ -230,6 +240,7 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 		boolean isVisible(Pose2d tagPose, Pose2d pose) {
 			return Math.abs(
 					pose.getRotation().minus(tagPose.getRotation()).plus(Rotation2d.fromDegrees(180)).getDegrees()) < 60
+					&& tagPose.getTranslation().minus(pose.getTranslation()).getNorm() < distanceLimit
 					&& withinViewAngle(new Translation2d(0, -aprilTagWidth / 2).rotateBy(tagPose.getRotation())
 							.plus(tagPose.getTranslation()), pose)
 					&& withinViewAngle(
@@ -264,8 +275,21 @@ public class LimeLightEmulationSubsystem extends SubsystemBase {
 			var p = toDoubleArray(e.getKey());
 			limelightTable.getEntry("botpose").setDoubleArray(p);
 			limelightTable.getEntry("json").setString(json(e.getKey(), e.getValue()));
+			limelightTable.getEntry("targetpose_robotspace").setDoubleArray(poseArray(e.getKey(), e.getValue()));
 		}
 		m_pose = m_poseCalculator.pose(m_pose); // introduces a little delay
+	}
+
+	private double[] poseArray(Pose2d pose, Collection<Integer> tagIDs) {
+		var poses = new LinkedList<Pose>();
+		for (Integer tagID : tagIDs) {
+			var tagPose = this.m_limelightEmulator.aprilTagPoses.get(tagID);
+			Transform2d t = tagPose.minus(pose);
+			var tt = t.getTranslation().rotateBy(Rotation2d.fromDegrees(90));
+			poses.add(new Pose(tt.getX(), tt.getY(), tt.getAngle().getDegrees()));
+		}
+		pose = Pose.average(poses.toArray(new Pose[0]));
+		return new double[] { pose.getX(), 0.0, pose.getY(), 0.0, 0.0, pose.getRotation().getDegrees() };
 	}
 
 	private String json(Pose2d pose, Collection<Integer> tagIDs) {
