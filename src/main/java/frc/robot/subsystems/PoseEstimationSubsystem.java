@@ -657,18 +657,6 @@ public class PoseEstimationSubsystem extends SubsystemBase {
 		return m;
 	}
 
-	/**
-	 * Returns the {@code Rotation2d} that is needed to turn the robot toward the
-	 * specified target position
-	 * 
-	 * @param targetPosition the target position
-	 * @return the {@code Rotation2d} that is needed to turn the robot toward the
-	 *         specified target position
-	 */
-	public Rotation2d getRotation(Translation2d targetPosition) {
-		return getRotation(this.estimatedPose(), targetPosition);
-	}
-
 	public static Rotation2d getRotation(Pose2d pose, Translation2d target) {
 		return target.minus(pose.getTranslation()).getAngle().minus(pose.getRotation());
 	}

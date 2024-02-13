@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -20,10 +19,10 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.drive.BangBangDriveDistance;
+import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.PIDTurnCommand;
 import frc.robot.commands.drive.SetSteering;
-import frc.robot.commands.drive.TurnCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
@@ -76,17 +75,13 @@ public class RobotContainer {
 
 	};
 
-	static class TurnCommandSample extends TurnCommand { // more code for debugging purposes
+	static class DriveCommandSample extends DriveCommand { // more code for debugging purposes
 
 		protected NetworkTable table = NetworkTableInstance.getDefault().getTable("AdvantageScope");
 
-		public TurnCommandSample(DriveSubsystem driveSubsystem, double targetAlgnle, double angleTolerance) {
-			super(driveSubsystem, targetAlgnle, angleTolerance);
-		}
-
-		public TurnCommandSample(DriveSubsystem driveSubsystem, Translation2d targetPosition,
-				PoseEstimationSubsystemAdvanced poseEstimationSubsystem, double angleTolerance) {
-			super(driveSubsystem, targetPosition, poseEstimationSubsystem, angleTolerance);
+		public DriveCommandSample(DriveSubsystem driveSubsystem, Pose2d targetPose, double distanceTolerance,
+				double angleTolerance) {
+			super(driveSubsystem, targetPose, distanceTolerance, angleTolerance);
 		}
 
 		@Override
@@ -122,7 +117,9 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
-				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
+				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)
+
+		));
 
 		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_driverController.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
@@ -145,10 +142,18 @@ public class RobotContainer {
 				super.end(b);
 				m_driveSubsystem.setModuleStates(0.0, 0.1, 0, false);
 			}
-		}, new TurnCommand(m_driveSubsystem, 30, 1)
-				.andThen(new TurnCommand(m_driveSubsystem, -30, 1)),
-				new TurnCommand(m_driveSubsystem, new Translation2d(8.308467, 1.442593), m_poseEstimationSubsystem,
-						1) };
+		}, new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 30), 0.05, 1)
+				.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+						1)),
+				new DriveCommandSample(m_driveSubsystem, new Pose(0, 1, 0), 0.05, 1)
+						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+								1)),
+				new DriveCommandSample(m_driveSubsystem, new Pose(1, 1, 0), 0.05, 1)
+						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+								1)),
+				new DriveCommandSample(m_driveSubsystem, new Pose(1, 1, 45), 0.05, 1)
+						.andThen(new DriveCommandSample(m_driveSubsystem, new Pose(0, 0, 0), 0.05,
+								1)) };
 		m_driverController.button(Button.kX).whileTrue(samples[1]);
 
 		// // Indexer Button Mappings
