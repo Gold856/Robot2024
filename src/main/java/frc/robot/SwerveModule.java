@@ -37,6 +37,7 @@ public class SwerveModule {
 		configMotorController(m_driveMotor, kDriveSmartCurrentLimit, kDrivePeakCurrentLimit);
 		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
+		m_driveMotor.setOpenLoopRampRate(kRampRate);
 	}
 
 	/**
@@ -82,6 +83,15 @@ public class SwerveModule {
 	}
 
 	/**
+	 * Gets the current drive motor temperature.
+	 * 
+	 * @return The temperature in degrees celcius
+	 */
+	public double getDriveTemperature() {
+		return m_driveMotor.getMotorTemperature();
+	}
+
+	/**
 	 * Returns the module angle in degrees.
 	 * 
 	 * @return The module angle
@@ -123,10 +133,6 @@ public class SwerveModule {
 	 * @param state The module state
 	 */
 	public void setModuleState(SwerveModuleState state) {
-		// Will allow the module to spin to 180 deg + target angle
-		// but swap drive speed if that is quicker than normal
-		state = SwerveModuleState.optimize(state, Rotation2d.fromDegrees(getModuleAngle()));
-		// Set drive and steer speed
 		m_driveMotor.set(state.speedMetersPerSecond);
 		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
 	}

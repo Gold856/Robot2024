@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.DriverStationSim;
 import edu.wpi.first.wpilibj.simulation.SimHooks;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.DriveTimeCommand;
+import frc.robot.commands.drive.DriveTimeCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class SwerveTest {

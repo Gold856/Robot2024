@@ -101,15 +101,37 @@ public final class Constants {
 
 		public static final double kMotorRotationsPerMeter = (1 / kGearRatio) * (Math.PI * kWheelDiameter);
 
-		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
-		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
-		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
-		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+		public static final Translation2d kFrontLeftLocation = new Translation2d(-0.381, 0.381); // -+
+		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, 0.381); // ++
+		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, -0.381); // --
+		public static final Translation2d kBackRightLocation = new Translation2d(0.381, -0.381); // +-
 
 		public static final int kDriveSmartCurrentLimit = 55;
 		public static final int kDrivePeakCurrentLimit = 65;
-		public static final int kSteerSmartCurrentLimit = 20;
-		public static final int kSteerPeakCurrentLimit = 25;
+		public static final int kSteerSmartCurrentLimit = 30;
+		public static final int kSteerPeakCurrentLimit = 35;
+
+		// The amount of time to go from 0 to full power in seconds
+		public static final double kRampRate = .1;
+	}
+
+	public static final class FlywheelConstants {
+		public static final int kMasterPort = 80; // 9 valk
+		public static final int kFollowerPort = 81; // 6 valk
+		public static final boolean kMasterInvert = true; // TODO: All below were from last year, change
+		public static final boolean kFollowerOppose = false;
+		public static final int kSmartCurrentLimit = 50;
+		public static final double kPeakCurrentLimit = 60;
+		public static final int kPeakCurrentDurationMillis = 100;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kIz = 0.0;
+		public static final double kFF = .000_1050;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = 0;
+		public static final double kGearRatio = 1 / 2;
+		public static final double kAllowedError = 50;
 	}
 
 	public static final class ClimbConstants {

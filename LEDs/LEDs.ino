@@ -1,3 +1,13 @@
+// How to set up (aka what to do if LEDs are not working):
+// #1 Make sure the correct board is selected (Arduino Nano), the right comm is selected (changes per pc)
+// #2 LED_PIN (check on the board to see what the LEDs are plugged into and change the constant)
+// #3 What the type of LEDs they are, though we usually use Neopixels they might be different, check with electrical,
+// 	  the other type is making sure that the pixel type flags are correct (whether the original LEDs are RBG, BRG, GRB, etc)
+// #4 Try to change the bootloader (you can find this in the IDE under Tools -> Processor)
+// #5 Is the Bitstream right?
+// #6 The code itself is likely fine so try not to touch that, if anything change the inline commmands in RobotContainer
+// #7 It should tell you if it isn't but just in case make sure your libraries are downloaded and updated
+
 #include <Adafruit_NeoPixel.h>
 #include <Wire.h>
 // Which pin on the Arduino is connected to the NeoPixels?
@@ -70,42 +80,40 @@ void loop() {
 		case 0:         // reset code
 			colorIndex = 0;
 			pattern = -1;
-		case 1:
+		case 1:  // RainbowPartyFunTime!!
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, RainbowPartyFunTime(colorIndex, i));
 			}
 			delay(75);
 			break;
-		case 2:  // blinking orange note color
+		case 2:  // orange color -> Left Trigger -> Intake down  / Intake forward / Index forward w/ Sensor + Orange LED (Rest of Drive Team)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, BlinkingLights(colorIndex, noteColor, color(0, 0, 0)));
+				strip.setPixelColor(i, noteColor);
 			}
 			delay(150);
 			break;
-		case 3:  // blinking white
-			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, TheaterLights(colorIndex, i, color(255, 255, 255), color(0, 0, 0)));
-			}
-			delay(150);
-			break;
-		case 4:  // solid blue
+		case 3:  // blue -> after all shoot commands (ready to shoot) (Rest of Drive Team)
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, color(0, 0, 255));
 			}
 			delay(150);
 			break;
-		case 5:  // yellow
+		case 5:  // yellow -> Coop LED (HP Command)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, color(255, 255, 0));
+				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 255, 0), color(0, 0, 0)));
 			}
 			delay(150);
 			break;
-		case 6:  // purple
+		case 6:  // purple -> Amp LED (HP Command)
 			for (int i = 0; i < LED_COUNT; i++) {
-				strip.setPixelColor(i, color(255, 0, 255));
+				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 0, 255), color(0, 0, 0)));
 			}
 			delay(150);
 			break;
+		case 7:  // Red, for when HP should drop a note (HP Command)
+			for (int i = 0; i < LED_COUNT; i++) {
+				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 0, 0), color(0, 0, 0)));
+			}
 		default:  // display team color
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, teamColor);
