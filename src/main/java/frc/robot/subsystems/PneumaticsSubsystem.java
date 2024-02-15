@@ -23,7 +23,6 @@ public class PneumaticsSubsystem extends SubsystemBase {
 
 	/** Creates a new PneumaticsSubsystem. */
 	public PneumaticsSubsystem() {
-		m_hub.setOneShotDuration(0, 100);
 	}
 
 	/**
