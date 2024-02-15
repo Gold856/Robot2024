@@ -56,7 +56,7 @@ public class TagAlignCommand extends Command {
 	 */
 	@Override
 	public void initialize() {
-		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
+		double heading = -m_driveSubsystem.getHeading().getDegrees(); // NEGATION if the heading data is negated
 		double goal = heading;
 		var t = transformationToTagPosition();
 		if (t != null)
@@ -66,14 +66,28 @@ public class TagAlignCommand extends Command {
 	}
 
 	/**
+	 * Finds the transformation that maps the current robot pose to the mid point of
+	 * the detectedA prilTags.
+	 * 
+	 * @return the transformation that maps the current robot pose to the mid point
+	 *         of the detected AprilTags
+	 */
+	public static Transform2d transformationToTagPosition() {
+		var a = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_robotspace")
+				.getDoubleArray(new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
+		var tagPosition = new Translation2d(a[0], a[2]).rotateBy(Rotation2d.fromDegrees(-90));
+		return tagPosition.getNorm() == 0 ? null : new Transform2d(tagPosition, tagPosition.getAngle());
+	}
+
+	/**
 	 * Is invoked periodically by the scheduler until this {@code TagAlignCommand}
 	 * is either ended or interrupted.
 	 */
 	@Override
 	public void execute() {
-		double heading = m_driveSubsystem.getPose().getRotation().getDegrees();
+		double heading = -m_driveSubsystem.getHeading().getDegrees(); // NEGATION if the heading data is negated
 		double turnSpeed = m_turnController.calculate(heading);
-		turnSpeed = -turnSpeed; // NEGATION if positive turnSpeed: clockwise rotation
+		turnSpeed = -turnSpeed; // NEGATION if positive turnSpeed = clockwise rotation
 		// turnSpeed = applyThreshold(turnSpeed, DriveConstants.kMinSpeed); // for
 		// convergence
 		m_driveSubsystem.setModuleStates(0, 0, turnSpeed, true);
@@ -112,20 +126,6 @@ public class TagAlignCommand extends Command {
 	 */
 	public static double applyThreshold(double value, double threshold) {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
-	}
-
-	/**
-	 * Finds the transformation that maps the current robot pose to the mid point of
-	 * the detectedA prilTags.
-	 * 
-	 * @return the transformation that maps the current robot pose to the mid point
-	 *         of the detected AprilTags
-	 */
-	public static Transform2d transformationToTagPosition() {
-		var a = NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_robotspace")
-				.getDoubleArray(new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
-		var tagPosition = new Translation2d(a[0], a[2]).rotateBy(Rotation2d.fromDegrees(-90));
-		return tagPosition.getNorm() == 0 ? null : new Transform2d(tagPosition, tagPosition.getAngle());
 	}
 
 }
