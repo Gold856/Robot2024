@@ -67,7 +67,7 @@ public class TagAlignCommand extends Command {
 
 	/**
 	 * Finds the transformation that maps the current robot pose to the mid point of
-	 * the detectedA prilTags.
+	 * the detected AprilTags.
 	 * 
 	 * @return the transformation that maps the current robot pose to the mid point
 	 *         of the detected AprilTags

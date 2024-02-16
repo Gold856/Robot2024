@@ -23,7 +23,6 @@ import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.TagAlignCommand;
-import frc.robot.commands.drive.TagDistanceAlignCommand;
 import frc.robot.commands.drive.TurnCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -172,7 +171,6 @@ public class RobotContainer implements frc.common.RobotContainer {
 						.andThen(new DriveCommand(m_driveSubsystem, new Pose(1, 1, 45), 0.1, 5))
 						.andThen(new DriveCommand(m_driveSubsystem, new Pose(0, 0, 0), 0.1, 5)),
 				new TagAlignCommand(m_driveSubsystem, 5),
-				new TagDistanceAlignCommand(m_driveSubsystem, 2, 0.1, 5),
 				new TurnCommand(m_driveSubsystem, 45, 5)
 						.andThen(new TurnCommand(m_driveSubsystem, -45, 5))
 						.andThen(new DriveDistanceCommand(m_driveSubsystem, 1, 0.1))
