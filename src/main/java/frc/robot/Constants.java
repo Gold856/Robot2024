@@ -142,6 +142,7 @@ public final class Constants {
 		public static final int kAmpBarReverseChannel = 4;
 		public static final int kIntakeForwardChannel = 1;
 		public static final int kIntakeReverseChannel = 2;
+		// TODO direction/starting state?
 		/** Alias for the solenoid value that makes the intake go down. */
 		public static final Value kIntakeDown = Value.kReverse;
 		/** Alias for the solenoid value that makes the intake go up. */

@@ -47,7 +47,6 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command upIntakeCommand() {
-		// TODO direction/starting state?
 		return runOnce(() -> m_intakeSolenoid.set(kIntakeUp));
 	}
 
@@ -57,7 +56,6 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command downIntakeCommand() {
-		// TODO direction/starting state?
 		return runOnce(() -> m_intakeSolenoid.set(kIntakeDown));
 	}
 
