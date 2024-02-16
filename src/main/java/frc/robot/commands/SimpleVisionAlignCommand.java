@@ -12,15 +12,15 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
 public class SimpleVisionAlignCommand extends Command {
-	private DriveSubsystem m_driveSubsystem;
-	private SimpleVisionSubsystem m_visionSubsystem;
-	private PIDController m_controller;
+	private final DriveSubsystem m_driveSubsystem;
+	private final SimpleVisionSubsystem m_visionSubsystem;
+	private final PIDController m_controller;
 
 	/**
-	 * Creates a new TurnRelativeCommand.
+	 * Creates a new SimpleVisionAlignCommand.
 	 * 
-	 * @param subsystem The drive subsystem.
-	 * @param angle     The angle in degrees.
+	 * @param driveSubsystem  The drive subsystem.
+	 * @param visionSubsystem The vision subsystem.
 	 */
 	public SimpleVisionAlignCommand(DriveSubsystem driveSubsystem, SimpleVisionSubsystem visionSubsystem) {
 		m_driveSubsystem = driveSubsystem;
