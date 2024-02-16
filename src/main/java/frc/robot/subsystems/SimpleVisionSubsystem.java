@@ -1,13 +1,13 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.filter.MedianFilter;
-import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class SimpleVisionSubsystem extends SubsystemBase {
-	private final DoubleArraySubscriber m_subscription;
+	private final DoubleSubscriber m_subscription;
 	private double m_distance;
 	private double m_angle;
 	private MedianFilter m_angleFilter;
@@ -16,8 +16,8 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 		m_angleFilter = new MedianFilter(10);
 		// Setup subscription
 		m_subscription = NetworkTableInstance.getDefault().getTable("limelight")
-				.getDoubleArrayTopic("targetpose_robotspace")
-				.subscribe(new double[6]);
+				.getDoubleTopic("tx")
+				.subscribe(0);
 	}
 
 	@Override
@@ -41,14 +41,10 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	//
 	private void updateSavedPositions() {
 		// get the data from limelight
-		var pose = m_subscription.get();
-		double x = pose[0];
-		double z = pose[2];
-		double angle = pose[5];
+		var angle = m_subscription.get();
 		// ignore unrealistic answers
 		if (Math.abs(angle) < 45) {
 			m_angle = m_angleFilter.calculate(angle);
-			m_distance = x;
 		}
 		SmartDashboard.putNumber("limelight angle to turn", m_angle);
 		SmartDashboard.putNumber("limelight distance", m_distance);

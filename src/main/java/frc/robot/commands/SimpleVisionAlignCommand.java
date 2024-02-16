@@ -27,7 +27,6 @@ public class SimpleVisionAlignCommand extends Command {
 		m_visionSubsystem = visionSubsystem;
 		m_controller = new PIDController(0.0075, 0, 0);
 		m_controller.enableContinuousInput(0, 360);
-		m_controller.setTolerance(5);
 		addRequirements(m_driveSubsystem, m_visionSubsystem);
 	}
 
@@ -44,7 +43,7 @@ public class SimpleVisionAlignCommand extends Command {
 		double power = m_controller.calculate(currentAngle);
 		double powerLimit = .1;
 		power = MathUtil.clamp(power, -powerLimit, powerLimit);
-		m_driveSubsystem.setModuleStates(0, 0, power, false);
+		m_driveSubsystem.setModuleStates(0, 0, -power, false);
 		SmartDashboard.putNumber("error", m_controller.getPositionError());
 	}
 
