@@ -100,10 +100,11 @@ public class RobotContainer {
 						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
 		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		m_driverController.button(Button.kRightBumper)
+				.onTrue(new SimpleVisionAlignCommand(m_driveSubsystem, m_visionSubsystem));
 	}
 
 	public Command getAutonomousCommand() {
-		return new SimpleVisionAlignCommand(m_driveSubsystem, m_visionSubsystem);
-		// return m_autoSelector.getSelected();
+		return m_autoSelector.getSelected();
 	}
 }
