@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -144,6 +145,7 @@ public final class Constants {
 		public static final double kIz = 0.0;
 		public static final double kFF = .000_1050;
 		public static final double kMaxOutput = 1;
+
 		public static final double kMinOutput = 0;
 		public static final double kGearRatio = 2;
 		public static final double kAllowedError = 50;
@@ -160,5 +162,18 @@ public final class Constants {
 		// Shoot Command Constants
 		public static final double kShootTime = 0.5;
 		public static final double kShootSpeed = 0.25;
+	}
+
+	public static final class PneumaticsConstants {
+		public static final int kPneumaticHubID = 50;
+		public static final int kAmpBarForwardChannel = 2;
+		public static final int kAmpBarReverseChannel = 3;
+		public static final int kIntakeForwardChannel = 0;
+		public static final int kIntakeReverseChannel = 1;
+		// TODO direction/starting state?
+		/** Alias for the solenoid value that makes the intake go down. */
+		public static final Value kIntakeDown = Value.kReverse;
+		/** Alias for the solenoid value that makes the intake go up. */
+		public static final Value kIntakeUp = Value.kForward;
 	}
 }
