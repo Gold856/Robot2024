@@ -71,9 +71,13 @@ public class RobotContainer {
 				() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
 		m_operatorController.button(Button.kTriangle)
-				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP));
+				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP,
+						() -> m_operatorController.getRawAxis(Axis.kLeftY),
+						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 		m_operatorController.button(Button.kX)
-				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.ZERO));
+				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.ZERO,
+						() -> m_operatorController.getRawAxis(Axis.kLeftY),
+						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
 		// m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		// m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
