@@ -145,7 +145,7 @@ public final class Constants {
 		public static final double kFF = .000_1050;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = 0;
-		public static final double kGearRatio = 1 / 2;
+		public static final double kGearRatio = 2;
 		public static final double kAllowedError = 50;
 	}
 
