@@ -2,6 +2,7 @@ package frc.robot.commands.drive;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -46,8 +47,7 @@ public class BangBangDriveCommand extends Command {
 
 	@Override
 	public void initialize() {
-		double currentPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
-		m_target = currentPosition + m_distance;
+		m_target = m_driveSubsystem.getModulePositions()[0].distanceMeters + m_distance;
 	}
 
 	@Override
@@ -62,13 +62,9 @@ public class BangBangDriveCommand extends Command {
 		double error = getDiff();
 		double kP = 0.1;
 		double speed = error * kP;
-		if (speed > kMaxSpeed) {
-			speed = kMaxSpeed;
-		} else if (speed < kMinSpeed) {
-			speed = kMinSpeed;
-		}
+		speed = MathUtil.clamp(speed, kMinSpeed, kMaxSpeed);
 
-		m_driveSubsystem.setModuleStatesDirect(new SwerveModuleState(speed, Rotation2d.fromDegrees(m_angle)));
+		m_driveSubsystem.setModuleStatesDirect(new SwerveModuleState(speed * sign, Rotation2d.fromDegrees(m_angle)));
 	}
 
 	@Override
