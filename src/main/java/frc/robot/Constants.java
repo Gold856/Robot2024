@@ -149,6 +149,6 @@ public final class Constants {
 		public static final double kSecondaryCurrentLimit = 0;
 		public static final double kClimberDriveSpeed = .1;
 		public static final double kMaxClimberDriveSpeed = .4;
-		public static final double kMaxExtension = 50;
+		public static final int kMaxExtension = 50;
 	}
 }
