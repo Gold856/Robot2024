@@ -1,0 +1,60 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands.drive;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.DriveSubsystem;
+
+public class TurnToAngleCommand extends Command {
+	private final double m_targetAngle;
+	private final double m_angleThreshold;
+	private final DriveSubsystem m_driveSubsystem;
+	private final PIDController m_controller = new PIDController(0.0075, 0, 0);
+	private final boolean m_relative;
+
+	/**
+	 * Creates a new {@code TurnToAngleCommand} with the given params.
+	 * 
+	 * @param targetAngle    The angle to turn to (field relative)
+	 * @param angleThreshold The threshold
+	 */
+	public TurnToAngleCommand(DriveSubsystem driveSubsystem, double targetAngle, double angleThreshold,
+			boolean relative) {
+		m_targetAngle = targetAngle;
+		m_angleThreshold = angleThreshold;
+		m_driveSubsystem = driveSubsystem;
+		m_relative = relative;
+		m_controller.setTolerance(m_angleThreshold);
+		m_controller.enableContinuousInput(0, 360);
+		addRequirements(driveSubsystem);
+	}
+
+	@Override
+	public void initialize() {
+		if (m_relative) {
+			m_controller.setSetpoint(m_driveSubsystem.getHeading().getDegrees() + m_targetAngle);
+		} else {
+			m_controller.setSetpoint(m_targetAngle);
+		}
+	}
+
+	@Override
+	public void execute() {
+		double speed = -m_controller.calculate(m_driveSubsystem.getHeading().getDegrees());
+		m_driveSubsystem.setModuleStates(0, 0, speed, false);
+	}
+
+	@Override
+	public boolean isFinished() {
+		return m_controller.atSetpoint();
+	}
+
+	// Called once the command ends or is interrupted.
+	@Override
+	public void end(boolean interrupted) {
+		m_driveSubsystem.stopDriving();
+	}
+}
