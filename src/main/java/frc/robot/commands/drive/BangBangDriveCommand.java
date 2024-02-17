@@ -10,30 +10,35 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class BangBangDriveCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
-	private double m_target; // if distance, in meters; if angle, in degrees
-	private double m_amount;
+	private double m_target;
+	private double m_distance;
 	private double m_tolerance;
 	private double m_angle;
 
-	/***
-	 * Autonomous command to drive straight
+	/**
+	 * Creates a command to drive to a point by specifying a distance and and angle
+	 * (robot relative).
 	 * 
-	 * @param amount
-	 *               amount is distance in meters
+	 * @param subsystem The drive subsystem.
+	 * @param distance  The distance to drive.
+	 * @param angle     The angle to drive relative to the robot (CCW+).
+	 * @param tolerance The distance tolerance.
 	 */
-	public BangBangDriveCommand(DriveSubsystem subsystem, double amount, double angle, double tolerance) {
+	public BangBangDriveCommand(DriveSubsystem subsystem, double distance, double angle, double tolerance) {
 		m_driveSubsystem = subsystem;
-		m_amount = amount;
+		m_distance = distance;
 		m_tolerance = tolerance;
 		m_angle = angle;
 		addRequirements(subsystem);
 	}
 
-	/***
-	 * Autonomous command to drive straight
+	/**
+	 * Creates a command to drive to a point by specifying a distance and and angle
+	 * (robot relative).
 	 * 
-	 * @param amount
-	 *               amount is distance in meters
+	 * @param subsystem The drive subsystem.
+	 * @param distance  The distance to drive.
+	 * @param angle     The angle to drive relative to the robot (CCW+).
 	 */
 	public BangBangDriveCommand(DriveSubsystem subsystem, double amount, double angle) {
 		this(subsystem, amount, angle, 0.01);
@@ -42,7 +47,7 @@ public class BangBangDriveCommand extends Command {
 	@Override
 	public void initialize() {
 		double currentPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
-		m_target = currentPosition + m_amount;
+		m_target = currentPosition + m_distance;
 	}
 
 	@Override
