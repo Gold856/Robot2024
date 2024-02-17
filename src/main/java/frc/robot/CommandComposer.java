@@ -41,8 +41,8 @@ public class CommandComposer {
 	public static Command getTwoScoreRightAuto(DriveSubsystem driveSubsystem) {
 		return sequence(driveSubsystem.offsetGyroCommand(-60),
 				new SetSteeringCommand(driveSubsystem, 0),
-				new BangBangDriveCommand(driveSubsystem, 1.1, 60, 0.01),
-				new TurnToAngleCommand(driveSubsystem, 0, 2, false));
+				new BangBangDriveCommand(driveSubsystem, 1.4, 60, 0.01),
+				new TurnToAngleCommand(driveSubsystem, -27, 2, false));
 	}
 
 	/**
