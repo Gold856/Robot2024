@@ -16,10 +16,13 @@ public class TurnToAngleCommand extends Command {
 	private final boolean m_relative;
 
 	/**
-	 * Creates a new {@code TurnToAngleCommand} with the given params.
+	 * Creates a command to turn the robot to an angle.
 	 * 
-	 * @param targetAngle    The angle to turn to (field relative)
-	 * @param angleThreshold The threshold
+	 * @param driveSubsystem The drive subsystem.
+	 * @param targetAngle    The target angle (CCW+).
+	 * @param angleThreshold The tolerance of the angle.
+	 * @param relative       Whether or not the angle is relative to the current
+	 *                       heading.
 	 */
 	public TurnToAngleCommand(DriveSubsystem driveSubsystem, double targetAngle, double angleThreshold,
 			boolean relative) {
@@ -30,6 +33,18 @@ public class TurnToAngleCommand extends Command {
 		m_controller.setTolerance(m_angleThreshold);
 		m_controller.enableContinuousInput(0, 360);
 		addRequirements(driveSubsystem);
+	}
+
+	/**
+	 * Creates a command to turn the robot to an angle.
+	 * 
+	 * @param driveSubsystem The drive subsystem.
+	 * @param targetAngle    The target angle (CCW+).
+	 * @param relative       Whether or not the angle is relative to the current
+	 *                       heading.
+	 */
+	public TurnToAngleCommand(DriveSubsystem driveSubsystem, double targetAngle, boolean relative) {
+		this(driveSubsystem, targetAngle, 3, relative);
 	}
 
 	@Override
