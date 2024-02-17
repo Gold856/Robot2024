@@ -25,6 +25,7 @@ import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
+import frc.robot.subsystems.PneumaticsSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -40,6 +41,7 @@ public class RobotContainer {
 			ControllerConstants.kOperatorControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
+	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
@@ -92,12 +94,13 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
-		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_driverController.button(Button.kTriangle)
 				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
 						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
-		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
+		m_operatorController.button(Button.kLeftTrigger).onTrue(m_pneumaticsSubsystem.downIntakeCommand());
+		m_operatorController.button(Button.kRightTrigger).onTrue(m_pneumaticsSubsystem.upIntakeCommand());
 	}
 
 	public Command getAutonomousCommand() {
