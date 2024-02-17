@@ -28,7 +28,6 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
->>>>>>> main
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -75,7 +74,7 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 
-		// ------------------LED Controls-------------
+		// ------------------LED Controls------------------------------------
 		new Trigger(() -> DriverStation.getMatchTime() <= 20)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		// LEDs for when you want AMP
