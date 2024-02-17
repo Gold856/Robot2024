@@ -29,6 +29,9 @@ public class ClimberSubsystem extends SubsystemBase {
 	private double m_setPositionLeft = 0;
 	private double m_setPositionRight = 0;
 
+	private double m_setSpeedLeft = 0;
+	private double m_setSpeedRight = 0;
+
 	/** Creates a new ClimberSubsystem. */
 	public ClimberSubsystem() {
 
@@ -92,6 +95,14 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_setPositionRight = positionRight;
 		m_leftPidController.setReference(positionLeft, ControlType.kPosition);
 		m_rightPidController.setReference(positionRight, ControlType.kPosition);
+	}
+
+	public void setSpeed(double speedLeft, double speedRight) {
+		m_setSpeedLeft = speedLeft;
+		m_setSpeedRight = speedRight;
+		m_leftMotor.set(m_setSpeedLeft);
+		m_rightMotor.set(m_setSpeedRight);
+
 	}
 
 	public void resetEncoder() {
