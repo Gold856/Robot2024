@@ -17,11 +17,11 @@ public class AimCommand extends Command {
 	private PhysicsAndMathTargeter m_targeter;
 
 	public enum Operation {
-		CMD_SET_SHOOT_POS, // Calculate Angle at current position (changes)
+		CMD_CALC_AND_SET, // Calculate Angle at current position (changes)
 		CMD_SET_PRESET_DEFAULT, // For checkout, set shooter down (static)
 		CMD_PRESET_AMP,
-		CMD_HOLD,
 		CMD_PRESET_SUBWOOFER,
+		CMD_HOLD,
 		CMD_DOWN_ADJUST, // Fine tune down
 		CMD_UP_ADJUST, // Fine tune up
 		CMD_SETTLE, // Paired with above in Robot Container
@@ -42,7 +42,7 @@ public class AimCommand extends Command {
 	@Override
 	public void initialize() {
 		switch (m_operation) {
-			case CMD_SET_SHOOT_POS:
+			case CMD_CALC_AND_SET:
 				double actuatorHeightSetpoint = m_targeter.calcActuatorHeightFromDistance(m_distanceMeters);
 				m_shooterSubsystem.setActuatorHeight(actuatorHeightSetpoint);
 				break;
@@ -72,7 +72,7 @@ public class AimCommand extends Command {
 	@Override
 	public boolean isFinished() {
 
-		if (m_operation == Operation.CMD_SET_SHOOT_POS || m_operation == Operation.CMD_SET_PRESET_DEFAULT) {
+		if (m_operation == Operation.CMD_CALC_AND_SET || m_operation == Operation.CMD_SET_PRESET_DEFAULT) {
 			return true;
 		} else if (m_operation == Operation.CMD_UP_ADJUST || m_operation == Operation.CMD_DOWN_ADJUST) {
 			return true;
