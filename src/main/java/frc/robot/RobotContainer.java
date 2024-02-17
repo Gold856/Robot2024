@@ -56,8 +56,7 @@ public class RobotContainer {
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
 		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
-		m_autoSelector.addOption("Knock Over Blocks",
-				CommandComposer.getBlocksAuto(m_driveSubsystem));
+		m_autoSelector.addOption("Knock Over Blocks", CommandComposer.getTwoScoreRightAuto(m_driveSubsystem));
 
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();

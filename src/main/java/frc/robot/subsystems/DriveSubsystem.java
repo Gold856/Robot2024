@@ -43,7 +43,7 @@ public class DriveSubsystem extends SubsystemBase {
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
 	private final SwerveDriveOdometry m_odometry;
 	private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-
+	private double m_headingOffset = 0;
 	private Pose2d m_pose = new Pose2d(0, 0, new Rotation2d());
 	private Rotation2d m_heading = new Rotation2d(Math.PI / 2);
 	private final Field2d m_field = new Field2d();
@@ -79,6 +79,15 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * Sets a gyro offset.
+	 * 
+	 * @param angle The angle to offset gyro readings (CCW+).
+	 */
+	public void setHeadingOffset(double angle) {
+		m_headingOffset = angle;
+	}
+
+	/**
 	 * Gets the robot's heading from the gyro.
 	 * 
 	 * @return The heading
@@ -87,7 +96,7 @@ public class DriveSubsystem extends SubsystemBase {
 		if (RobotBase.isSimulation()) {
 			return m_heading;
 		}
-		return Rotation2d.fromDegrees(-m_gyro.getYaw());
+		return Rotation2d.fromDegrees(-m_gyro.getYaw() + m_headingOffset);
 	}
 
 	/**
@@ -213,6 +222,20 @@ public class DriveSubsystem extends SubsystemBase {
 		m_backRight.setAngle(angle);
 	}
 
+	public void setModuleStatesDirect(SwerveModuleState moduleState) {
+		m_frontLeft.setModuleState(moduleState);
+		m_frontRight.setModuleState(moduleState);
+		m_backLeft.setModuleState(moduleState);
+		m_backRight.setModuleState(moduleState);
+	}
+
+	public void setModuleSpeeds(double speed) {
+		m_frontLeft.setSpeed(speed);
+		m_frontRight.setSpeed(speed);
+		m_backLeft.setSpeed(speed);
+		m_backRight.setSpeed(speed);
+	}
+
 	/**
 	 * Sets module states for each swerve module.
 	 * 
@@ -273,6 +296,10 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public Command resetHeadingCommand() {
 		return runOnce(m_gyro::zeroYaw);
+	}
+
+	public Command offsetGyroCommand(double angle) {
+		return runOnce(() -> setHeadingOffset(angle));
 	}
 
 	/**
