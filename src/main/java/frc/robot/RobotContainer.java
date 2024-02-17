@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
+import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
@@ -69,9 +70,9 @@ public class RobotContainer {
 				() -> m_operatorController.getRawAxis(Axis.kLeftY),
 				() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
-		m_operatorController.povUp()
+		m_operatorController.button(Button.kTriangle)
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP));
-		m_operatorController.povDown()
+		m_operatorController.button(Button.kX)
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.ZERO));
 
 		// m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
