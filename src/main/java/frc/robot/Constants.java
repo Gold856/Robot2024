@@ -130,6 +130,25 @@ public final class Constants {
 		public static final double kRampRate = .1;
 	}
 
+	public static final class FlywheelConstants {
+		public static final int kMasterPort = 80; // 9 valk
+		public static final int kFollowerPort = 81; // 6 valk
+		public static final boolean kMasterInvert = true; // TODO: All below were from last year, change
+		public static final boolean kFollowerOppose = false;
+		public static final int kSmartCurrentLimit = 50;
+		public static final double kPeakCurrentLimit = 60;
+		public static final int kPeakCurrentDurationMillis = 100;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kIz = 0.0;
+		public static final double kFF = .000_1050;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = 0;
+		public static final double kGearRatio = 1 / 2;
+		public static final double kAllowedError = 50;
+	}
+
 	public static final class IndexerConstants {
 		public static final MotorType kIndexerMotorType = MotorType.kBrushless;
 		public static final int kIndexerPort = 70;

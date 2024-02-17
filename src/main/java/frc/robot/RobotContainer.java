@@ -19,6 +19,7 @@ import frc.robot.commands.drive.PIDTurnCommand;
 import frc.robot.commands.drive.SetSteering;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 
 /**
@@ -38,6 +39,7 @@ public class RobotContainer {
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
+	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.

@@ -142,10 +142,7 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Heading", getHeading().getRadians());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(states,
-				kMaxSpeed);
-
-		m_targetModuleStatePublisher.set(states);
+		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
 		m_field.setRobotPose(m_pose);
 		return states;
 	}
@@ -189,6 +186,15 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @param moduleStates The module states, in order of FL, FR, BL, BR
 	 */
 	public void setModuleStates(SwerveModuleState[] moduleStates) {
+		// Get the current module angles
+		double[] moduleAngles = { m_frontLeft.getModuleAngle(), m_frontRight.getModuleAngle(),
+				m_backLeft.getModuleAngle(), m_backRight.getModuleAngle() };
+		for (int i = 0; i < moduleStates.length; i++) {
+			// Optimize target module states
+			moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(moduleAngles[i]));
+		}
+		m_targetModuleStatePublisher.set(moduleStates);
+
 		m_frontLeft.setModuleState(moduleStates[0]);
 		m_frontRight.setModuleState(moduleStates[1]);
 		m_backLeft.setModuleState(moduleStates[2]);
