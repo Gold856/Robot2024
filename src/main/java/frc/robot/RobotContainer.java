@@ -21,6 +21,7 @@ import frc.robot.commands.drive.PIDTurnCommand;
 import frc.robot.commands.drive.SetSteeringCommand;
 import frc.robot.commands.flywheel.FlywheelCommand;
 import frc.robot.commands.flywheel.FlywheelCommand.Operation;
+import frc.robot.commands.indexer.IndexerShootCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
@@ -70,16 +71,13 @@ public class RobotContainer {
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
 	private void configureButtonBindings() {
-		// Should have RainbowPartyFunTime in the last 20 seconds of a match
-		// TODO: Check if this can be overridden LED buttons
+
+		// ------------------LED Controls-------------
 		new Trigger(() -> DriverStation.getMatchTime() <= 20)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
-		// TODO: LEDs to add: Left Trigger -> Orange LED, with other stuff, BLUE WHEN
-		// SHOOT COMMANDS ARE DONE
-
 		// LEDs for when you want AMP
 		m_operatorController.povLeft().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_PURPLE));
-		// LEDs for when you want COOP
+		// LEDs for when yosu want COOP
 		m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
 		// LEDs for when you want HP to drop a note
 		m_operatorController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
@@ -89,17 +87,21 @@ public class RobotContainer {
 		m_operatorController.button(Button.kShare)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
+		// --------------------Drive Controls---------------------------------
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+
+		// -------------------Flywheel Controls--------------------------------
 		m_driverController.button(Button.kTriangle)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
-						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
-		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY, 8000));
+
+		// --------------------Indexer Controls--------------------------------
+		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem));
+		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(m_indexerSubsystem));
 	}
 
 	public Command getAutonomousCommand() {
