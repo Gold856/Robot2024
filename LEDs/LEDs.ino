@@ -108,10 +108,14 @@ void loop() {
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 0, 255), color(0, 0, 0)));
 			}
+			delay(100);
+			break;
 		case 7:  // Red, for when HP should drop a note (HP Command)
 			for (int i = 0; i < LED_COUNT; i++) {
 				strip.setPixelColor(i, BlinkingLights(colorIndex, color(255, 0, 0), color(0, 0, 0)));
 			}
+			delay(100);
+			break;
 		case 8:
 			for (int i = 0; i < LED_COUNT / 2; i++) {
 				strip.setPixelColor(i, ProgressBar(colorIndex, i, LED_COUNT / 2, color(0, 0, 255)));
