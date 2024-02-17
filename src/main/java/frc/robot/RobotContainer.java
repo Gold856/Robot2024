@@ -98,8 +98,9 @@ public class RobotContainer {
 				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
 						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
-		m_driverController.button(Button.kSquare).onTrue(m_pneumaticsSubsystem.toggleIntakeCommand());
-		m_driverController.button(Button.kCircle).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
+		m_driverController.button(Button.kSquare).onTrue(m_pneumaticsSubsystem.downIntakeCommand());
+		m_driverController.button(Button.kTriangle).onTrue(m_pneumaticsSubsystem.upIntakeCommand());
+		m_driverController.button(Button.kCircle).onTrue(m_pneumaticsSubsystem.toggleIntakeCommand());
 	}
 
 	public Command getAutonomousCommand() {

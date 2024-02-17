@@ -138,10 +138,10 @@ public final class Constants {
 
 	public static final class PneumaticsConstants {
 		public static final int kPneumaticHubID = 50;
-		public static final int kAmpBarForwardChannel = 3;
-		public static final int kAmpBarReverseChannel = 4;
-		public static final int kIntakeForwardChannel = 1;
-		public static final int kIntakeReverseChannel = 2;
+		public static final int kAmpBarForwardChannel = 2;
+		public static final int kAmpBarReverseChannel = 3;
+		public static final int kIntakeForwardChannel = 0;
+		public static final int kIntakeReverseChannel = 1;
 		// TODO direction/starting state?
 		/** Alias for the solenoid value that makes the intake go down. */
 		public static final Value kIntakeDown = Value.kReverse;
