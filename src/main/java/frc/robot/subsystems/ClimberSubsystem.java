@@ -41,8 +41,7 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_leftMotor.enableVoltageCompensation(12);
 		m_leftMotor.setSmartCurrentLimit(ClimbConstants.kSmartCurrentLimit);
 		m_leftMotor.setSecondaryCurrentLimit(ClimbConstants.kSecondaryCurrentLimit);
-		m_leftMotor.setSoftLimit(SoftLimitDirection.kForward, 100);
-		m_leftMotor.setSoftLimit(SoftLimitDirection.kForward, 0);
+		m_leftMotor.setSoftLimit(SoftLimitDirection.kForward, 50);
 
 		m_rightMotor.restoreFactoryDefaults();
 		m_rightMotor.setInverted(ClimbConstants.kRightInvert);
@@ -50,8 +49,7 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_rightMotor.enableVoltageCompensation(12);
 		m_rightMotor.setSmartCurrentLimit(ClimbConstants.kSmartCurrentLimit);
 		m_rightMotor.setSecondaryCurrentLimit(ClimbConstants.kSecondaryCurrentLimit);
-		m_rightMotor.setSoftLimit(SoftLimitDirection.kForward, 100);
-		m_rightMotor.setSoftLimit(SoftLimitDirection.kForward, 0);
+		m_rightMotor.setSoftLimit(SoftLimitDirection.kForward, 50);
 
 		m_leftPidController.setP(ClimbConstants.kP);
 		m_leftPidController.setI(ClimbConstants.kI);

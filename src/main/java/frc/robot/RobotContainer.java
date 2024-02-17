@@ -4,20 +4,18 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
+import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
 import frc.robot.subsystems.ArduinoSubsystem;
-import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.ClimberSubsystem;
 
 /**
@@ -72,9 +70,9 @@ public class RobotContainer {
 				() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
 		m_operatorController.povUp()
-				.onTrue(new ClimberPresetCommand(m_climberSubsystem,
-						() -> m_operatorController.getRawAxis(Axis.kLeftY),
-						() -> m_operatorController.getRawAxis(Axis.kRightY)));
+				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP));
+		m_operatorController.povDown()
+				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.ZERO));
 
 		// m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		// m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
@@ -83,8 +81,8 @@ public class RobotContainer {
 		// DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		// Should have RainbowPartyFunTime in the last 20 seconds of a match
 		// TODO: Check if this can be overridden LED buttons
-		new Trigger(() -> DriverStation.getMatchTime() <= 20)
-				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		// new Trigger(() -> DriverStation.getMatchTime() <= 20)
+		// .onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		// TODO: LEDs to add: Left Trigger -> Orange LED, with other stuff, BLUE WHEN
 		// SHOOT COMMANDS ARE DONE
 

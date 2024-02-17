@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ClimbConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 
@@ -17,6 +16,8 @@ public class ClimberDriveCommand extends Command {
 	private final ClimberSubsystem m_climberSubsystem;
 	private final Supplier<Double> m_left;
 	private final Supplier<Double> m_right;
+	private double leftSpeed;
+	private double rightSpeed;
 
 	/** Creates a new LeftClimberDrive. */
 	public ClimberDriveCommand(ClimberSubsystem subsystem, Supplier<Double> left, Supplier<Double> right) {
@@ -34,16 +35,14 @@ public class ClimberDriveCommand extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_climberSubsystem.setSpeed(
-				Math.abs(MathUtil.applyDeadband(m_left.get(), ControllerConstants.kDeadzone)
-						* ClimbConstants.kMaxExtension),
-				Math.abs(MathUtil.applyDeadband(m_right.get(), ControllerConstants.kDeadzone)
-						* ClimbConstants.kMaxExtension));
+		leftSpeed = MathUtil.applyDeadband(m_left.get(), ControllerConstants.kDeadzone);
+		rightSpeed = MathUtil.applyDeadband(m_right.get(), ControllerConstants.kDeadzone);
+
+		m_climberSubsystem.setSpeed(leftSpeed, rightSpeed);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		m_climberSubsystem.setSpeed(0, 0);
 	}
 }
