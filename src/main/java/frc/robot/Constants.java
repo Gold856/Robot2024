@@ -147,8 +147,6 @@ public final class Constants {
 		public static final double kD = 0;
 		public static final double ktolerance = 1;
 		public static final double kSecondaryCurrentLimit = 0;
-		public static final double kClimberDriveSpeed = .1;
-		public static final double kMaxClimberDriveSpeed = .4;
 		public static final int kMaxExtension = 50;
 	}
 }

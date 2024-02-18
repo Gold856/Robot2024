@@ -4,20 +4,31 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
+import frc.robot.commands.drive.BangBangDriveDistanceCommand;
+import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.PIDTurnCommand;
+import frc.robot.commands.drive.SetSteeringCommand;
+import frc.robot.commands.flywheel.FlywheelCommand;
+import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
 import frc.robot.subsystems.ArduinoSubsystem;
+import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FlywheelSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -31,12 +42,11 @@ public class RobotContainer {
 			ControllerConstants.kDriverControllerPort);
 	private final CommandGenericHID m_operatorController = new CommandGenericHID(
 			ControllerConstants.kOperatorControllerPort);
-	// private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
-	// private final FlywheelSubsystem m_flywheelSubsystem = new
-	// FlywheelSubsystem();
+	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -44,16 +54,12 @@ public class RobotContainer {
 
 	public RobotContainer() {
 		// Configure the button bindings
-		// m_autoSelector.addOption("Test Steering",
-		// SetSteeringCommand.getCalibrationCommand(m_driveSubsystem));
-		// m_autoSelector.addOption("PID Turn 90 degrees", new
-		// PIDTurnCommand(m_driveSubsystem, 90, 0.5));
-		// m_autoSelector.addOption("Bang Bang Drive 2 Meters",
-		// new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
-		// m_autoSelector.addOption("PID Drive 2 Meters",
-		// DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
-		// m_autoSelector.addOption("Knock Over Blocks",
-		// CommandComposer.getBlocksAuto(m_driveSubsystem));
+		m_autoSelector.addOption("Test Steering", SetSteeringCommand.getCalibrationCommand(m_driveSubsystem));
+		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
+				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
+		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
+		m_autoSelector.addOption("Knock Over Blocks", CommandComposer.getBlocksAuto(m_driveSubsystem));
 
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
@@ -65,6 +71,13 @@ public class RobotContainer {
 	 * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 	 */
+
+	/*
+	 * - - - W A R N I N G - - - W A R N I N G - - - W A R N I N G - - - TODO
+	 * - - - - I USE A XBOX CONTROLER SO THERE MIGHT BE SOME ISSUES - - - TODO
+	 * - - - W A R N I N G - - - W A R N I N G - - - W A R N I N G - - - TODO
+	 */
+
 	private void configureButtonBindings() {
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
 				() -> m_operatorController.getRawAxis(Axis.kLeftY),
@@ -79,43 +92,44 @@ public class RobotContainer {
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
-		// m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		// m_controller.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
-		// m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		// m_controller.button(Button.kX).onTrue(new
-		// DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_driverController.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
+		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		// Should have RainbowPartyFunTime in the last 20 seconds of a match
 		// TODO: Check if this can be overridden LED buttons
-		// new Trigger(() -> DriverStation.getMatchTime() <= 20)
-		// .onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		new Trigger(() -> DriverStation.getMatchTime() <= 20)
+				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		// TODO: LEDs to add: Left Trigger -> Orange LED, with other stuff, BLUE WHEN
 		// SHOOT COMMANDS ARE DONE
 
 		// LEDs for when you want AMP
-		// m_operatorController.povLeft().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_PURPLE));
+		m_operatorController.povLeft().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_PURPLE));
 		// LEDs for when you want COOP
-		// m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
+		m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
 		// LEDs for when you want HP to drop a note
-		// m_operatorController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
+		m_operatorController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
 		// DEFAULT Button
-		// m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
+		m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
 		// RainbowPartyFunTime
-		// m_operatorController.button(Button.kShare)
-		// .onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
+		m_operatorController.button(Button.kShare)
+				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
-		// m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-		// () -> m_driverController.getRawAxis(Axis.kLeftY),
-		// () -> m_driverController.getRawAxis(Axis.kLeftX),
-		// () -> m_driverController.getRawAxis(Axis.kRightTrigger),
-		// () -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
-		// m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		// m_driverController.button(Button.kTriangle)
-		// .onTrue(new FlywheelCommand(m_flywheelSubsystem,
-		// FlywheelOperation.SET_VELOCITY,
-		// 200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
-		// m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		// m_driverController.button(Button.kX).onTrue(new
-		// DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
+				() -> m_driverController.getRawAxis(Axis.kLeftY),
+				() -> m_driverController.getRawAxis(Axis.kLeftX),
+				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
+				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
+		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_driverController.button(Button.kTriangle)
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 200)); // 200 w/
+																										// gearbox on
+																										// valk puts
+																										// this at about
+																										// 2 rotation
+																										// per second
+		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 	}
 
 	public Command getAutonomousCommand() {
