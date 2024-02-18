@@ -61,6 +61,10 @@ public class RobotContainer {
 				CommandComposer.getTwoScoreRightAuto(m_driveSubsystem, m_visionSubsystem));
 		m_autoSelector.addOption("Left Two Score",
 				CommandComposer.getTwoScoreLeftAuto(m_driveSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Right Three Score",
+				CommandComposer.getThreeScoreRightAuto(m_driveSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Three Score",
+				CommandComposer.getThreeScoreLeftAuto(m_driveSubsystem, m_visionSubsystem));
 		m_autoSelector.addOption("Get Blocks Auto", CommandComposer.getBlocksAuto(m_driveSubsystem));
 		m_autoSelector.addOption("Absolute to Zero", new TurnToAngleCommand(m_driveSubsystem, 0, 0.5, false));
 

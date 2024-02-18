@@ -41,12 +41,18 @@ public class CommandComposer {
 	 * @return The command.
 	 */
 	public static Command getTwoScoreRightAuto(DriveSubsystem driveSubsystem, SimpleVisionSubsystem visionSubsystem) {
+		Command alignCommand;
+		if (visionSubsystem == null) {
+			alignCommand = new TurnToAngleCommand(driveSubsystem, -35, 2, false);
+		} else {
+			alignCommand = new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem);
+		}
 		return sequence(
 				// new SetSteeringCommand(driveSubsystem, 0),
 				new BangBangDriveCommand(driveSubsystem, 1.2, 240, 0.01),
 				new TurnToAngleCommand(driveSubsystem, -11, 2, false),
 				new BangBangDriveCommand(driveSubsystem, 0.4, 180, 0.01),
-				new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+				alignCommand);
 	}
 
 	/**
@@ -57,11 +63,65 @@ public class CommandComposer {
 	 * @return The command.
 	 */
 	public static Command getTwoScoreLeftAuto(DriveSubsystem driveSubsystem, SimpleVisionSubsystem visionSubsystem) {
+		Command alignCommand;
+		if (visionSubsystem == null) {
+			alignCommand = new TurnToAngleCommand(driveSubsystem, 35, 2, false);
+		} else {
+			alignCommand = new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem);
+		}
 		return sequence(
 				new BangBangDriveCommand(driveSubsystem, 1.2, -240, 0.01),
-				new TurnToAngleCommand(driveSubsystem, 11, 2, false),
+				new TurnToAngleCommand(driveSubsystem, 45, 2, false),
 				new BangBangDriveCommand(driveSubsystem, 0.4, 180, 0.01),
-				new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+				alignCommand);
+	}
+
+	/**
+	 * Returns a command to shoot a note, drive forward to the next note, and shoot
+	 * the note.
+	 * 
+	 * @param driveSubsystem The drive subsystem.
+	 * @return The command.
+	 */
+	public static Command getThreeScoreRightAuto(DriveSubsystem driveSubsystem, SimpleVisionSubsystem visionSubsystem) {
+		Command alignCommand;
+		if (visionSubsystem == null) {
+			alignCommand = new TurnToAngleCommand(driveSubsystem, 12, 2, false);
+		} else {
+			alignCommand = new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem);
+		}
+		return sequence(
+				// right note
+				getTwoScoreRightAuto(driveSubsystem, visionSubsystem),
+				// middle note
+				new TurnToAngleCommand(driveSubsystem, 78, 2, false),
+				new BangBangDriveCommand(driveSubsystem, .75, 180, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
+				alignCommand);
+	}
+
+	/**
+	 * Returns a command to shoot a note, drive forward to the next note, and shoot
+	 * the note.
+	 * 
+	 * @param driveSubsystem The drive subsystem.
+	 * @return The command.
+	 */
+	public static Command getThreeScoreLeftAuto(DriveSubsystem driveSubsystem, SimpleVisionSubsystem visionSubsystem) {
+		Command alignCommand;
+		if (visionSubsystem == null) {
+			alignCommand = new TurnToAngleCommand(driveSubsystem, -12, 2, false);
+		} else {
+			alignCommand = new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem);
+		}
+		return sequence(
+				// right note
+				getTwoScoreLeftAuto(driveSubsystem, visionSubsystem),
+				// middle note
+				new TurnToAngleCommand(driveSubsystem, -75, 2, false),
+				new BangBangDriveCommand(driveSubsystem, .75, -180, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
+				alignCommand);
 	}
 
 	public static Command getBlocksAuto(DriveSubsystem driveSubsystem) {
