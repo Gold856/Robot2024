@@ -31,8 +31,7 @@ public class IndexerSubsystem extends SubsystemBase {
 	}
 
 	public void setSpeed(double speed) {
-		m_indexerMotor
-				.set(speed);
+		m_indexerMotor.set(speed);
 	}
 
 	public void stop() {
