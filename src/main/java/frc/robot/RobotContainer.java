@@ -21,7 +21,9 @@ import frc.robot.commands.drive.SetSteeringCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.flywheel.FlywheelCommand;
 import frc.robot.commands.flywheel.FlywheelCommand.Operation;
+import frc.robot.commands.indexer.IndexerCommand;
 import frc.robot.commands.indexer.IndexerShootCommand;
+import frc.robot.commands.indexer.IndexerStopCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
@@ -117,8 +119,16 @@ public class RobotContainer {
 		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(m_indexerSubsystem));
 
 		// ------------------Intake Controls-----------------------------------
-		m_operatorController.button(Button.kLeftTrigger).onTrue(m_pneumaticsSubsystem.downIntakeCommand());
-		m_operatorController.button(Button.kRightTrigger).onTrue(m_pneumaticsSubsystem.upIntakeCommand());
+		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getTeleopIntakeCommand(
+				m_intakeSubsystem, m_pneumaticsSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
+		m_operatorController.button(Button.kRightTrigger)
+				.onTrue(m_pneumaticsSubsystem.upIntakeCommand().andThen(m_intakeSubsystem.stopIntakeCommand()));
+		// sorry about this one
+		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper)).onTrue(m_intakeSubsystem
+				.reverseIntakeCommand().alongWith(IndexerCommand.getReverseCommand(m_indexerSubsystem)));
+		// and this one
+		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper))
+				.onFalse(m_intakeSubsystem.stopIntakeCommand().alongWith(new IndexerStopCommand(m_indexerSubsystem)));
 
 		// ------------------Amp Bar Controls, removal later-------------------
 		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
