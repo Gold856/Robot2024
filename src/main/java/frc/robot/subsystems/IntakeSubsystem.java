@@ -60,7 +60,7 @@ public class IntakeSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command forwardIntakeCommand() {
-		return run(() -> setSpeed(.1));
+		return runOnce(() -> setSpeed(.1));
 	}
 
 	/**
@@ -69,6 +69,6 @@ public class IntakeSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command stopIntakeCommand() {
-		return run(() -> setSpeed(0));
+		return runOnce(() -> setSpeed(0));
 	}
 }

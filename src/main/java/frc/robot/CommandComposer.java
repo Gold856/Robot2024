@@ -83,8 +83,8 @@ public class CommandComposer {
 			ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
 				parallel(
-						intakeSubsystem.forwardIntakeCommand(),
 						new IndexWithSensorCommand(indexerSubsystem, 0.5),
+						intakeSubsystem.forwardIntakeCommand(),
 						arduinoSubsystem.writeStatus(StatusCode.SOLID_ORANGE)),
 				intakeSubsystem.stopIntakeCommand(),
 				arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
