@@ -4,15 +4,15 @@
 
 package frc.robot.commands.drive;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.ClampedController;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class TurnToAngleCommand extends Command {
 	private final double m_targetAngle;
 	private final double m_angleThreshold;
 	private final DriveSubsystem m_driveSubsystem;
-	private final PIDController m_controller = new PIDController(0.0075, 0, 0);
+	private final ClampedController m_controller = new ClampedController(0.01, 0.1, .5);
 	private final boolean m_relative;
 
 	/**
