@@ -4,6 +4,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkLimitSwitch;
 
@@ -11,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
 
 public class IndexerSubsystem extends SubsystemBase {
-
 	private CANSparkMax m_indexerMotor;
 	private SparkLimitSwitch m_forwardLimitSwitch;
 
@@ -21,7 +21,7 @@ public class IndexerSubsystem extends SubsystemBase {
 	 * @throws Exception
 	 */
 	public IndexerSubsystem() {
-		m_indexerMotor = new CANSparkMax(IndexerConstants.kIndexerPort, IndexerConstants.kIndexerMotorType);
+		m_indexerMotor = new CANSparkMax(IndexerConstants.kIndexerPort, MotorType.kBrushless);
 		m_indexerMotor.setIdleMode(IdleMode.kBrake);
 		m_indexerMotor.enableVoltageCompensation(12);
 		m_indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerSmartCurrentLimit);

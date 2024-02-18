@@ -88,7 +88,7 @@ public class RobotContainer {
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		// LEDs for when you want AMP
 		m_operatorController.povLeft().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_PURPLE));
-		// LEDs for when yosu want COOP
+		// LEDs for when you want CO-OP
 		m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
 		// LEDs for when you want HP to drop a note
 		m_operatorController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
@@ -105,7 +105,7 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
-		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
 
 		// -------------------Flywheel Controls--------------------------------
 		m_driverController.button(Button.kTriangle)
