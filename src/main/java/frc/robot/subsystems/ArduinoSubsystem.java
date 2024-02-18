@@ -52,4 +52,19 @@ public class ArduinoSubsystem extends SubsystemBase {
 	public Command writeStatus(StatusCode code) {
 		return runOnce(() -> setCode(code));
 	}
+
+	// public void setLEDS(ChassisSpeeds chassisSpeeds, boolean b) {
+	// // TODO Auto-generated method stub
+	// throw new UnsupportedOperationException("Unimplemented method 'setLEDS'");
+	// }
+
+	// public void setLEDS(StatusCode rainbowPartyFunTime) {
+	// // TODO Auto-generated method stub
+	// throw new UnsupportedOperationException("Unimplemented method 'setLEDS'");
+	public void setLEDs(StatusCode code) {
+		if (m_usb != null) {
+			m_usb.write(new byte[] { code.code }, 1);
+		}
+	}
+
 }
