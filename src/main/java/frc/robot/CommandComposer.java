@@ -26,7 +26,7 @@ public class CommandComposer {
 	public static Command getShootAndLeaveAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
 				new BangBangDriveDistanceCommand(driveSubsystem, 2, 0.01),
-				new TimedLEDCommand(arduinoSubsystem, 1, StatusCode.RAINBOW_PARTY_FUN_TIME));
+				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
 	/**
@@ -37,7 +37,8 @@ public class CommandComposer {
 	 * @param driveSubsystem   The drive subsystem.
 	 * @param arduinoSubsystem The arduino subsystem for LEDs.
 	 * @param visionSubsystem  The vision subsystem with Limelight.
-	 * 		If visionSubsystem is used, auto will include command to align with AprilTag.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
 	public static Command getTwoScoreMiddleAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
@@ -49,7 +50,7 @@ public class CommandComposer {
 		}
 		return sequence(
 				alignCommand,
-				new TimedLEDCommand(arduinoSubsystem, 1, StatusCode.RAINBOW_PARTY_FUN_TIME));
+				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
 	/**
@@ -60,7 +61,8 @@ public class CommandComposer {
 	 * @param driveSubsystem   The drive subsystem.
 	 * @param arduinoSubsystem The arduino subsystem for LEDs.
 	 * @param visionSubsystem  The vision subsystem with Limelight.
-	 * 		If visionSubsystem is used, auto will include command to align with AprilTag.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
 	public static Command getTwoScoreRightAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
@@ -75,7 +77,7 @@ public class CommandComposer {
 				new TurnToAngleCommand(driveSubsystem, -11, 2, false),
 				new BangBangDriveCommand(driveSubsystem, 0.4, 180, 0.01),
 				alignCommand,
-				new TimedLEDCommand(arduinoSubsystem, 1, StatusCode.RAINBOW_PARTY_FUN_TIME));
+				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
 	/**
@@ -86,7 +88,8 @@ public class CommandComposer {
 	 * @param driveSubsystem   The drive subsystem.
 	 * @param arduinoSubsystem The arduino subsystem for LEDs.
 	 * @param visionSubsystem  The vision subsystem with Limelight.
-	 * 		If visionSubsystem is used, auto will include command to align with AprilTag.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
 	 * 
 	 * @return The command.
 	 */
@@ -102,7 +105,7 @@ public class CommandComposer {
 				new TurnToAngleCommand(driveSubsystem, 45, 2, false),
 				new BangBangDriveCommand(driveSubsystem, 0.4, 180, 0.01),
 				alignCommand,
-				new TimedLEDCommand(arduinoSubsystem, 1, StatusCode.RAINBOW_PARTY_FUN_TIME));
+				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
 	/**
@@ -115,7 +118,8 @@ public class CommandComposer {
 	 * @param driveSubsystem   The drive subsystem.
 	 * @param arduinoSubsystem The arduino subsystem for LEDs.
 	 * @param visionSubsystem  The vision subsystem with Limelight.
-	 * 		If visionSubsystem is used, auto will include command to align with AprilTag.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
 	public static Command getThreeScoreRightAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
@@ -132,7 +136,7 @@ public class CommandComposer {
 				new TurnToAngleCommand(driveSubsystem, 78, 2, false),
 				new BangBangDriveCommand(driveSubsystem, .75, 180, 0.01),
 				alignCommand,
-				new TimedLEDCommand(arduinoSubsystem, 1, StatusCode.RAINBOW_PARTY_FUN_TIME));
+				new TimedLEDCommand(arduinoSubsystem, .5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
 	/**
@@ -145,7 +149,8 @@ public class CommandComposer {
 	 * @param driveSubsystem   The drive subsystem.
 	 * @param arduinoSubsystem The arduino subsystem for LEDs.
 	 * @param visionSubsystem  The vision subsystem with Limelight.
-	 * 		If visionSubsystem is used, auto will include command to align with AprilTag.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
 	public static Command getThreeScoreLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
@@ -162,7 +167,7 @@ public class CommandComposer {
 				new TurnToAngleCommand(driveSubsystem, -75, 2, false),
 				new BangBangDriveCommand(driveSubsystem, .75, -180, 0.01),
 				alignCommand,
-				new TimedLEDCommand(arduinoSubsystem, 1, StatusCode.RAINBOW_PARTY_FUN_TIME));
+				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
 	/**
@@ -180,6 +185,6 @@ public class CommandComposer {
 				DriveDistanceCommand.create(driveSubsystem, -1.825),
 				DriveDistanceCommand.create(driveSubsystem, 2.125),
 				DriveDistanceCommand.create(driveSubsystem, -2.5),
-				new TimedLEDCommand(arduinoSubsystem, 1, StatusCode.RAINBOW_PARTY_FUN_TIME));
+				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 }
