@@ -27,6 +27,7 @@ import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 
 /**
@@ -47,6 +48,7 @@ public class RobotContainer {
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
+	private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -95,6 +97,10 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
+		m_driverController.button(Button.kCircle).onTrue(m_intakeSubsystem.forwardIntakeCommand());
+		m_driverController.button(Button.kTriangle).onTrue(m_intakeSubsystem.reverseIntakeCommand());
+		m_driverController.button(Button.kSquare).onTrue(m_intakeSubsystem.stopIntakeCommand());
+		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 
 		// -------------------Flywheel Controls--------------------------------
@@ -109,7 +115,7 @@ public class RobotContainer {
 		m_operatorController.button(Button.kLeftTrigger).onTrue(m_pneumaticsSubsystem.downIntakeCommand());
 		m_operatorController.button(Button.kRightTrigger).onTrue(m_pneumaticsSubsystem.upIntakeCommand());
 
-		// ------------------AMp Bar Controls, removal later-------------------
+		// ------------------Amp Bar Controls, removal later-------------------
 		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 	}
 
