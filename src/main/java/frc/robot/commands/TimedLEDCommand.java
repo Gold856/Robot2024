@@ -7,22 +7,23 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArduinoSubsystem;
+import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 
 public class TimedLEDCommand extends Command {
-	private ArduinoSubsystem m_ArduinoSubsystem;
-	private double m_seconds;
+	private final ArduinoSubsystem m_arduinoSubsystem;
+	private final double m_seconds;
 	private final Timer m_timer = new Timer();
-	private ArduinoSubsystem.StatusCode m_statusCode;
+	private final StatusCode m_statusCode;
 
 	/**
-	 * Creates a new TimedLCommand.
+	 * Creates a new TimedLEDCommand.
 	 * 
-	 * @param subsystem The subsystem
-	 * @param seconds   Time to drive in seconds
-	 * @param speed     The speed in percent output
+	 * @param subsystem  The subsystem
+	 * @param seconds    Time to drive in seconds
+	 * @param statusCode The LED pattern to display
 	 */
-	public TimedLEDCommand(ArduinoSubsystem subsystem, double seconds, ArduinoSubsystem.StatusCode statusCode) {
-		m_ArduinoSubsystem = subsystem;
+	public TimedLEDCommand(ArduinoSubsystem subsystem, double seconds, StatusCode statusCode) {
+		m_arduinoSubsystem = subsystem;
 		m_seconds = seconds;
 		m_statusCode = statusCode;
 		addRequirements(subsystem);
@@ -37,13 +38,13 @@ public class TimedLEDCommand extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		m_ArduinoSubsystem.setLEDs(m_statusCode);
+		m_arduinoSubsystem.setCode(m_statusCode);
 	}
 
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		m_ArduinoSubsystem.setCode(ArduinoSubsystem.StatusCode.DEFAULT);
+		m_arduinoSubsystem.setCode(StatusCode.DEFAULT);
 	}
 
 	// Returns true when the command should end.
