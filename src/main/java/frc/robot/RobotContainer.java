@@ -65,6 +65,9 @@ public class RobotContainer {
 		m_autoSelector.addOption("Get Blocks Auto", CommandComposer.getBlocksAuto(m_driveSubsystem));
 		m_autoSelector.addOption("Intake With Sensor",
 				CommandComposer.getIntakeWithSensorCommand(m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Intake With Sensor and Pneumatics",
+				CommandComposer.getTeleopIntakeCommand(m_intakeSubsystem, m_pneumaticsSubsystem, m_indexerSubsystem,
+						m_arduinoSubsystem));
 
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
