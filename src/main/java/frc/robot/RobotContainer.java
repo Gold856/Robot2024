@@ -15,17 +15,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.commands.SimpleVisionAlignCommand;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
-import frc.robot.commands.drive.PIDTurnCommand;
 import frc.robot.commands.drive.SetSteeringCommand;
+import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.flywheel.FlywheelCommand;
 import frc.robot.commands.flywheel.FlywheelCommand.Operation;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
+import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
 /**
@@ -42,6 +42,7 @@ public class RobotContainer {
 			ControllerConstants.kOperatorControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
+	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
@@ -52,7 +53,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		// Configure the button bindings
 		m_autoSelector.addOption("Test Steering", SetSteeringCommand.getCalibrationCommand(m_driveSubsystem));
-		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		m_autoSelector.addOption("PID Turn 90 degrees", new TurnToAngleCommand(m_driveSubsystem, 90, 0.5, true));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
 		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
@@ -94,14 +95,10 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
-		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_driverController.button(Button.kTriangle)
 				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY,
 						200)); // 200 w/ gearbox on valk puts this at about 2 rotation per second
-		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
-		m_driverController.button(Button.kRightBumper)
-				.onTrue(new SimpleVisionAlignCommand(m_driveSubsystem, m_visionSubsystem));
 	}
 
 	public Command getAutonomousCommand() {
