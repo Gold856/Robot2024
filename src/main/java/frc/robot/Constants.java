@@ -91,7 +91,7 @@ public final class Constants {
 		public static final double kSteerPeriod = 0.02;
 		// Speed multiplier to make sure the robot doesn't crash into something when
 		// testing, because crashing into people's shins would be bad
-		public static final double kMaxSpeed = 0.8;
+		public static final double kMaxSpeed = 1;
 		public static final double kMinSpeed = 0.1;
 		public static final double kTeleopMaxSpeed = 0.8;
 		public static final double kTeleopMaxTurnSpeed = 0.6;
