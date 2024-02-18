@@ -56,6 +56,13 @@ public class CommandComposer {
 		return new BangBangDriveCommand(driveSubsystem, 1., 90, 0.01);
 	}
 
+	/**
+	 * Returns a command to drive back and forth as described.
+	 * 
+	 * 
+	 * @param driveSubsystem The drive subsystem.
+	 * @return The command.
+	 */
 	public static Command getBlocksAuto(DriveSubsystem driveSubsystem) {
 		return sequence(
 				DriveDistanceCommand.create(driveSubsystem, 0.75),
@@ -65,4 +72,5 @@ public class CommandComposer {
 				DriveDistanceCommand.create(driveSubsystem, 2.125),
 				DriveDistanceCommand.create(driveSubsystem, -2.5));
 	}
+
 }
