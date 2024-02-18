@@ -10,17 +10,17 @@ import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 
 public class TimedLEDCommand extends Command {
-	private ArduinoSubsystem m_arduinoSubsystem;
-	private double m_seconds;
+	private final ArduinoSubsystem m_arduinoSubsystem;
+	private final double m_seconds;
 	private final Timer m_timer = new Timer();
-	private StatusCode m_statusCode;
+	private final StatusCode m_statusCode;
 
 	/**
-	 * Creates a new TimedLCommand.
+	 * Creates a new TimedLEDCommand.
 	 * 
-	 * @param subsystem The subsystem
-	 * @param seconds   Time to drive in seconds
-	 * @param speed     The speed in percent output
+	 * @param subsystem  The subsystem
+	 * @param seconds    Time to drive in seconds
+	 * @param statusCode The LED pattern to display
 	 */
 	public TimedLEDCommand(ArduinoSubsystem subsystem, double seconds, StatusCode statusCode) {
 		m_arduinoSubsystem = subsystem;
@@ -44,7 +44,7 @@ public class TimedLEDCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		m_arduinoSubsystem.setCode(ArduinoSubsystem.StatusCode.DEFAULT);
+		m_arduinoSubsystem.setCode(StatusCode.DEFAULT);
 	}
 
 	// Returns true when the command should end.
