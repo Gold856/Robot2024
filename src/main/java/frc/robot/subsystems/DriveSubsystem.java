@@ -252,6 +252,7 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		SmartDashboard.putNumber("Current Position", getModulePositions()[0].distanceMeters);
+		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 		if (RobotBase.isReal()) {
 			m_pose = m_odometry.update(getHeading(), getModulePositions());
 			m_posePublisher.set(m_pose);
