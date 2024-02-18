@@ -18,7 +18,7 @@ public class IndexerSubsystem extends SubsystemBase {
 	/**
 	 * Creates a new IndexerSubsystem.
 	 * 
-	 * @throws Exception
+	 * 
 	 */
 	public IndexerSubsystem() {
 		m_indexerMotor = new CANSparkMax(IndexerConstants.kIndexerPort, MotorType.kBrushless);
@@ -27,7 +27,7 @@ public class IndexerSubsystem extends SubsystemBase {
 		m_indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerSmartCurrentLimit);
 		m_indexerMotor.setSecondaryCurrentLimit(IndexerConstants.kIndexerPeakCurrentLimit);
 		m_forwardLimitSwitch = m_indexerMotor.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-		m_forwardLimitSwitch.enableLimitSwitch(false);
+		m_forwardLimitSwitch.enableLimitSwitch(true);
 	}
 
 	public void setSpeed(double speed) {

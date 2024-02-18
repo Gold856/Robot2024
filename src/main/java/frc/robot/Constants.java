@@ -78,27 +78,11 @@ public final class Constants {
 		public static final int kFrontLeftCANCoderPort = 42;
 		public static final int kBackRightCANCoderPort = 22;
 		public static final int kBackLeftCANCoderPort = 32;
-		public static final double kDriveScale = 0.5;
-		// Drive PID values
+		// Swerve PID values
 		public static final double kP = 0.005;
 		public static final double kI = 0.045;
 		public static final double kD = 0;
 		public static final double kIz = 5;
-		public static final double kFF = 0;
-		public static final double kMinOutput = -1.0;
-		public static final double kMaxOutput = 1.0;
-
-		public static final double kDriveP = 0.2;
-		public static final double kDriveI = 0;
-		public static final double kDriveD = 0;
-		public static final double kDriveMaxVelocity = 3;
-		public static final double kDriveMaxAcceleration = 2;
-
-		public static final double kTurnP = 0.016; // was 0.005
-		public static final double kTurnI = 0; // was 0.003
-		public static final double kTurnD = 0; // 0.0
-		public static final double kTurnMaxVelocity = 120;
-		public static final double kTurnMaxAcceleration = 120;
 
 		/*** Distance between center of front wheel and center of back wheel */
 		public static final double kWheelBase = 21.5;
@@ -107,8 +91,10 @@ public final class Constants {
 		public static final double kSteerPeriod = 0.02;
 		// Speed multiplier to make sure the robot doesn't crash into something when
 		// testing, because crashing into people's shins would be bad
-		public static final double kMaxSpeed = 1;
+		public static final double kMaxSpeed = 0.8;
 		public static final double kMinSpeed = 0.1;
+		public static final double kTeleopMaxSpeed = 0.8;
+		public static final double kTeleopMaxTurnSpeed = 0.6;
 		public static final double kModuleResponseTimeSeconds = 0.02;
 		public static final double kGearRatio = 6.12;
 		public static final double kWheelDiameter = Units.inchesToMeters(4);
@@ -156,13 +142,6 @@ public final class Constants {
 		public static final int kPeakCurrentLimit = 60;
 		public static final boolean kFollowerOppose = false;
 		public static final int kGearRatio = 60;
-		public static final int kP = 0;
-		public static final int kI = 0;
-		public static final int kIz = 0;
-		public static final int kD = 0;
-		public static final int kFF = 0;
-		public static final double kMinOutput = -1;
-		public static final double kMaxOutput = 1;
 	}
 
 	public static final class IndexerConstants {
@@ -174,7 +153,7 @@ public final class Constants {
 
 		// Shoot Command Constants
 		public static final double kShootTime = 0.5;
-		public static final double kShootSpeed = 0.25;
+		public static final double kShootSpeed = 0.8;
 	}
 
 	public static final class PneumaticsConstants {
