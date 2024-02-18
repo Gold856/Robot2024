@@ -19,6 +19,7 @@ import frc.robot.commands.BangBangDriveDistance;
 import frc.robot.commands.DriveDistanceCommand;
 import frc.robot.commands.PIDTurnCommand;
 import frc.robot.commands.SetSteering;
+import frc.robot.commands.TimedLEDCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
@@ -71,6 +72,8 @@ public class RobotContainer {
 	}
 
 	public Command getAutonomousCommand() {
-		return m_autoSelector.getSelected();
+		return new TimedLEDCommand(m_ArduinoSubsystem, 1.5 /* seconds */,
+				ArduinoSubsystem.StatusCode.RAINBOW_PARTY_FUN_TIME);
+
 	}
 }
