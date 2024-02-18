@@ -7,6 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArduinoSubsystem;
+import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 
 public class TimedLEDCommand extends Command {
 	private ArduinoSubsystem m_arduinoSubsystem;
@@ -14,7 +15,7 @@ public class TimedLEDCommand extends Command {
 	private final Timer m_timer = new Timer();
 	private StatusCode m_statusCode;
 
-	/**s
+	/**
 	 * Creates a new TimedLCommand.
 	 * 
 	 * @param subsystem The subsystem
