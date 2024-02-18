@@ -5,6 +5,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.drive.BangBangDriveCommand;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
+import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -53,5 +54,15 @@ public class CommandComposer {
 	 */
 	public static Command getTwoScoreLeftAuto(DriveSubsystem driveSubsystem) {
 		return new BangBangDriveCommand(driveSubsystem, 1., 90, 0.01);
+	}
+
+	public static Command getBlocksAuto(DriveSubsystem driveSubsystem) {
+		return sequence(
+				DriveDistanceCommand.create(driveSubsystem, 0.75),
+				DriveDistanceCommand.create(driveSubsystem, -1.25),
+				DriveDistanceCommand.create(driveSubsystem, 1.5),
+				DriveDistanceCommand.create(driveSubsystem, -1.825),
+				DriveDistanceCommand.create(driveSubsystem, 2.125),
+				DriveDistanceCommand.create(driveSubsystem, -2.5));
 	}
 }
