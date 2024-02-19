@@ -8,6 +8,7 @@ import frc.robot.commands.SimpleVisionAlignCommand;
 import frc.robot.commands.TimedLEDCommand;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.NinjaStarCommand;
 import frc.robot.commands.drive.PolarDriveCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.indexer.IndexWithSensorCommand;
@@ -77,9 +78,10 @@ public class CommandComposer {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
-				new PolarDriveCommand(driveSubsystem, 1.2, 240, 0.01),
-				new TurnToAngleCommand(driveSubsystem, -11, 2, false),
-				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
+				// new PolarDriveCommand(driveSubsystem, 1.2, 240, 0.01),
+				// new TurnToAngleCommand(driveSubsystem, -11, 2, false),
+				// new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
+				new NinjaStarCommand(driveSubsystem, 2, 0, -15),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -137,8 +139,9 @@ public class CommandComposer {
 				// right note
 				getTwoScoreRightAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// middle note
-				new TurnToAngleCommand(driveSubsystem, 78, 2, false),
-				new PolarDriveCommand(driveSubsystem, .75, 180, 0.01),
+				// new TurnToAngleCommand(driveSubsystem, 78, 2, false),
+				// new PolarDriveCommand(driveSubsystem, .75, 180, 0.01),
+				new NinjaStarCommand(driveSubsystem, 0, -.75, 0),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, .5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}

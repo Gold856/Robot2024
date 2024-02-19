@@ -37,6 +37,7 @@ public class NinjaStarCommand extends Command {
 		m_yController.setTolerance(yTolerance);
 		m_rotController.setTolerance(rotTolerance);
 		m_rotController.enableContinuousInput(0, 360);
+		SmartDashboard.putString("ninja star command", "constructed");
 		addRequirements(subsystem);
 	}
 
@@ -54,6 +55,7 @@ public class NinjaStarCommand extends Command {
 
 	@Override
 	public void initialize() {
+		SmartDashboard.putString("ninja star command", "initialized");
 		m_startPose = m_driveSubsystem.getPose();
 		m_xTarget = m_startPose.getX() + m_xAmount;
 		m_yTarget = m_startPose.getY() + m_yAmount;
