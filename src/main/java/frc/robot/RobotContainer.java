@@ -31,6 +31,7 @@ import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
+import frc.robot.subsystems.SimpleVisionSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -49,13 +50,13 @@ public class RobotContainer {
 	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
+	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 	private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
 	 */
-
 	public RobotContainer() {
 		// Configure the button bindings
 		m_autoSelector.addOption("Test Steering", SetSteeringCommand.getCalibrationCommand(m_driveSubsystem));
@@ -63,8 +64,17 @@ public class RobotContainer {
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
 		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
-		m_autoSelector.addOption("Right Two Score", CommandComposer.getTwoScoreRightAuto(m_driveSubsystem));
-		m_autoSelector.addOption("Get Blocks Auto", CommandComposer.getBlocksAuto(m_driveSubsystem));
+		m_autoSelector.addOption("Right Two Score",
+				CommandComposer.getTwoScoreRightAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Two Score",
+				CommandComposer.getTwoScoreLeftAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Right Three Score",
+				CommandComposer.getThreeScoreRightAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Three Score",
+				CommandComposer.getThreeScoreLeftAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Get Blocks Auto",
+				CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Absolute to Zero", new TurnToAngleCommand(m_driveSubsystem, 0, 0.5, false));
 		m_autoSelector.addOption("Intake With Sensor",
 				CommandComposer.getIntakeWithSensorCommand(m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
 		m_autoSelector.addOption("Intake With Sensor and Pneumatics",
