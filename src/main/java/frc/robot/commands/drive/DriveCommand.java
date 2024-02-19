@@ -1,5 +1,7 @@
 package frc.robot.commands.drive;
 
+import static frc.robot.Constants.DriveConstants.*;
+
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -9,7 +11,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 /**
@@ -109,16 +110,16 @@ public class DriveCommand extends Command {
 			double angleTolerance) {
 		m_driveSubsystem = driveSubsystem;
 		m_targetPoseSupplier = targetPoseSupplier;
-		var constraints = new TrapezoidProfile.Constraints(DriveConstants.kDriveMaxVelocity,
-				DriveConstants.kDriveMaxAcceleration);
-		m_controllerX = new ProfiledPIDController(DriveConstants.kDriveP, DriveConstants.kDriveI,
-				DriveConstants.kDriveD, constraints);
-		m_controllerY = new ProfiledPIDController(DriveConstants.kDriveP, DriveConstants.kDriveI,
-				DriveConstants.kDriveD, constraints);
-		m_controllerYaw = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI,
-				DriveConstants.kTurnD,
-				new TrapezoidProfile.Constraints(DriveConstants.kTurnMaxVelocity,
-						DriveConstants.kTurnMaxAcceleration));
+		var constraints = new TrapezoidProfile.Constraints(kDriveMaxVelocity,
+				kDriveMaxAcceleration);
+		m_controllerX = new ProfiledPIDController(kDriveP, kDriveI,
+				kDriveD, constraints);
+		m_controllerY = new ProfiledPIDController(kDriveP, kDriveI,
+				kDriveD, constraints);
+		m_controllerYaw = new ProfiledPIDController(kTurnP, kTurnI,
+				kTurnD,
+				new TrapezoidProfile.Constraints(kTurnMaxVelocity,
+						kTurnMaxAcceleration));
 		m_controllerX.setTolerance(distanceTolerance);
 		m_controllerY.setTolerance(distanceTolerance);
 		m_controllerYaw.setTolerance(angleTolerance);
