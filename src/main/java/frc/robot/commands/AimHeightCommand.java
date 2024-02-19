@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter.PhysicsAndMathTargeter;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class AimCommand extends Command {
-	private AimOperation m_operation;
+public class AimHeightCommand extends Command {
+	private AimHeightOperation m_operation;
 	private double m_distanceMeters;
 	private ShooterSubsystem m_shooterSubsystem;
 	private PhysicsAndMathTargeter m_targeter;
 
-	public enum AimOperation {
+	public enum AimHeightOperation {
 		CMD_CALC_AND_SET, // Calculate Angle at current position (changes)
 		CMD_SET_PRESET_DEFAULT, // For checkout, set shooter down (static)
 		CMD_PRESET_AMP,
@@ -29,7 +29,7 @@ public class AimCommand extends Command {
 	}
 
 	/** Creates a new AimCommand. */
-	public AimCommand(ShooterSubsystem subsystem, PhysicsAndMathTargeter targeter, AimOperation operation) {
+	public AimHeightCommand(ShooterSubsystem subsystem, PhysicsAndMathTargeter targeter, AimHeightOperation operation) {
 		m_operation = operation;
 		// m_distanceMeters = SimpleVision.getDistance(); //TODO fix vision
 		m_shooterSubsystem = subsystem;
@@ -72,13 +72,15 @@ public class AimCommand extends Command {
 	@Override
 	public boolean isFinished() {
 
-		if (m_operation == AimOperation.CMD_CALC_AND_SET || m_operation == AimOperation.CMD_SET_PRESET_DEFAULT) {
+		if (m_operation == AimHeightOperation.CMD_CALC_AND_SET
+				|| m_operation == AimHeightOperation.CMD_SET_PRESET_DEFAULT) {
 			return true;
-		} else if (m_operation == AimOperation.CMD_UP_ADJUST || m_operation == AimOperation.CMD_DOWN_ADJUST) {
+		} else if (m_operation == AimHeightOperation.CMD_UP_ADJUST
+				|| m_operation == AimHeightOperation.CMD_DOWN_ADJUST) {
 			return true;
-		} else if (m_operation == AimOperation.CMD_SETTLE) {
+		} else if (m_operation == AimHeightOperation.CMD_SETTLE) {
 			return m_shooterSubsystem.atActuatorSetpoint();
-		} else if (m_operation == AimOperation.CMD_STOP) {
+		} else if (m_operation == AimHeightOperation.CMD_STOP) {
 			return true;
 		}
 		return true;
@@ -87,7 +89,7 @@ public class AimCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		if (m_operation == AimOperation.CMD_STOP) {
+		if (m_operation == AimHeightOperation.CMD_STOP) {
 			m_shooterSubsystem.stopMotors();
 		}
 		// m_shooterSubsystem.stopMotors();

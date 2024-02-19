@@ -148,7 +148,7 @@ public final class Constants {
 		public static final double kFF = 0.0; // .000_1050;
 		public static final double kMaxOutput = 1;
 		public static final double kMinOutput = 0;
-		public static final double kGearRatio = 1; // 1 for aster testing or 3;
+		public static final double kGearRatio = 3;
 		public static final double speakerHeight = 2.032145; // TODO change to this height - robot height
 		public static final double shooterLength = .25; // TODO change to deltaX between edge of robot and shooter axis
 														// on robot

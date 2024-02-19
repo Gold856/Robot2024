@@ -14,45 +14,31 @@ import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-	private final CANSparkMax m_neoShooterMaster = new CANSparkMax(FlywheelConstants.kFlywheelMasterPort,
+	private final CANSparkMax m_neoShooter = new CANSparkMax(FlywheelConstants.kFlywheelMasterPort,
 			MotorType.kBrushless); // TODO make 550s
-	private final CANSparkMax m_neoShooterFollower = new CANSparkMax(FlywheelConstants.kFlywheelFollowerPort,
-			MotorType.kBrushless);
-	private final SparkPIDController m_neoController = m_neoShooterMaster.getPIDController();
-	private final RelativeEncoder m_neoEncoderMaster = m_neoShooterMaster.getEncoder();
+	private final SparkPIDController m_neoController = m_neoShooter.getPIDController();
+	private final RelativeEncoder m_neoEncoderMaster = m_neoShooter.getEncoder();
 	private double m_setVelocity;
 	private double m_kShooterTolerance = Constants.ShooterConstants.kShooterTolerance;
 	private double m_actuatorHeightSetpoint;
 	private double m_conversionFactor;
 
-	// private Instant m_startTime;
 	/**
 	 * Initializes a new instance of the {@link FlywheelSubsystem} class.
 	 */
 	public ShooterSubsystem() {
 		// Initialize Motors
-		m_neoShooterMaster.restoreFactoryDefaults();
-		m_neoShooterMaster.setInverted(ShooterConstants.kMasterInvert);
-		m_neoShooterMaster.setIdleMode(IdleMode.kCoast);
-		m_neoShooterMaster.enableVoltageCompensation(12);
-		m_neoShooterMaster.setSmartCurrentLimit(ShooterConstants.kSmartCurrentLimit);
-		m_neoShooterMaster.setSecondaryCurrentLimit(ShooterConstants.kPeakCurrentLimit,
+		m_neoShooter.restoreFactoryDefaults();
+		m_neoShooter.setInverted(ShooterConstants.kMasterInvert);
+		m_neoShooter.setIdleMode(IdleMode.kCoast);
+		m_neoShooter.enableVoltageCompensation(12);
+		m_neoShooter.setSmartCurrentLimit(ShooterConstants.kSmartCurrentLimit);
+		m_neoShooter.setSecondaryCurrentLimit(ShooterConstants.kPeakCurrentLimit,
 				ShooterConstants.kPeakCurrentDurationMillis);
 
-		m_neoShooterFollower.restoreFactoryDefaults();
-		m_neoShooterFollower.setIdleMode(IdleMode.kCoast);
-		m_neoShooterFollower.enableVoltageCompensation(12);
-		m_neoShooterFollower.setSmartCurrentLimit(ShooterConstants.kSmartCurrentLimit);
-		m_neoShooterFollower.setSecondaryCurrentLimit(ShooterConstants.kPeakCurrentLimit,
-				ShooterConstants.kPeakCurrentDurationMillis);
-		m_neoShooterFollower.setSoftLimit(SoftLimitDirection.kForward, ShooterConstants.kLeadScrewLimit);
-		m_neoShooterFollower.follow(m_neoShooterMaster, ShooterConstants.kFollowerOppose);
-
-		m_neoEncoderMaster.setPositionConversionFactor(1 / ShooterConstants.kGearRatio);
-		m_neoEncoderMaster.setVelocityConversionFactor(1 / ShooterConstants.kGearRatio);
-		m_conversionFactor = m_neoEncoderMaster.getPositionConversionFactor();
+		m_conversionFactor = 1 / ShooterConstants.kGearRatio;
 		float leadScrewSoftLimit = (float) (ShooterConstants.kLeadScrewLimit * m_conversionFactor);
-		m_neoShooterMaster.setSoftLimit(SoftLimitDirection.kForward, leadScrewSoftLimit);
+		m_neoShooter.setSoftLimit(SoftLimitDirection.kForward, leadScrewSoftLimit);
 
 		m_neoController.setP(ShooterConstants.kP);
 		m_neoController.setI(ShooterConstants.kI);
@@ -100,6 +86,10 @@ public class ShooterSubsystem extends SubsystemBase {
 	public void adjustActuatorSetpoint(double adjustAmount) {
 		m_actuatorHeightSetpoint += adjustAmount;
 		setActuatorHeight(m_actuatorHeightSetpoint);
+	}
+
+	public void setSpeed(double speed) {
+		m_neoShooter.set(speed);
 	}
 
 	public boolean atActuatorSetpoint() {

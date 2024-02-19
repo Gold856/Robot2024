@@ -14,6 +14,8 @@ public interface Targeter {
 
 	public double calcActuatorHeightFromAngle(double distanceMeters);
 
+	public double calcActuatorHeightFromDistance(double distanceMeters);
+
 	public class RegressionTargeter { // quadratic regression
 
 		public double getAngle(double distanceMeters) {
