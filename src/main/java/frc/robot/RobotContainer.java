@@ -122,8 +122,6 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_driverController.button(Button.kTriangle)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 200));
 		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
