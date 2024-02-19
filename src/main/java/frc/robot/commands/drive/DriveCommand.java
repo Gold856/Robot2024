@@ -2,19 +2,13 @@ package frc.robot.commands.drive;
 
 import java.util.function.Supplier;
 
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -67,16 +61,11 @@ public class DriveCommand extends Command {
 	 * robot-oriented fashion.
 	 * 
 	 * @param driveSubsystem    the {@code DriveSubsystem} to use
-	 * @param changeX
-	 *                          the desired change in the x-coordinate value
-	 * @param changeY
-	 *                          the desired change in the y-coordinate value
-	 * @param changeYaw
-	 *                          the desired change in the yaw value
-	 * @param distanceTolerance
-	 *                          the distance error in meters which is tolerable
-	 * @param angleTolerance
-	 *                          the angle error in degrees which is tolerable
+	 * @param changeX           the desired change in the x-coordinate value
+	 * @param changeY           the desired change in the y-coordinate value
+	 * @param changeYaw         the desired change in the yaw value
+	 * @param distanceTolerance the distance error in meters which is tolerable
+	 * @param angleTolerance    the angle error in degrees which is tolerable
 	 */
 	public DriveCommand(DriveSubsystem driveSubsystem, double changeX, double changeY, double changeYaw,
 			double distanceTolerance,
@@ -92,13 +81,10 @@ public class DriveCommand extends Command {
 	 * robot to a certain target.
 	 * 
 	 * @param driveSubsystem    the {@code DriveSubsystem} to use
-	 * @param targetPose
-	 *                          the target pose whose x and y-coordinate values are
+	 * @param targetPose        the target pose whose x and y-coordinate values are
 	 *                          in meters and yaw value is in degrees
-	 * @param distanceTolerance
-	 *                          the distance error in meters which is tolerable
-	 * @param angleTolerance
-	 *                          the angle error in degrees which is tolerable
+	 * @param distanceTolerance the distance error in meters which is tolerable
+	 * @param angleTolerance    the angle error in degrees which is tolerable
 	 */
 	public DriveCommand(DriveSubsystem driveSubsystem, Pose2d targetPose, double distanceTolerance,
 			double angleTolerance) {
@@ -110,35 +96,29 @@ public class DriveCommand extends Command {
 	 * robot to a certain target pose.
 	 * 
 	 * @param driveSubsystem     the {@code DriveSubsystem} to use
-	 * @param targetPoseSupplier
-	 *                           a {@code Supplier<Pose2d>} that provides the
+	 * @param targetPoseSupplier a {@code Supplier<Pose2d>} that provides the
 	 *                           target pose to which the robot should move.
-	 *                           This is used at the commencement of this {@code
-	 *                             DriveCommand} (i.e.,
-	 *                           when the scheduler begins to periodically execute
-	 *                           this {@code
-	 *                             DriveCommand})
-	 * 
-	 * @param distanceTolerance  the distance error in
-	 *                           meters which is
-	 *                           tolerable
-	 * @param angleTolerance
-	 *                           the angle error in degrees which is tolerable
+	 *                           This is used at the commencement of this
+	 *                           {@code DriveCommand} (i.e., when the scheduler
+	 *                           begins to periodically execute this
+	 *                           {@code DriveCommand})
+	 * @param distanceTolerance  the distance error in meters which is tolerable
+	 * @param angleTolerance     the angle error in degrees which is tolerable
 	 */
 	public DriveCommand(DriveSubsystem driveSubsystem, Supplier<Pose2d> targetPoseSupplier, double distanceTolerance,
 			double angleTolerance) {
 		m_driveSubsystem = driveSubsystem;
 		m_targetPoseSupplier = targetPoseSupplier;
-		var constraints = new TrapezoidProfile.Constraints(Constants.DriveConstants.kDriveMaxVelocity,
-				Constants.DriveConstants.kDriveMaxAcceleration);
-		m_controllerX = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
-				Constants.DriveConstants.kDriveD, constraints);
-		m_controllerY = new ProfiledPIDController(Constants.DriveConstants.kDriveP, Constants.DriveConstants.kDriveI,
-				Constants.DriveConstants.kDriveD, constraints);
+		var constraints = new TrapezoidProfile.Constraints(DriveConstants.kDriveMaxVelocity,
+				DriveConstants.kDriveMaxAcceleration);
+		m_controllerX = new ProfiledPIDController(DriveConstants.kDriveP, DriveConstants.kDriveI,
+				DriveConstants.kDriveD, constraints);
+		m_controllerY = new ProfiledPIDController(DriveConstants.kDriveP, DriveConstants.kDriveI,
+				DriveConstants.kDriveD, constraints);
 		m_controllerYaw = new ProfiledPIDController(DriveConstants.kTurnP, DriveConstants.kTurnI,
 				DriveConstants.kTurnD,
-				new TrapezoidProfile.Constraints(Constants.DriveConstants.kTurnMaxVelocity,
-						Constants.DriveConstants.kTurnMaxAcceleration));
+				new TrapezoidProfile.Constraints(DriveConstants.kTurnMaxVelocity,
+						DriveConstants.kTurnMaxAcceleration));
 		m_controllerX.setTolerance(distanceTolerance);
 		m_controllerY.setTolerance(distanceTolerance);
 		m_controllerYaw.setTolerance(angleTolerance);
@@ -164,10 +144,6 @@ public class DriveCommand extends Command {
 		m_controllerX.setGoal(targetPose.getX());
 		m_controllerY.setGoal(targetPose.getY());
 		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
-		SmartDashboard.putString(
-				"drive",
-				String.format(
-						"initialize - current pose: %s, target pose: %s", "" + pose, "" + targetPose));
 	}
 
 	/**
@@ -185,28 +161,16 @@ public class DriveCommand extends Command {
 		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
 		m_driveSubsystem.setModuleStates(speedX,
 				speedY, speedYaw, true);
-		SmartDashboard.putString(
-				"drive",
-				String.format("execute - velocities: [%.2f, %.2f, %.1f degrees], pose: %s",
-						speedX, speedY, speedYaw, "" + m_driveSubsystem.getPose()));
 	}
 
 	/**
 	 * Is invoked once this {@code DriveCommand} is either ended or interrupted.
 	 * 
-	 * @param interrupted
-	 *                    indicates if this {@code DriveCommand} was
-	 *                    interrupted
+	 * @param interrupted indicates if this {@code DriveCommand} was interrupted
 	 */
 	@Override
 	public void end(boolean interrupted) {
 		m_driveSubsystem.setModuleStates(0, 0, 0, true);
-		SmartDashboard.putString("drive",
-				"end - : " + (interrupted ? "interrupted"
-						: "completed") + String.format(" - current: %s, target: [%.2f, %.2f, %.1f degrees]",
-								"" + m_driveSubsystem.getPose(),
-								m_controllerX.getGoal().position, m_controllerY.getGoal().position,
-								m_controllerYaw.getGoal().position));
 	}
 
 	/**
