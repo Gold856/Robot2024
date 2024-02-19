@@ -17,7 +17,7 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Targeter.PhysicsAndMathTargeter;
 import frc.robot.commands.AimHeightCommand;
-import frc.robot.commands.AimHeightCommand.AimOperation;
+import frc.robot.commands.AimHeightCommand.AimHeightOperation;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
@@ -62,11 +62,11 @@ public class RobotContainer {
 				() -> m_controller.getRawAxis(Axis.kRightX)));
 		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_controller.button(Button.kTriangle).onTrue(new SequentialCommandGroup(
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimOperation.CMD_UP_ADJUST),
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimOperation.CMD_SETTLE)));
+				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_UP_ADJUST),
+				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SETTLE)));
 		m_controller.button(Button.kX).onTrue(new SequentialCommandGroup(
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimOperation.CMD_DOWN_ADJUST),
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimOperation.CMD_SETTLE)));
+				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_DOWN_ADJUST),
+				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SETTLE)));
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 	}
 
