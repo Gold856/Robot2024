@@ -113,8 +113,8 @@ public final class Constants {
 	}
 
 	public static final class FlywheelConstants {
-		public static final int kMasterPort = 9;
-		public static final int kFollowerPort = 10;
+		public static final int kFlywheelMasterPort = 9;
+		public static final int kFlywheelFollowerPort = 10;
 		public static final boolean kMasterInvert = false;
 		public static final boolean kFollowerOppose = true;
 		public static final int kSmartCurrentLimit = 50;
@@ -132,9 +132,9 @@ public final class Constants {
 	}
 
 	public static final class ShooterConstants {
-		public static final int kShooterMasterPort = 6; // 57
-		public static final int kShooterFollowerPort = 7; // 58
-		// public static final int kShooterEncoderPort = 59;
+		public static final int kShooterLeadScrewPort = 48;
+		// public static final int kShooterFollowerPort = 7; // 58
+		public static final int kShooterEncoderPort = 51;
 		public static final boolean kMasterInvert = false;
 		public static final boolean kFollowerOppose = true;
 		public static final int kSmartCurrentLimit = 55; // 90

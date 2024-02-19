@@ -10,12 +10,13 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.FlywheelConstants;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-	private final CANSparkMax m_neoShooterMaster = new CANSparkMax(ShooterConstants.kShooterMasterPort,
+	private final CANSparkMax m_neoShooterMaster = new CANSparkMax(FlywheelConstants.kFlywheelMasterPort,
 			MotorType.kBrushless); // TODO make 550s
-	private final CANSparkMax m_neoShooterFollower = new CANSparkMax(ShooterConstants.kShooterFollowerPort,
+	private final CANSparkMax m_neoShooterFollower = new CANSparkMax(FlywheelConstants.kFlywheelFollowerPort,
 			MotorType.kBrushless);
 	private final SparkPIDController m_neoController = m_neoShooterMaster.getPIDController();
 	private final RelativeEncoder m_neoEncoderMaster = m_neoShooterMaster.getEncoder();
