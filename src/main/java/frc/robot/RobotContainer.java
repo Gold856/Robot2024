@@ -20,7 +20,6 @@ import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
-import frc.robot.commands.drive.PIDTurnCommand;
 import frc.robot.commands.drive.SetSteeringCommand;
 import frc.robot.commands.flywheel.FlywheelCommand;
 import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
@@ -55,7 +54,8 @@ public class RobotContainer {
 	public RobotContainer() {
 		// Configure the button bindings
 		m_autoSelector.addOption("Test Steering", SetSteeringCommand.getCalibrationCommand(m_driveSubsystem));
-		m_autoSelector.addOption("PID Turn 90 degrees", new PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		// m_autoSelector.addOption("PID Turn 90 degrees", new
+		// PIDTurnCommand(m_driveSubsystem, 90, 0.5));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
 		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
@@ -70,12 +70,6 @@ public class RobotContainer {
 	 * created by instantiating a {@link GenericHID} or one of its subclasses
 	 * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
 	 * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-	 */
-
-	/*
-	 * - - - W A R N I N G - - - W A R N I N G - - - W A R N I N G - - - TODO
-	 * - - - - I USE A XBOX CONTROLER SO THERE MIGHT BE SOME ISSUES - - - TODO
-	 * - - - W A R N I N G - - - W A R N I N G - - - W A R N I N G - - - TODO
 	 */
 
 	private void configureButtonBindings() {
