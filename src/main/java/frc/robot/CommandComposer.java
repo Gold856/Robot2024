@@ -10,9 +10,13 @@ import frc.robot.commands.drive.BangBangDriveCommand;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
+import frc.robot.commands.indexer.IndexWithSensorCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IndexerSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
 public class CommandComposer {
@@ -170,14 +174,7 @@ public class CommandComposer {
 				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
-	/**
-	 * Returns a command to drive back and forth certain distances.
-	 * 
-	 * @param driveSubsystem   The drive subsystem.
-	 * @param arduinoSubsystem The arduino subsystem for LEDs.
-	 * @return The command.
-	 */
-	public static Command getBlocksAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
+	public static Command getBlocksAuto(DriveSubsystem driveSubsystem) {
 		return sequence(
 				DriveDistanceCommand.create(driveSubsystem, 0.75),
 				DriveDistanceCommand.create(driveSubsystem, -1.25),
@@ -186,5 +183,25 @@ public class CommandComposer {
 				DriveDistanceCommand.create(driveSubsystem, 2.125),
 				DriveDistanceCommand.create(driveSubsystem, -2.5),
 				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	public static Command getIntakeWithSensorCommand(IntakeSubsystem intakeSubsystem, IndexerSubsystem indexerSubsystem,
+			ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				parallel(
+						new IndexWithSensorCommand(indexerSubsystem, 0.5),
+						intakeSubsystem.forwardIntakeCommand(),
+						arduinoSubsystem.writeStatus(StatusCode.SOLID_ORANGE)),
+				intakeSubsystem.stopIntakeCommand(),
+				arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
+	}
+
+	public static Command getTeleopIntakeCommand(IntakeSubsystem intakeSubsystem,
+			PneumaticsSubsystem pneumaticsSubsystem, IndexerSubsystem indexerSubsystem,
+			ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				pneumaticsSubsystem.downIntakeCommand(),
+				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
+				pneumaticsSubsystem.upIntakeCommand());
 	}
 }
