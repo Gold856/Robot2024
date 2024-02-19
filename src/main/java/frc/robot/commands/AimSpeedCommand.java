@@ -8,26 +8,18 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class AimSpeedCommand extends Command {
-	private double m_distanceMeters;
-	private ShooterSubsystem m_shooterSubsystem;
+	private final ShooterSubsystem m_shooterSubsystem;
 
-	/** Creates a new AimCommand. */
+	/** Creates a new ClimberMove. */
 	public AimSpeedCommand(ShooterSubsystem subsystem) {
-		// m_distanceMeters = SimpleVision.getDistance(); //TODO fix vision
 		m_shooterSubsystem = subsystem;
-		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_shooterSubsystem);
-	}
-
-	// Called when the command is initially scheduled.
-	@Override
-	public void initialize() {
-		m_shooterSubsystem.setSpeed(15);
 	}
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
+		m_shooterSubsystem.setSpeed(15);
 	}
 
 	// Called once the command ends or is interrupted.
@@ -35,5 +27,4 @@ public class AimSpeedCommand extends Command {
 	public void end(boolean interrupted) {
 		m_shooterSubsystem.setSpeed(0);
 	}
-
 }

@@ -18,6 +18,7 @@ import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Targeter.PhysicsAndMathTargeter;
 import frc.robot.commands.AimHeightCommand;
 import frc.robot.commands.AimHeightCommand.AimHeightOperation;
+import frc.robot.commands.AimSpeedCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
@@ -68,6 +69,7 @@ public class RobotContainer {
 				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_DOWN_ADJUST),
 				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SETTLE)));
 		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_controller.button(Button.kOptions).whileTrue(new AimSpeedCommand(m_shooterSubsystem));
 	}
 
 	public Command getAutonomousCommand() {
