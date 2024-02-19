@@ -65,8 +65,7 @@ public class RobotContainer {
 	public RobotContainer() {
 		// Configure the button bindings
 		m_autoSelector.addOption("Test Steering", SetSteeringCommand.getCalibrationCommand(m_driveSubsystem));
-		// m_autoSelector.addOption("PID Turn 90 degrees", new
-		// PIDTurnCommand(m_driveSubsystem, 90, 0.5));
+		m_autoSelector.addOption("PID Turn 90 degrees", new TurnToAngleCommand(m_driveSubsystem, 90.0, 0.5, true));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
 		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
@@ -99,25 +98,9 @@ public class RobotContainer {
 	 */
 
 	private void configureButtonBindings() {
-		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
-				() -> m_operatorController.getRawAxis(Axis.kLeftY),
-				() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
-		m_operatorController.button(Button.kTriangle)
-				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP,
-						() -> m_operatorController.getRawAxis(Axis.kLeftY),
-						() -> m_operatorController.getRawAxis(Axis.kRightY)));
-		m_operatorController.button(Button.kX)
-				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.ZERO,
-						() -> m_operatorController.getRawAxis(Axis.kLeftY),
-						() -> m_operatorController.getRawAxis(Axis.kRightY)));
-
-		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_driverController.button(Button.kTriangle).onTrue(m_driveSubsystem.alignModulesToZeroComamnd());
-		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
+		// --------------------- LED Controls ---------------------------
 		// Should have RainbowPartyFunTime in the last 20 seconds of a match
-		// TODO: Check if this can be overridden LED buttons
 		new Trigger(() -> DriverStation.getMatchTime() <= 20)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		// LEDs for when you want AMP
@@ -140,12 +123,7 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_driverController.button(Button.kTriangle)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 200)); // 200 w/
-																										// gearbox on
-																										// valk puts
-																										// this at about
-																										// 2 rotation
-																										// per second
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 200));
 		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
@@ -170,8 +148,22 @@ public class RobotContainer {
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper))
 				.onFalse(m_intakeSubsystem.stopIntakeCommand().alongWith(new IndexerStopCommand(m_indexerSubsystem)));
 
-		// ------------------Amp Bar Controls, removal later-------------------
+		// ------------------Amp Bar Controls, removal later------------------- TODO
 		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
+
+		// -------------------Climber Commands---------------------------------
+		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
+				() -> m_operatorController.getRawAxis(Axis.kLeftY),
+				() -> m_operatorController.getRawAxis(Axis.kRightY)));
+
+		m_operatorController.button(Button.kTriangle)
+				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP,
+						() -> m_operatorController.getRawAxis(Axis.kLeftY),
+						() -> m_operatorController.getRawAxis(Axis.kRightY)));
+		m_operatorController.button(Button.kX)
+				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.ZERO,
+						() -> m_operatorController.getRawAxis(Axis.kLeftY),
+						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 	}
 
 	public Command getAutonomousCommand() {
