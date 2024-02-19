@@ -27,7 +27,7 @@ public class IndexerSubsystem extends SubsystemBase {
 		m_indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerSmartCurrentLimit);
 		m_indexerMotor.setSecondaryCurrentLimit(IndexerConstants.kIndexerPeakCurrentLimit);
 		m_forwardLimitSwitch = m_indexerMotor.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-		m_forwardLimitSwitch.enableLimitSwitch(true);
+		m_forwardLimitSwitch.enableLimitSwitch(false);
 	}
 
 	public void setSpeed(double speed) {
