@@ -174,7 +174,14 @@ public class CommandComposer {
 				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
-	public static Command getBlocksAuto(DriveSubsystem driveSubsystem) {
+	/**
+	 * Returns a command to drive back and forth various amounts.
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @return The command.
+	 */
+	public static Command getBlocksAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
 				DriveDistanceCommand.create(driveSubsystem, 0.75),
 				DriveDistanceCommand.create(driveSubsystem, -1.25),
