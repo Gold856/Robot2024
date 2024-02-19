@@ -140,14 +140,14 @@ public final class Constants {
 		public static final int kRightPort = 6;
 		public static final boolean kLeftInvert = true;
 		public static final boolean kRightInvert = false;
-		public static final int kSmartCurrentLimit = 15;
+		public static final int kSmartCurrentLimit = 60;
+		public static final int kSecondaryCurrentLimit = 70;
 		public static final double kMinOutput = -1;
 		public static final double kMaxOutput = 1;
 		public static final double kP = 0.1;
 		public static final double kI = 0;
 		public static final double kD = 0;
 		public static final double ktolerance = 1;
-		public static final double kSecondaryCurrentLimit = 0;
 		public static final int kMaxExtension = 50;
 	}
 
