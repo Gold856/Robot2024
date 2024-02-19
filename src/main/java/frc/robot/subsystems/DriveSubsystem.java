@@ -43,7 +43,7 @@ public class DriveSubsystem extends SubsystemBase {
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
 	private final SwerveDriveOdometry m_odometry;
 	private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-
+	private double m_headingOffset = 0;
 	private Pose2d m_pose = new Pose2d(0, 0, new Rotation2d());
 	private Rotation2d m_heading = new Rotation2d(Math.PI / 2);
 	private final Field2d m_field = new Field2d();
@@ -79,6 +79,15 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * Sets a gyro offset.
+	 * 
+	 * @param angle The angle to offset gyro readings (CCW+).
+	 */
+	public void setHeadingOffset(double angle) {
+		m_headingOffset = angle;
+	}
+
+	/**
 	 * Gets the robot's heading from the gyro.
 	 * 
 	 * @return The heading
@@ -87,7 +96,7 @@ public class DriveSubsystem extends SubsystemBase {
 		if (RobotBase.isSimulation()) {
 			return m_heading;
 		}
-		return Rotation2d.fromDegrees(-m_gyro.getYaw());
+		return Rotation2d.fromDegrees(-m_gyro.getYaw() + m_headingOffset);
 	}
 
 	/**
@@ -139,7 +148,8 @@ public class DriveSubsystem extends SubsystemBase {
 		if (RobotBase.isSimulation()) {
 			updateSimPose(speeds);
 		}
-		SmartDashboard.putNumber("Heading", getHeading().getRadians());
+		SmartDashboard.putNumber("Heading Radians", getHeading().getRadians());
+		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
@@ -213,6 +223,20 @@ public class DriveSubsystem extends SubsystemBase {
 		m_backRight.setAngle(angle);
 	}
 
+	public void setModuleStatesDirect(SwerveModuleState moduleState) {
+		m_frontLeft.setModuleState(moduleState);
+		m_frontRight.setModuleState(moduleState);
+		m_backLeft.setModuleState(moduleState);
+		m_backRight.setModuleState(moduleState);
+	}
+
+	public void setModuleSpeeds(double speed) {
+		m_frontLeft.setSpeed(speed);
+		m_frontRight.setSpeed(speed);
+		m_backLeft.setSpeed(speed);
+		m_backRight.setSpeed(speed);
+	}
+
 	/**
 	 * Sets module states for each swerve module.
 	 * 
@@ -228,6 +252,7 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		SmartDashboard.putNumber("Current Position", getModulePositions()[0].distanceMeters);
+		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 		if (RobotBase.isReal()) {
 			m_pose = m_odometry.update(getHeading(), getModulePositions());
 			m_posePublisher.set(m_pose);
@@ -255,9 +280,11 @@ public class DriveSubsystem extends SubsystemBase {
 		return run(() -> {
 			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
 			// input so slight movements don't move the robot
-			double fwdSpeed = -0.8 * MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-			double strSpeed = -0.8 * MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			double rotSpeed = 0.6 * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
+			double fwdSpeed = -kTeleopMaxSpeed
+					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+			double strSpeed = -kTeleopMaxSpeed
+					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+			double rotSpeed = kTeleopMaxTurnSpeed * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
 					ControllerConstants.kDeadzone);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true)); // TODO:
 																											// back to
@@ -273,6 +300,10 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public Command resetHeadingCommand() {
 		return runOnce(m_gyro::zeroYaw);
+	}
+
+	public Command offsetGyroCommand(double angle) {
+		return runOnce(() -> setHeadingOffset(angle));
 	}
 
 	/**

@@ -148,6 +148,10 @@ public class SwerveModule {
 		m_steerMotor.set(out);
 	}
 
+	public void setSpeed(double speed) {
+		m_driveMotor.set(speed);
+	}
+
 	public void setIdleMode(IdleMode mode) {
 		m_driveMotor.setIdleMode(mode);
 		m_steerMotor.setIdleMode(mode);
