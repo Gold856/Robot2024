@@ -17,6 +17,7 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.PolarDriveCommand;
 import frc.robot.commands.drive.SetSteeringCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.flywheel.FlywheelCommand;
@@ -63,7 +64,7 @@ public class RobotContainer {
 		m_autoSelector.addOption("PID Turn 90 degrees", new TurnToAngleCommand(m_driveSubsystem, 90, 0.5, true));
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
-		m_autoSelector.addOption("PID Drive 2 Meters", DriveDistanceCommand.create(m_driveSubsystem, 3.0, 0.01));
+		m_autoSelector.addOption("Polar Drive Two Meters", new PolarDriveCommand(m_driveSubsystem, 2, 180));
 		m_autoSelector.addOption("Right Two Score",
 				CommandComposer.getTwoScoreRightAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
 		m_autoSelector.addOption("Left Two Score",

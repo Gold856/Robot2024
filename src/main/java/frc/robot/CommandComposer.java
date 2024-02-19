@@ -6,9 +6,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.SimpleVisionAlignCommand;
 import frc.robot.commands.TimedLEDCommand;
-import frc.robot.commands.drive.BangBangDriveCommand;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.PolarDriveCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.indexer.IndexWithSensorCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
@@ -48,7 +48,7 @@ public class CommandComposer {
 	public static Command getTwoScoreMiddleAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
-				new BangBangDriveCommand(driveSubsystem, 1., 90, 0.01));
+				new PolarDriveCommand(driveSubsystem, 1., 90, 0.01));
 		if (visionSubsystem != null) {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
@@ -77,9 +77,9 @@ public class CommandComposer {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
-				new BangBangDriveCommand(driveSubsystem, 1.2, 240, 0.01),
+				new PolarDriveCommand(driveSubsystem, 1.2, 240, 0.01),
 				new TurnToAngleCommand(driveSubsystem, -11, 2, false),
-				new BangBangDriveCommand(driveSubsystem, 0.4, 180, 0.01),
+				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -105,9 +105,9 @@ public class CommandComposer {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
-				new BangBangDriveCommand(driveSubsystem, 1.2, -240, 0.01),
+				new PolarDriveCommand(driveSubsystem, 1.2, -240, 0.01),
 				new TurnToAngleCommand(driveSubsystem, 45, 2, false),
-				new BangBangDriveCommand(driveSubsystem, 0.4, 180, 0.01),
+				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -138,8 +138,8 @@ public class CommandComposer {
 				getTwoScoreRightAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// middle note
 				new TurnToAngleCommand(driveSubsystem, 78, 2, false),
-				new BangBangDriveCommand(driveSubsystem, .75, 180, 0.01),
-				alignCommand,
+				new PolarDriveCommand(driveSubsystem, .75, 180, 0.01),
+				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, .5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
@@ -169,7 +169,7 @@ public class CommandComposer {
 				getTwoScoreLeftAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// middle note
 				new TurnToAngleCommand(driveSubsystem, -75, 2, false),
-				new BangBangDriveCommand(driveSubsystem, .75, -180, 0.01),
+				new PolarDriveCommand(driveSubsystem, .75, -180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}

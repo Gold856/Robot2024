@@ -1,20 +1,19 @@
 package frc.robot.commands.drive;
 
-import static frc.robot.Constants.DriveConstants.*;
-
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.ClampedController;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class BangBangDriveCommand extends Command {
+public class PolarDriveCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
 	private double m_target;
 	private double m_distance;
 	private double m_tolerance;
 	private double m_angle;
+	private final ClampedController m_controller = new ClampedController(0.3, 0.1, .3);
 
 	/**
 	 * Creates a command to drive to a point by specifying a distance and and angle
@@ -25,7 +24,7 @@ public class BangBangDriveCommand extends Command {
 	 * @param angle     The angle to drive relative to the robot (CCW+).
 	 * @param tolerance The distance tolerance.
 	 */
-	public BangBangDriveCommand(DriveSubsystem subsystem, double distance, double angle, double tolerance) {
+	public PolarDriveCommand(DriveSubsystem subsystem, double distance, double angle, double tolerance) {
 		m_driveSubsystem = subsystem;
 		m_distance = distance;
 		m_tolerance = tolerance;
@@ -41,7 +40,7 @@ public class BangBangDriveCommand extends Command {
 	 * @param distance  The distance to drive.
 	 * @param angle     The angle to drive relative to the robot (CCW+).
 	 */
-	public BangBangDriveCommand(DriveSubsystem subsystem, double amount, double angle) {
+	public PolarDriveCommand(DriveSubsystem subsystem, double amount, double angle) {
 		this(subsystem, amount, angle, 0.01);
 	}
 
@@ -52,31 +51,20 @@ public class BangBangDriveCommand extends Command {
 
 	@Override
 	public void execute() {
-		double sign;
-		if (m_target > m_driveSubsystem.getModulePositions()[0].distanceMeters) {
-			sign = 1;
-		} else {
-			sign = -1;
-		}
-
-		double error = getDiff();
-		double kP = 0.1;
-		double speed = error * kP;
-		speed = MathUtil.clamp(speed, kMinSpeed, kMaxSpeed);
-
-		m_driveSubsystem.setModuleStatesDirect(new SwerveModuleState(speed * sign, Rotation2d.fromDegrees(m_angle)));
+		double speed = m_controller.calculate(getDiff());
+		m_driveSubsystem.setModuleStatesDirect(new SwerveModuleState(-speed, Rotation2d.fromDegrees(m_angle)));
 	}
 
 	@Override
 	public boolean isFinished() {
 		// Determine whether the target distance has been reached
-		double diff = getDiff();
-		SmartDashboard.putNumber("diff", diff);
-		return diff < m_tolerance;
+		SmartDashboard.putNumber("diff", getDiff());
+		return getDiff() < m_tolerance;
 	}
 
 	@Override
 	public void end(boolean interrupted) {
+		System.out.println("Polar drive finished");
 		m_driveSubsystem.stopDriving();
 	}
 
