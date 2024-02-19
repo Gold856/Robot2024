@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,6 +18,7 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
+import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.SetSteeringCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
@@ -101,6 +104,19 @@ public class RobotContainer {
 		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 		m_operatorController.button(Button.kLeftTrigger).onTrue(m_pneumaticsSubsystem.downIntakeCommand());
 		m_operatorController.button(Button.kRightTrigger).onTrue(m_pneumaticsSubsystem.upIntakeCommand());
+
+		Command[] samples = {
+				new DriveCommand(m_driveSubsystem, 1, 1, 60, 0.1, 5),
+				new DriveCommand(m_driveSubsystem, new Pose2d(1.0, 0, Rotation2d.fromDegrees(0)), 0.1, 5)
+						.andThen(
+								new DriveCommand(m_driveSubsystem, new Pose2d(1, 1, Rotation2d.fromDegrees(0)), 0.1, 5))
+						.andThen(new DriveCommand(m_driveSubsystem, new Pose2d(1, 1, Rotation2d.fromDegrees(45)), 0.1,
+								5))
+						.andThen(
+								new DriveCommand(m_driveSubsystem, new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 0.1, 5))
+		};
+		m_driverController.button(Button.kShare)
+				.whileTrue(samples[0]);
 	}
 
 	public Command getAutonomousCommand() {
