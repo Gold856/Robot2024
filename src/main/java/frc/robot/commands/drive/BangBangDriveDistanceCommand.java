@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.drive;
 
 import static frc.robot.Constants.DriveConstants.*;
 
@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class BangBangDriveDistance extends Command {
+public class BangBangDriveDistanceCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
 	private double m_target; // if distance, in meters; if angle, in degrees
 	private double m_amount;
@@ -18,7 +18,7 @@ public class BangBangDriveDistance extends Command {
 	 * @param amount
 	 *               amount is distance in meters
 	 */
-	public BangBangDriveDistance(DriveSubsystem subsystem, double amount, double tolerance) {
+	public BangBangDriveDistanceCommand(DriveSubsystem subsystem, double amount, double tolerance) {
 		m_driveSubsystem = subsystem;
 		m_amount = amount;
 		m_tolerance = tolerance;
@@ -31,7 +31,7 @@ public class BangBangDriveDistance extends Command {
 	 * @param amount
 	 *               amount is distance in meters
 	 */
-	public BangBangDriveDistance(DriveSubsystem subsystem, double amount) {
+	public BangBangDriveDistanceCommand(DriveSubsystem subsystem, double amount) {
 		m_driveSubsystem = subsystem;
 		m_amount = amount;
 		m_tolerance = 0.1;
@@ -40,14 +40,14 @@ public class BangBangDriveDistance extends Command {
 
 	@Override
 	public void initialize() {
-		double currentPosition = m_driveSubsystem.getModulePositions()[0].distanceMeters;
+		double currentPosition = m_driveSubsystem.getPose().getX();
 		m_target = currentPosition + m_amount;
 	}
 
 	@Override
 	public void execute() {
 		double sign;
-		if (m_target > m_driveSubsystem.getModulePositions()[0].distanceMeters) {
+		if (m_target > m_driveSubsystem.getPose().getX()) {
 			sign = 1;
 		} else {
 			sign = -1;
@@ -79,6 +79,6 @@ public class BangBangDriveDistance extends Command {
 	}
 
 	private double getDiff() {
-		return Math.abs(m_target - m_driveSubsystem.getModulePositions()[0].distanceMeters);
+		return Math.abs(m_target - m_driveSubsystem.getPose().getX());
 	}
 }
