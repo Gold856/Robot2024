@@ -2,7 +2,6 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedController;
 import frc.robot.subsystems.DriveSubsystem;
@@ -47,28 +46,23 @@ public class PolarDriveCommand extends Command {
 	@Override
 	public void initialize() {
 		m_target = m_driveSubsystem.getModulePositions()[0].distanceMeters + m_distance;
+		m_controller.setSetpoint(m_target);
 	}
 
 	@Override
 	public void execute() {
-		double speed = m_controller.calculate(getDiff());
-		m_driveSubsystem.setModuleStatesDirect(new SwerveModuleState(-speed, Rotation2d.fromDegrees(m_angle)));
+		double speed = m_controller.calculate(m_driveSubsystem.getModulePositions()[0].distanceMeters);
+		m_driveSubsystem.setModuleStatesDirect(new SwerveModuleState(speed, Rotation2d.fromDegrees(m_angle)));
 	}
 
 	@Override
 	public boolean isFinished() {
 		// Determine whether the target distance has been reached
-		SmartDashboard.putNumber("diff", getDiff());
-		return getDiff() < m_tolerance;
+		return m_controller.atSetpoint();
 	}
 
 	@Override
 	public void end(boolean interrupted) {
-		System.out.println("Polar drive finished");
 		m_driveSubsystem.stopDriving();
-	}
-
-	private double getDiff() {
-		return Math.abs(m_target - m_driveSubsystem.getModulePositions()[0].distanceMeters);
 	}
 }

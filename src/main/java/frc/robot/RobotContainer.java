@@ -17,6 +17,7 @@ import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.NinjaStarCommand;
 import frc.robot.commands.drive.PolarDriveCommand;
 import frc.robot.commands.drive.SetSteeringCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
@@ -81,7 +82,7 @@ public class RobotContainer {
 		m_autoSelector.addOption("Intake With Sensor and Pneumatics",
 				CommandComposer.getTeleopIntakeCommand(m_intakeSubsystem, m_pneumaticsSubsystem, m_indexerSubsystem,
 						m_arduinoSubsystem));
-
+		m_autoSelector.addOption("Ninja Star Command", new NinjaStarCommand(m_driveSubsystem, 2, -2, 45));
 		SmartDashboard.putData(m_autoSelector);
 		configureButtonBindings();
 	}
