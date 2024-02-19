@@ -110,16 +110,11 @@ public class DriveCommand extends Command {
 			double angleTolerance) {
 		m_driveSubsystem = driveSubsystem;
 		m_targetPoseSupplier = targetPoseSupplier;
-		var constraints = new TrapezoidProfile.Constraints(kDriveMaxVelocity,
-				kDriveMaxAcceleration);
-		m_controllerX = new ProfiledPIDController(kDriveP, kDriveI,
-				kDriveD, constraints);
-		m_controllerY = new ProfiledPIDController(kDriveP, kDriveI,
-				kDriveD, constraints);
-		m_controllerYaw = new ProfiledPIDController(kTurnP, kTurnI,
-				kTurnD,
-				new TrapezoidProfile.Constraints(kTurnMaxVelocity,
-						kTurnMaxAcceleration));
+		var constraints = new TrapezoidProfile.Constraints(kDriveMaxVelocity, kDriveMaxAcceleration);
+		m_controllerX = new ProfiledPIDController(kDriveP, kDriveI, kDriveD, constraints);
+		m_controllerY = new ProfiledPIDController(kDriveP, kDriveI, kDriveD, constraints);
+		m_controllerYaw = new ProfiledPIDController(kTurnP, kTurnI, kTurnD,
+				new TrapezoidProfile.Constraints(kTurnMaxVelocity, kTurnMaxAcceleration));
 		m_controllerX.setTolerance(distanceTolerance);
 		m_controllerY.setTolerance(distanceTolerance);
 		m_controllerYaw.setTolerance(angleTolerance);
@@ -156,12 +151,11 @@ public class DriveCommand extends Command {
 		Pose2d pose = m_driveSubsystem.getPose();
 		double speedX = m_controllerX.calculate(pose.getX());
 		double speedY = m_controllerY.calculate(pose.getY());
-		double speedYaw = m_controllerYaw.calculate(pose.getRotation().getDegrees());
-		speedYaw = -speedYaw; // NEGATION if positive turnSpeed: clockwise rotation
+		// NEGATION if positive turnSpeed: clockwise rotation
+		double speedYaw = -m_controllerYaw.calculate(pose.getRotation().getDegrees());
 		// speedX = applyThreshold(speedX, DriveConstants.kMinSpeed);
 		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
-		m_driveSubsystem.setModuleStates(speedX,
-				speedY, speedYaw, true);
+		m_driveSubsystem.setModuleStates(speedX, speedY, speedYaw, true);
 	}
 
 	/**
@@ -171,7 +165,7 @@ public class DriveCommand extends Command {
 	 */
 	@Override
 	public void end(boolean interrupted) {
-		m_driveSubsystem.setModuleStates(0, 0, 0, true);
+		m_driveSubsystem.stopDriving();
 	}
 
 	/**
