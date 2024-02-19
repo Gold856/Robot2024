@@ -129,7 +129,7 @@ public class CommandComposer {
 	public static Command getThreeScoreRightAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
-				new TurnToAngleCommand(driveSubsystem, 12, 2, false));
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false));
 		if (visionSubsystem != null) {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
@@ -139,7 +139,7 @@ public class CommandComposer {
 				// middle note
 				new TurnToAngleCommand(driveSubsystem, 78, 2, false),
 				new PolarDriveCommand(driveSubsystem, .75, 180, 0.01),
-				// alignCommand,
+				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, .5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
@@ -160,7 +160,7 @@ public class CommandComposer {
 	public static Command getThreeScoreLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
-				new TurnToAngleCommand(driveSubsystem, -12, 2, false));
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false));
 		if (visionSubsystem != null) {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
