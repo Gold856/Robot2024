@@ -84,6 +84,23 @@ public final class Constants {
 		public static final double kD = 0;
 		public static final double kIz = 5;
 
+		public static final double kFF = 0;
+		public static final double kMinOutput = -1.0;
+		public static final double kMaxOutput = 1.0;
+
+		// DriveCommand.java Constants
+		public static final double kDriveP = 0.4; // up to 1.0?
+		public static final double kDriveI = 0;
+		public static final double kDriveD = 0;
+		public static final double kDriveMaxVelocity = 2;
+		public static final double kDriveMaxAcceleration = 4; // up to 10?
+
+		public static final double kTurnP = 0.02; // was 0.005 upto 0.2?
+		public static final double kTurnI = 0; // was 0.003
+		public static final double kTurnD = 0; // 0.0
+		public static final double kTurnMaxVelocity = 120;
+		public static final double kTurnMaxAcceleration = 240; // up to 360?
+
 		/*** Distance between center of front wheel and center of back wheel */
 		public static final double kWheelBase = 21.5;
 		/*** Distance between center of left wheel and center of right wheel */
