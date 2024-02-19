@@ -11,7 +11,6 @@ public class AimSpeedCommand extends Command {
 	private final ShooterSubsystem m_shooterSubsystem;
 	// private boolean end = false;
 
-	/** Creates a new ClimberMove. */
 	public AimSpeedCommand(ShooterSubsystem subsystem) {
 		m_shooterSubsystem = subsystem;
 		addRequirements(m_shooterSubsystem);
