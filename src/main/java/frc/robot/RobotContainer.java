@@ -152,7 +152,7 @@ public class RobotContainer {
 
 		// -------------------Flywheel Controls--------------------------------
 		m_driverController.button(Button.kTriangle)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, Operation.SET_VELOCITY, 8000));
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000));
 
 		// -------------------Indexer Controls---------------------------------
 		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem));
