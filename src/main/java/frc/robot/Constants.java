@@ -135,6 +135,22 @@ public final class Constants {
 		public static final double kAllowedError = 50;
 	}
 
+	public static final class ClimbConstants {
+		public static final int kLeftPort = 3;
+		public static final int kRightPort = 6;
+		public static final boolean kLeftInvert = true;
+		public static final boolean kRightInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final int kSecondaryCurrentLimit = 70;
+		public static final double kMinOutput = -1;
+		public static final double kMaxOutput = 1;
+		public static final double kP = 0.1;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double ktolerance = 1;
+		public static final int kMaxExtension = 50;
+	}
+
 	public static final class IntakeConstants {
 		public static final int kMasterPort = 3;
 		public static final int kFollowerPort = 4;
