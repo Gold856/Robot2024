@@ -9,6 +9,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class AimSpeedCommand extends Command {
 	private final ShooterSubsystem m_shooterSubsystem;
+	// private boolean end = false;
 
 	/** Creates a new ClimberMove. */
 	public AimSpeedCommand(ShooterSubsystem subsystem) {
