@@ -116,9 +116,9 @@ public final class Constants {
 	}
 
 	public static final class FlywheelConstants {
-		public static final int kMasterPort = 80; // 9 valk
-		public static final int kFollowerPort = 81; // 6 valk
-		public static final boolean kMasterInvert = true; // TODO: All below were from last year, change
+		public static final int kMasterPort = 50;
+		public static final int kFollowerPort = 49;
+		public static final boolean kMasterInvert = true;
 		public static final boolean kFollowerOppose = false;
 		public static final int kSmartCurrentLimit = 50;
 		public static final double kPeakCurrentLimit = 60;
@@ -136,8 +136,8 @@ public final class Constants {
 	}
 
 	public static final class ClimbConstants {
-		public static final int kLeftPort = 3;
-		public static final int kRightPort = 6;
+		public static final int kLeftPort = 44;
+		public static final int kRightPort = 45;
 		public static final boolean kLeftInvert = true;
 		public static final boolean kRightInvert = false;
 		public static final int kSmartCurrentLimit = 60;
@@ -147,13 +147,12 @@ public final class Constants {
 		public static final double kP = 0.1;
 		public static final double kI = 0;
 		public static final double kD = 0;
-		public static final double ktolerance = 1;
+		public static final double kTolerance = 1;
 		public static final int kMaxExtension = 50;
 	}
 
 	public static final class IntakeConstants {
-		public static final int kMasterPort = 3;
-		public static final int kFollowerPort = 4;
+		public static final int kIntakePort = 46;
 		public static final int kSmartCurrentLimit = 60;
 		public static final int kPeakCurrentLimit = 60;
 		public static final boolean kFollowerOppose = false;
@@ -161,7 +160,7 @@ public final class Constants {
 	}
 
 	public static final class IndexerConstants {
-		public static final int kIndexerPort = 70;
+		public static final int kIndexerPort = 47;
 		public static final int kIndexerPeakCurrentLimit = 55;
 		public static final int kIndexerSmartCurrentLimit = 55;
 		public static final double kIndexerMaxSpeed = 1;

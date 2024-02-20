@@ -87,11 +87,11 @@ public class ClimberSubsystem extends SubsystemBase {
 
 	// returns true if the motor is at the setpoint
 	public boolean atleftSetpoint() {
-		return (Math.abs(m_setPositionLeft - getleftPosition()) <= ClimbConstants.ktolerance);
+		return (Math.abs(m_setPositionLeft - getleftPosition()) <= ClimbConstants.kTolerance);
 	}
 
 	public boolean atrightSetpoint() {
-		return (Math.abs(m_setPositionRight - getrightPosition()) <= ClimbConstants.ktolerance);
+		return (Math.abs(m_setPositionRight - getrightPosition()) <= ClimbConstants.kTolerance);
 	}
 
 	public void setPosition(double positionLeft, double positionRight) {
@@ -120,7 +120,7 @@ public class ClimberSubsystem extends SubsystemBase {
 	}
 
 	public boolean atZero() {
-		return ((Math.abs(getrightPosition()) <= ClimbConstants.ktolerance)
-				&& (Math.abs(getleftPosition()) <= ClimbConstants.ktolerance));
+		return ((Math.abs(getrightPosition()) <= ClimbConstants.kTolerance)
+				&& (Math.abs(getleftPosition()) <= ClimbConstants.kTolerance));
 	}
 }
