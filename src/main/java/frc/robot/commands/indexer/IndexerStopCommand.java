@@ -7,6 +7,12 @@ package frc.robot.commands.indexer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
 
+/**
+ * Stops the Indexer
+ * 
+ * @author Gabriel West
+ * @author Andrew Hwang
+ */
 public class IndexerStopCommand extends Command {
 	private IndexerSubsystem m_indexerSubsystem;
 

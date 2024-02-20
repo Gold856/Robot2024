@@ -10,6 +10,12 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Connects the Arduino to the RoboRio
+ * 
+ * @author Natalie Mann
+ * @author Alex Chan
+ */
 public class ArduinoSubsystem extends SubsystemBase {
 	/** The USB port that's used to connect to the Arduino. */
 	private SerialPort m_usb;
@@ -43,12 +49,23 @@ public class ArduinoSubsystem extends SubsystemBase {
 		setCode(StatusCode.DEFAULT);
 	}
 
+	/**
+	 * Sets code on the rio and sends it through the USB to the Arduino
+	 * 
+	 * @param code The enum based on the byte
+	 */
 	public void setCode(StatusCode code) {
 		if (m_usb != null) {
 			m_usb.write(new byte[] { code.code }, 1);
 		}
 	}
 
+	/**
+	 * Returns the code that you set once as to not overload
+	 * 
+	 * @param code The enum based on the byte
+	 * @return The code that is set and runs it only once
+	 */
 	public Command writeStatus(StatusCode code) {
 		return runOnce(() -> setCode(code));
 	}

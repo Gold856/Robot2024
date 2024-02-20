@@ -11,14 +11,18 @@ import com.revrobotics.SparkLimitSwitch;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
 
+/**
+ * Operates the indexer of the robot, the transfer between intake and shooter
+ * 
+ * @author Gabriel West
+ * @author Andrew Hwang
+ */
 public class IndexerSubsystem extends SubsystemBase {
 	private CANSparkMax m_indexerMotor;
 	private SparkLimitSwitch m_forwardLimitSwitch;
 
 	/**
 	 * Creates a new IndexerSubsystem.
-	 * 
-	 * 
 	 */
 	public IndexerSubsystem() {
 		m_indexerMotor = new CANSparkMax(IndexerConstants.kIndexerPort, MotorType.kBrushless);
@@ -30,14 +34,28 @@ public class IndexerSubsystem extends SubsystemBase {
 		m_forwardLimitSwitch.enableLimitSwitch(false);
 	}
 
+	/**
+	 * Sets the speed of the indexer motor
+	 * 
+	 * @param speed speed to set
+	 */
 	public void setSpeed(double speed) {
 		m_indexerMotor.set(speed);
 	}
 
+	/**
+	 * Stops the indexer
+	 */
 	public void stop() {
 		setSpeed(0.0);
 	}
 
+	/**
+	 * Returns true of the limit switch has been pressed
+	 * (indicates a note passing through)
+	 * 
+	 * @return has the limit switch been pressed
+	 */
 	public boolean getLimitSwitch() {
 		return m_forwardLimitSwitch.isPressed();
 	}

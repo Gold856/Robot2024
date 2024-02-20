@@ -7,6 +7,11 @@ package frc.robot.commands.indexer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
 
+/**
+ * Check the sensors on the Indexer to check if note or not
+ * 
+ * @author Jamis Orr
+ */
 public class IndexWithSensorCommand extends Command {
 	private final double m_speed;
 	private final IndexerSubsystem m_indexerSubsystem;

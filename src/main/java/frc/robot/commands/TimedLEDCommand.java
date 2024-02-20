@@ -9,6 +9,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 
+/**
+ * Runs the LEDs for a certain amount of time
+ * 
+ * @author Zeynep Tasdibek
+ */
 public class TimedLEDCommand extends Command {
 	private final ArduinoSubsystem m_arduinoSubsystem;
 	private final double m_seconds;

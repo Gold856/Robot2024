@@ -6,6 +6,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
+/**
+ * To one distance (a drive distance command) uses PIDs
+ * 
+ * @author All of Programming
+ */
 public class BangBangDriveDistanceCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
 	private double m_target; // if distance, in meters; if angle, in degrees

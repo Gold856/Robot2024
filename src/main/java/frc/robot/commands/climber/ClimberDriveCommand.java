@@ -11,6 +11,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 
+/**
+ * The manual drive for the climber w/ joysticks
+ * 
+ * @author Dominick Marrello
+ * @author Natalie Mann
+ */
 public class ClimberDriveCommand extends Command {
 
 	private final ClimberSubsystem m_climberSubsystem;

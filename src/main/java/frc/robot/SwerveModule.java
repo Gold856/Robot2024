@@ -62,6 +62,11 @@ public class SwerveModule {
 		return this.m_driveEncoder.getPosition() * kMotorRotationsPerMeter;
 	}
 
+	/**
+	 * Returns the output current of the steer motors
+	 * 
+	 * @return the output current
+	 */
 	public double getSteerCurrent() {
 		return m_steerMotor.getOutputCurrent();
 	}
@@ -148,10 +153,20 @@ public class SwerveModule {
 		m_steerMotor.set(out);
 	}
 
+	/**
+	 * Sets the speed of the drive motor
+	 * 
+	 * @param speed
+	 */
 	public void setSpeed(double speed) {
 		m_driveMotor.set(speed);
 	}
 
+	/**
+	 * Sets the idle mode of the motors
+	 * 
+	 * @param mode The Idle mode to set to
+	 */
 	public void setIdleMode(IdleMode mode) {
 		m_driveMotor.setIdleMode(mode);
 		m_steerMotor.setIdleMode(mode);

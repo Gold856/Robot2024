@@ -12,6 +12,14 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Operates the flywheels
+ * 
+ * @author Natalie Mann
+ * 
+ *         Look at 2023 code as well...
+ */
+
 public class FlywheelSubsystem extends SubsystemBase {
 	private final CANSparkMax m_neoFlywheelMaster = new CANSparkMax(kMasterPort, MotorType.kBrushless);
 	private final CANSparkMax m_neoFlywheelFollower = new CANSparkMax(kFollowerPort, MotorType.kBrushless);

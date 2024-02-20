@@ -33,6 +33,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
 
+/**
+ * Drive the Robot
+ * 
+ * @author Alex Chan
+ * @author Jamis Orr
+ * @author Gabriel West
+ * @author Nitya Bajaj
+ */
+
 public class DriveSubsystem extends SubsystemBase {
 	private final SwerveModule m_frontLeft;
 	private final SwerveModule m_frontRight;
@@ -173,7 +182,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * 
+	 * s
 	 * Stops all the motors.
 	 */
 	public void stopDriving() {
@@ -223,6 +232,11 @@ public class DriveSubsystem extends SubsystemBase {
 		m_backRight.setAngle(angle);
 	}
 
+	/**
+	 * Directly sets the module states.
+	 * 
+	 * @param moduleState The state of the modules
+	 */
 	public void setModuleStatesDirect(SwerveModuleState moduleState) {
 		m_frontLeft.setModuleState(moduleState);
 		m_frontRight.setModuleState(moduleState);
@@ -230,6 +244,11 @@ public class DriveSubsystem extends SubsystemBase {
 		m_backRight.setModuleState(moduleState);
 	}
 
+	/**
+	 * Sets the speeds of the modules
+	 * 
+	 * @param speed The speed of the modules
+	 */
 	public void setModuleSpeeds(double speed) {
 		m_frontLeft.setSpeed(speed);
 		m_frontRight.setSpeed(speed);
@@ -302,6 +321,11 @@ public class DriveSubsystem extends SubsystemBase {
 		return runOnce(m_gyro::zeroYaw);
 	}
 
+	/**
+	 * Offsets the gyro so that we can start in a non "field relative" position
+	 * 
+	 * @param angle The angle to offset by
+	 */
 	public Command offsetGyroCommand(double angle) {
 		return runOnce(() -> setHeadingOffset(angle));
 	}

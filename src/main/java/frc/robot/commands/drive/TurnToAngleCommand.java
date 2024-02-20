@@ -8,6 +8,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedController;
 import frc.robot.subsystems.DriveSubsystem;
 
+/**
+ * Turns to the angle based on gyro
+ * 
+ * @author Alex Chan
+ */
 public class TurnToAngleCommand extends Command {
 	private final double m_targetAngle;
 	private final double m_angleThreshold;

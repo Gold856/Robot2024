@@ -10,6 +10,12 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Operates the Intake
+ * 
+ * @author Zeynep Tasdibek
+ * @author Alex Chan
+ */
 public class IntakeSubsystem extends SubsystemBase {
 	private final CANSparkMax m_motor = new CANSparkMax(kIntakePort, MotorType.kBrushless);
 	private final RelativeEncoder m_encoder = m_motor.getEncoder();

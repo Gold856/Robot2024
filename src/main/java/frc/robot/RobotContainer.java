@@ -99,7 +99,7 @@ public class RobotContainer {
 
 	private void configureButtonBindings() {
 
-		// --------------------- LED Controls ---------------------------
+		// --------------- LED Controls ---------------
 		// Should have RainbowPartyFunTime in the last 20 seconds of a match
 		new Trigger(() -> DriverStation.getMatchTime() <= 20)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -115,7 +115,7 @@ public class RobotContainer {
 		m_operatorController.button(Button.kShare)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
-		// --------------------Drive Controls---------------------------------
+		// --------------- Drive Controls ---------------
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
@@ -126,15 +126,15 @@ public class RobotContainer {
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
 
-		// -------------------Flywheel Controls--------------------------------
+		// --------------- Flywheel Controls ---------------
 		m_driverController.button(Button.kTriangle)
 				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000));
 
-		// -------------------Indexer Controls---------------------------------
+		// --------------- Indexer Controls ---------------
 		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem));
 		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(m_indexerSubsystem));
 
-		// ------------------Intake Controls-----------------------------------
+		// --------------- Intake Controls ---------------
 		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getTeleopIntakeCommand(
 				m_intakeSubsystem, m_pneumaticsSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
 		m_operatorController.button(Button.kRightTrigger)
@@ -146,14 +146,13 @@ public class RobotContainer {
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper))
 				.onFalse(m_intakeSubsystem.stopIntakeCommand().alongWith(new IndexerStopCommand(m_indexerSubsystem)));
 
-		// ------------------Amp Bar Controls, removal later------------------- TODO
+		// --------------- Amp Bar Controls, removal later --------------- TODO
 		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 
-		// -------------------Climber Commands---------------------------------
+		// --------------- Climber Commands ---------------
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
 				() -> m_operatorController.getRawAxis(Axis.kLeftY),
 				() -> m_operatorController.getRawAxis(Axis.kRightY)));
-
 		m_operatorController.button(Button.kTriangle)
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP,
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),

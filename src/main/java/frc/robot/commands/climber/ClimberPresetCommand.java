@@ -12,6 +12,11 @@ import frc.robot.Constants.ClimbConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 
+/**
+ * The presets for the climber
+ * 
+ * @author Dominick Marrello
+ */
 public class ClimberPresetCommand extends Command {
 	private final ClimberSubsystem m_climberSubsystem;
 	private final ClimberOperation m_operation;
@@ -40,9 +45,9 @@ public class ClimberPresetCommand extends Command {
 	@Override
 	public void initialize() {
 		end = false;
-		if (m_operation == ClimberOperation.TOP) {
+		if (m_operation == ClimberOperation.TOP) { // the top preset
 			m_climberSubsystem.setPosition(ClimbConstants.kMaxExtension, ClimbConstants.kMaxExtension);
-		} else if (m_operation == ClimberOperation.ZERO) {
+		} else if (m_operation == ClimberOperation.ZERO) { // the bottom preset
 			m_climberSubsystem.setPosition(0, 0);
 		}
 	}
@@ -54,7 +59,7 @@ public class ClimberPresetCommand extends Command {
 		leftJoystick = MathUtil.applyDeadband(m_left.get(), ControllerConstants.kDeadzone);
 		rightJoystick = MathUtil.applyDeadband(m_right.get(), ControllerConstants.kDeadzone);
 
-		if (leftJoystick != 0 || rightJoystick != 0) {
+		if (leftJoystick != 0 || rightJoystick != 0) { // if the joysticks are being used it is the end of the command
 			end = true;
 		}
 	}

@@ -7,14 +7,32 @@ package frc.robot.commands.indexer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
 
+/**
+ * Controls the indexer, sends it forward or in reverse
+ * 
+ * @author Gabriel West
+ * @author Andrew Hwang
+ */
 public class IndexerCommand extends Command {
 	private final double m_speed;
 	private final IndexerSubsystem m_indexerSubsystem;
 
+	/**
+	 * Runs the indexer forward (towards the shooter)
+	 * 
+	 * @param indexerSubsystem
+	 * @return The indexer full speed forward
+	 */
 	public static IndexerCommand getFowardCommand(IndexerSubsystem indexerSubsystem) {
 		return new IndexerCommand(indexerSubsystem, 1.0);
 	}
 
+	/**
+	 * Runs the indexer in reverse (towards the intake)
+	 * 
+	 * @param indexerSubsystem
+	 * @return The indexer at full speed in reverse
+	 */
 	public static IndexerCommand getReverseCommand(IndexerSubsystem indexerSubsystem) {
 		return new IndexerCommand(indexerSubsystem, -1.0);
 	}

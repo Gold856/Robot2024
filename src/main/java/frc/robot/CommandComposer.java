@@ -192,6 +192,15 @@ public class CommandComposer {
 				new TimedLEDCommand(arduinoSubsystem, 0.5, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
+	/**
+	 * Returns the sequence that runs the indexer, intake, and orange LED indicator
+	 * if the sensor is tripped
+	 * 
+	 * @param intakeSubsystem  The intake subsystem
+	 * @param indexerSubsystem The indexer subsystem
+	 * @param arduinoSubsystem The arduino subsystem
+	 * @return The command
+	 */
 	public static Command getIntakeWithSensorCommand(IntakeSubsystem intakeSubsystem, IndexerSubsystem indexerSubsystem,
 			ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
@@ -203,6 +212,16 @@ public class CommandComposer {
 				arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
 	}
 
+	/**
+	 * Instead of seperate buttons sets a command instead, release the pistons,
+	 * intake + make sure sensor is tripped and then retract the intake
+	 * 
+	 * @param intakeSubsystem     The intake subsystem
+	 * @param pneumaticsSubsystem The pneumatics subsystem
+	 * @param indexerSubsystem    The indexer subsystem
+	 * @param arduinoSubsystem    The arduino subsystem
+	 * @return The command
+	 */
 	public static Command getTeleopIntakeCommand(IntakeSubsystem intakeSubsystem,
 			PneumaticsSubsystem pneumaticsSubsystem, IndexerSubsystem indexerSubsystem,
 			ArduinoSubsystem arduinoSubsystem) {

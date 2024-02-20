@@ -12,6 +12,12 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Operates the Pneumatics of the Amp Bar & Intake
+ * 
+ * @author Alex Chan
+ * @author Zeynep Tasdibek
+ */
 public class PneumaticsSubsystem extends SubsystemBase {
 	private final PneumaticHub m_hub = new PneumaticHub(kPneumaticHubID);
 	private final DoubleSolenoid m_leftAmpBarSolenoid = m_hub.makeDoubleSolenoid(kLeftAmpBarForwardChannel,

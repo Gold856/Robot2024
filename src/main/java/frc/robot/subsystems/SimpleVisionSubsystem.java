@@ -5,6 +5,14 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * A simplified version of Andrew Hwang & Jeong-Hyon Hwang Vision
+ * 
+ * @author Nitya Bajaj
+ * @author Anvita Nagarkar
+ * @author Andrew Hwang
+ * @author Jeong-Hyon Hwang
+ */
 public class SimpleVisionSubsystem extends SubsystemBase {
 	private final DoubleSubscriber m_subscription;
 	private double m_angle;

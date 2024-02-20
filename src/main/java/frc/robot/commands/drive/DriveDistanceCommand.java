@@ -7,6 +7,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
 
+/**
+ * Drive to a distance using Izone
+ * 
+ * @author All of Programming
+ */
 public class DriveDistanceCommand extends Command {
 	private final DriveSubsystem m_driveSubsystem;
 	private double m_amount;

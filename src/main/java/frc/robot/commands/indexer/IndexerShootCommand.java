@@ -9,6 +9,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.IndexerSubsystem;
 
+/**
+ * Sets the indexer speed to the shoot speed
+ * 
+ * @author Gabriel West
+ * @author Andrew Hwang
+ */
 public class IndexerShootCommand extends Command {
 	private IndexerSubsystem m_indexerSubsystem;
 	private Timer m_timer;

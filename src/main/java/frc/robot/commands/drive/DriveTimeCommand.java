@@ -9,6 +9,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
+/**
+ * Drives for a specified amount of time
+ * 
+ * @author Alex Chan
+ * @author Jamis Orr
+ */
 public class DriveTimeCommand extends Command {
 	private DriveSubsystem m_driveSubsystem;
 	private double m_seconds;
