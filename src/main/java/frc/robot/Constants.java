@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -77,15 +78,12 @@ public final class Constants {
 		public static final int kFrontLeftCANCoderPort = 42;
 		public static final int kBackRightCANCoderPort = 22;
 		public static final int kBackLeftCANCoderPort = 32;
-		public static final double kDriveScale = 0.5;
-		// Drive PID values
+		// Swerve PID values
 		public static final double kP = 0.005;
 		public static final double kI = 0.045;
 		public static final double kD = 0;
 		public static final double kIz = 5;
-		public static final double kFF = 0;
-		public static final double kMinOutput = -1.0;
-		public static final double kMaxOutput = 1.0;
+
 		/*** Distance between center of front wheel and center of back wheel */
 		public static final double kWheelBase = 21.5;
 		/*** Distance between center of left wheel and center of right wheel */
@@ -95,21 +93,100 @@ public final class Constants {
 		// testing, because crashing into people's shins would be bad
 		public static final double kMaxSpeed = 1;
 		public static final double kMinSpeed = 0.1;
+		public static final double kTeleopMaxSpeed = 0.8;
+		public static final double kTeleopMaxTurnSpeed = 0.6;
 		public static final double kModuleResponseTimeSeconds = 0.02;
 		public static final double kGearRatio = 6.12;
 		public static final double kWheelDiameter = Units.inchesToMeters(4);
 
 		public static final double kMotorRotationsPerMeter = (1 / kGearRatio) * (Math.PI * kWheelDiameter);
 
-		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
-		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);
-		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381);
-		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
+		public static final Translation2d kFrontLeftLocation = new Translation2d(-0.381, 0.381); // -+
+		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, 0.381); // ++
+		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, -0.381); // --
+		public static final Translation2d kBackRightLocation = new Translation2d(0.381, -0.381); // +-
 
 		public static final int kDriveSmartCurrentLimit = 55;
 		public static final int kDrivePeakCurrentLimit = 65;
-		public static final int kSteerSmartCurrentLimit = 20;
-		public static final int kSteerPeakCurrentLimit = 25;
+		public static final int kSteerSmartCurrentLimit = 30;
+		public static final int kSteerPeakCurrentLimit = 35;
+
+		// The amount of time to go from 0 to full power in seconds
+		public static final double kRampRate = .1;
+	}
+
+	public static final class FlywheelConstants {
+		public static final int kMasterPort = 80; // 9 valk
+		public static final int kFollowerPort = 81; // 6 valk
+		public static final boolean kMasterInvert = true; // TODO: All below were from last year, change
+		public static final boolean kFollowerOppose = false;
+		public static final int kSmartCurrentLimit = 50;
+		public static final double kPeakCurrentLimit = 60;
+		public static final int kPeakCurrentDurationMillis = 100;
+		public static final double kP = 0.000_1;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double kIz = 0.0;
+		public static final double kFF = .000_1050;
+		public static final double kMaxOutput = 1;
+
+		public static final double kMinOutput = 0;
+		public static final double kGearRatio = 2;
+		public static final double kAllowedError = 50;
+	}
+
+	public static final class ClimbConstants {
+		public static final int kLeftPort = 3;
+		public static final int kRightPort = 6;
+		public static final boolean kLeftInvert = true;
+		public static final boolean kRightInvert = false;
+		public static final int kSmartCurrentLimit = 60;
+		public static final int kSecondaryCurrentLimit = 70;
+		public static final double kMinOutput = -1;
+		public static final double kMaxOutput = 1;
+		public static final double kP = 0.1;
+		public static final double kI = 0;
+		public static final double kD = 0;
+		public static final double ktolerance = 1;
+		public static final int kMaxExtension = 50;
+	}
+
+	public static final class IntakeConstants {
+		public static final int kMasterPort = 3;
+		public static final int kFollowerPort = 4;
+		public static final int kSmartCurrentLimit = 60;
+		public static final int kPeakCurrentLimit = 60;
+		public static final boolean kFollowerOppose = false;
+		public static final int kGearRatio = 60;
+	}
+
+	public static final class IndexerConstants {
+		public static final int kIndexerPort = 70;
+		public static final int kIndexerPeakCurrentLimit = 55;
+		public static final int kIndexerSmartCurrentLimit = 55;
+		public static final double kIndexerMaxSpeed = 1;
+		public static final double kIndexerMinSpeed = 0.1;
+
+		// Shoot Command Constants
+		public static final double kShootTime = 0.5;
+		public static final double kShootSpeed = 0.8;
+	}
+
+	public static final class PneumaticsConstants {
+		public static final int kPneumaticHubID = 50;
+		public static final int kLeftAmpBarForwardChannel = 0;
+		public static final int kLeftAmpBarReverseChannel = 1;
+		public static final int kRightAmpBarForwardChannel = 2;
+		public static final int kRightAmpBarReverseChannel = 3;
+		public static final int kLeftIntakeForwardChannel = 4;
+		public static final int kLeftIntakeReverseChannel = 5;
+		public static final int kRightIntakeForwardChannel = 6;
+		public static final int kRightIntakeReverseChannel = 7;
+		// TODO direction/starting state?
+		/** Alias for the solenoid value that makes the intake go down. */
+		public static final Value kIntakeDown = Value.kReverse;
+		/** Alias for the solenoid value that makes the intake go up. */
+		public static final Value kIntakeUp = Value.kForward;
 	}
 
 	public static final class FlywheelConstants {
