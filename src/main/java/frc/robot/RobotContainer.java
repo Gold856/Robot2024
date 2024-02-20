@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
@@ -18,10 +17,9 @@ import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Targeter.PhysicsAndMathTargeter;
 import frc.robot.commands.AimHeightCommand;
 import frc.robot.commands.AimHeightCommand.AimHeightOperation;
-import frc.robot.commands.AimSpeedCommand;
+import frc.robot.commands.AimerDriveCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
-import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 /**
@@ -33,7 +31,7 @@ import frc.robot.subsystems.ShooterSubsystem;
  */
 public class RobotContainer {
 	private final CommandGenericHID m_controller = new CommandGenericHID(ControllerConstants.kDriverControllerPort);
-	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+	// private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_ArduinoSubsystem = new ArduinoSubsystem();
 	private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
 	private final PhysicsAndMathTargeter m_targeter = new PhysicsAndMathTargeter();
@@ -57,19 +55,17 @@ public class RobotContainer {
 	private void configureButtonBindings() {
 		new Trigger(() -> DriverStation.getMatchTime() >= 20)
 				.onTrue(m_ArduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
-		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> m_controller.getRawAxis(Axis.kLeftY),
-				() -> m_controller.getRawAxis(Axis.kLeftX),
-				() -> m_controller.getRawAxis(Axis.kRightX)));
-		m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_controller.button(Button.kTriangle).onTrue(new SequentialCommandGroup(
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_UP_ADJUST),
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SETTLE)));
-		m_controller.button(Button.kX).onTrue(new SequentialCommandGroup(
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_DOWN_ADJUST),
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SETTLE)));
-		m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_controller.button(Button.kOptions).whileTrue(new AimSpeedCommand(m_shooterSubsystem));
+		// m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
+		// () -> m_controller.getRawAxis(Axis.kLeftY),
+		// () -> m_controller.getRawAxis(Axis.kLeftX),
+		// () -> m_controller.getRawAxis(Axis.kRightX)));
+		// m_controller.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
+		m_controller.button(Button.kTriangle).onTrue(
+				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SET_PRESET_DEFAULT)
+						.andThen(new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SETTLE)));
+		// m_controller.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
+		m_shooterSubsystem.setDefaultCommand(
+				new AimerDriveCommand(m_shooterSubsystem, () -> m_controller.getRawAxis(Axis.kLeftY)));
 	}
 
 	public Command getAutonomousCommand() {

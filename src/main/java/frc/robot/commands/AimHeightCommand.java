@@ -31,7 +31,6 @@ public class AimHeightCommand extends Command {
 	/** Creates a new AimCommand. */
 	public AimHeightCommand(ShooterSubsystem subsystem, PhysicsAndMathTargeter targeter, AimHeightOperation operation) {
 		m_operation = operation;
-		// m_distanceMeters = SimpleVision.getDistance(); //TODO fix vision
 		m_shooterSubsystem = subsystem;
 		m_targeter = targeter;
 		// Use addRequirements() here to declare subsystem dependencies.
@@ -71,17 +70,8 @@ public class AimHeightCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-
-		if (m_operation == AimHeightOperation.CMD_CALC_AND_SET
-				|| m_operation == AimHeightOperation.CMD_SET_PRESET_DEFAULT) {
-			return true;
-		} else if (m_operation == AimHeightOperation.CMD_UP_ADJUST
-				|| m_operation == AimHeightOperation.CMD_DOWN_ADJUST) {
-			return true;
-		} else if (m_operation == AimHeightOperation.CMD_SETTLE) {
+		if (m_operation == AimHeightOperation.CMD_SETTLE) {
 			return m_shooterSubsystem.atActuatorSetpoint();
-		} else if (m_operation == AimHeightOperation.CMD_STOP) {
-			return true;
 		}
 		return true;
 	}
@@ -90,9 +80,7 @@ public class AimHeightCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		if (m_operation == AimHeightOperation.CMD_STOP) {
-			m_shooterSubsystem.stopMotors();
+			m_shooterSubsystem.stopMotor();
 		}
-		// m_shooterSubsystem.stopMotors();
 	}
-
 }

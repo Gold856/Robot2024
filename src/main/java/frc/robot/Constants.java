@@ -132,14 +132,13 @@ public final class Constants {
 	}
 
 	public static final class ShooterConstants {
-		public static final int kShooterLeadScrewPort = 48;
-		// public static final int kShooterFollowerPort = 7; // 58
-		public static final int kShooterEncoderPort = 51;
+		public static final double kShooterMaxEncoderValue = 0.4; // Value when it's at it's peak TODO: make right
+		public static final int kShooterLeadScrewPort = 31; // TODO: 48
+		public static final int kShooterEncoderPort = 32; // TODO: 51
 		public static final boolean kMasterInvert = false;
 		public static final boolean kFollowerOppose = true;
 		public static final int kSmartCurrentLimit = 55; // 90
 		public static final double kPeakCurrentLimit = 65; // 100
-		public static final float kLeadScrewLimit = 5.0f; // TODO set lead screw limit from max positiob
 		public static final int kPeakCurrentDurationMillis = 100;
 		public static final double kP = 0.06000; // 0.000_1; // TODO tune PID values
 		public static final double kI = 0.000;
@@ -152,8 +151,9 @@ public final class Constants {
 		public static final double speakerHeight = 2.032145; // TODO change to this height - robot height
 		public static final double shooterLength = .25; // TODO change to deltaX between edge of robot and shooter axis
 														// on robot
-		public static final double kDefaultActuatorHeight = 0; // TODO fix actuator height
-		public static final double kShooterTolerance = 0.1; // TODO experiment
+		public static final double kDefaultActuatorHeight = 0.2; // TODO fix actuator height
+		public static final double kShooterTolerance = 0.05; // TODO experiment
 		public static final double kAdjustAmount = 0.2; // Adjust with testing
+		public static final double kMaxShooterPower = 0.4;
 	}
 }
