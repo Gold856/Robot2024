@@ -170,8 +170,8 @@ public class RobotContainer {
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 		m_operatorController.button(Button.kTriangle).onTrue(
-				new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SET_PRESET_DEFAULT)
-						.andThen(new AimHeightCommand(m_shooterSubsystem, m_targeter, AimHeightOperation.CMD_SETTLE)));
+				new AimHeightCommand(m_shooterSubsystem, AimHeightOperation.SET_PRESET_DEFAULT)
+						.andThen(new AimHeightCommand(m_shooterSubsystem, AimHeightOperation.SETTLE)));
 		m_shooterSubsystem.setDefaultCommand(
 				new AimerDriveCommand(m_shooterSubsystem, () -> m_operatorController.getRawAxis(Axis.kLeftY)));
 

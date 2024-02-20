@@ -15,15 +15,15 @@ public class AimHeightCommand extends Command {
 	private ShooterSubsystem m_shooterSubsystem;
 
 	public enum AimHeightOperation {
-		CMD_CALC_AND_SET, // Calculate Angle at current position (changes)
-		CMD_SET_PRESET_DEFAULT, // For checkout, set shooter down (static)
-		CMD_PRESET_AMP,
-		CMD_PRESET_SUBWOOFER,
-		CMD_HOLD,
-		CMD_DOWN_ADJUST, // Fine tune down
-		CMD_UP_ADJUST, // Fine tune up
-		CMD_SETTLE, // Paired with above in Robot Container
-		CMD_STOP // Currently not in use (??)
+		CALC_AND_SET, // Calculate Angle at current position (changes)
+		SET_PRESET_DEFAULT, // For checkout, set shooter down (static)
+		PRESET_AMP,
+		PRESET_SUBWOOFER,
+		HOLD,
+		DOWN_ADJUST, // Fine tune down
+		UP_ADJUST, // Fine tune up
+		SETTLE, // Paired with above in Robot Container
+		STOP // Currently not in use (??)
 	}
 
 	/** Creates a new AimCommand. */
@@ -37,20 +37,20 @@ public class AimHeightCommand extends Command {
 	@Override
 	public void initialize() {
 		switch (m_operation) {
-			case CMD_CALC_AND_SET:
+			case CALC_AND_SET:
 				double actuatorHeightSetpoint = m_shooterSubsystem.calcActuatorHeightFromDistance(m_distanceMeters);
 				m_shooterSubsystem.setActuatorHeight(actuatorHeightSetpoint);
 				break;
-			case CMD_SET_PRESET_DEFAULT:
+			case SET_PRESET_DEFAULT:
 				m_shooterSubsystem.setActuatorHeight(kDefaultActuatorHeight);
 				break;
-			case CMD_UP_ADJUST:
+			case UP_ADJUST:
 				m_shooterSubsystem.adjustActuatorSetpoint(kAdjustAmount);
 				break;
-			case CMD_DOWN_ADJUST:
+			case DOWN_ADJUST:
 				m_shooterSubsystem.adjustActuatorSetpoint(-kAdjustAmount);
 				break;
-			case CMD_HOLD:
+			case HOLD:
 				m_shooterSubsystem.setActuatorHeight(m_shooterSubsystem.getActuatorHeight());
 				break;
 			default:
@@ -66,7 +66,7 @@ public class AimHeightCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		if (m_operation == AimHeightOperation.CMD_SETTLE) {
+		if (m_operation == AimHeightOperation.SETTLE) {
 			return m_shooterSubsystem.atActuatorSetpoint();
 		}
 		return true;
@@ -75,7 +75,7 @@ public class AimHeightCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		if (m_operation == AimHeightOperation.CMD_STOP) {
+		if (m_operation == AimHeightOperation.STOP) {
 			m_shooterSubsystem.stopMotor();
 		}
 	}

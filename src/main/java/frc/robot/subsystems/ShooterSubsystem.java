@@ -35,11 +35,12 @@ public class ShooterSubsystem extends SubsystemBase {
 	}
 
 	public void periodic() {
+		// If using a setpoint
 		if (!m_isManual) {
-			if (!m_controller.atSetpoint()) {
-				m_neoShooter.set(m_controller.calculate(getActuatorHeight()));
-			} else {
+			if (m_controller.atSetpoint()) {
 				m_neoShooter.set(0);
+			} else {
+				m_neoShooter.set(m_controller.calculate(getActuatorHeight()));
 			}
 		}
 	}
@@ -60,7 +61,6 @@ public class ShooterSubsystem extends SubsystemBase {
 	// TODO: document 0-1.0
 	public void setActuatorHeight(double actuatorHeightSetpoint) {
 		m_controller.setSetpoint(actuatorHeightSetpoint);
-
 	}
 
 	public void adjustActuatorSetpoint(double adjustAmount) {
