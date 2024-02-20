@@ -190,8 +190,8 @@ public final class Constants {
 
 	public static final class ShooterConstants {
 		public static final double kShooterMaxEncoderValue = 0.4; // Value when it's at it's peak TODO: make right
-		public static final int kShooterLeadScrewPort = 6; // TODO: 48
-		public static final int kShooterEncoderPort = 32; // TODO: 51
+		public static final int kShooterLeadScrewPort = 48; // TODO: 48
+		public static final int kShooterEncoderPort = 51; // TODO: 51
 		public static final boolean kMasterInvert = false;
 		public static final boolean kFollowerOppose = true;
 		public static final int kSmartCurrentLimit = 55; // 90
