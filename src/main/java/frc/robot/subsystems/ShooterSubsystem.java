@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkLimitSwitch;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,6 +33,10 @@ public class ShooterSubsystem extends SubsystemBase {
 		m_neoShooter.setSmartCurrentLimit(ShooterConstants.kSmartCurrentLimit);
 		m_neoShooter.setSecondaryCurrentLimit(ShooterConstants.kPeakCurrentLimit,
 				ShooterConstants.kPeakCurrentDurationMillis);
+		SparkLimitSwitch forwardSwitch = m_neoShooter.getForwardLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+		forwardSwitch.enableLimitSwitch(true);
+		SparkLimitSwitch reverseSwitch = m_neoShooter.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
+		reverseSwitch.enableLimitSwitch(true);
 	}
 
 	public void periodic() {
