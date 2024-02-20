@@ -116,8 +116,8 @@ public final class Constants {
 	}
 
 	public static final class FlywheelConstants {
-		public static final int kMasterPort = 49;
-		public static final int kFollowerPort = 50;
+		public static final int kMasterPort = 50;
+		public static final int kFollowerPort = 49;
 		public static final boolean kMasterInvert = true;
 		public static final boolean kFollowerOppose = false;
 		public static final int kSmartCurrentLimit = 50;
