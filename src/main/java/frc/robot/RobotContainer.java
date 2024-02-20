@@ -34,6 +34,7 @@ import frc.robot.commands.indexer.IndexerStopCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -53,6 +54,7 @@ public class RobotContainer {
 			ControllerConstants.kDriverControllerPort);
 	private final CommandGenericHID m_operatorController = new CommandGenericHID(
 			ControllerConstants.kOperatorControllerPort);
+	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();
