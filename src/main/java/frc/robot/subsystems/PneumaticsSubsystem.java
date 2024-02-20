@@ -19,7 +19,7 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	private final DoubleSolenoid m_rightAmpBarSolenoid = m_hub.makeDoubleSolenoid(kRightAmpBarForwardChannel,
 			kRightAmpBarReverseChannel);
 	private final DoubleSolenoid m_leftIntakeSolenoid = m_hub.makeDoubleSolenoid(kLeftIntakeForwardChannel,
-			kRightIntakeReverseChannel);
+			kLeftIntakeReverseChannel);
 	private final DoubleSolenoid m_rightIntakeSolenoid = m_hub.makeDoubleSolenoid(kRightIntakeForwardChannel,
 			kRightIntakeReverseChannel);
 	private boolean m_ampBarExtended;
