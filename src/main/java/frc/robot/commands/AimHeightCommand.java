@@ -7,14 +7,12 @@ package frc.robot.commands;
 import static frc.robot.Constants.ShooterConstants.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Targeter.PhysicsAndMathTargeter;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class AimHeightCommand extends Command {
 	private AimHeightOperation m_operation;
 	private double m_distanceMeters;
 	private ShooterSubsystem m_shooterSubsystem;
-	private PhysicsAndMathTargeter m_targeter;
 
 	public enum AimHeightOperation {
 		CMD_CALC_AND_SET, // Calculate Angle at current position (changes)
@@ -29,11 +27,9 @@ public class AimHeightCommand extends Command {
 	}
 
 	/** Creates a new AimCommand. */
-	public AimHeightCommand(ShooterSubsystem subsystem, PhysicsAndMathTargeter targeter, AimHeightOperation operation) {
+	public AimHeightCommand(ShooterSubsystem subsystem, AimHeightOperation operation) {
 		m_operation = operation;
 		m_shooterSubsystem = subsystem;
-		m_targeter = targeter;
-		// Use addRequirements() here to declare subsystem dependencies.
 		addRequirements(m_shooterSubsystem);
 	}
 
@@ -42,7 +38,7 @@ public class AimHeightCommand extends Command {
 	public void initialize() {
 		switch (m_operation) {
 			case CMD_CALC_AND_SET:
-				double actuatorHeightSetpoint = m_targeter.calcActuatorHeightFromDistance(m_distanceMeters);
+				double actuatorHeightSetpoint = m_shooterSubsystem.calcActuatorHeightFromDistance(m_distanceMeters);
 				m_shooterSubsystem.setActuatorHeight(actuatorHeightSetpoint);
 				break;
 			case CMD_SET_PRESET_DEFAULT:

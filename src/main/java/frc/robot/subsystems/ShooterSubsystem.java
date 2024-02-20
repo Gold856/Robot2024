@@ -48,6 +48,10 @@ public class ShooterSubsystem extends SubsystemBase {
 		setSpeed(0);
 	}
 
+	public double calcActuatorHeightFromDistance(double distanceMeters) {
+		return (ShooterConstants.shooterLength * ShooterConstants.speakerHeight) / distanceMeters;
+	}
+
 	// TODO: Returns 0 - 1.0
 	public double getActuatorHeight() {
 		return m_aimCancoder.getAbsolutePosition().getValueAsDouble() / ShooterConstants.kShooterMaxEncoderValue;
