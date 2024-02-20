@@ -11,29 +11,20 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
-	private final CANSparkMax m_neoIntakeMaster = new CANSparkMax(kMasterPort, MotorType.kBrushless);
-	private final CANSparkMax m_neoIntakeFollower = new CANSparkMax(kFollowerPort, MotorType.kBrushless);
-	private final RelativeEncoder m_neoEncoderMaster = m_neoIntakeMaster.getEncoder();
+	private final CANSparkMax m_motor = new CANSparkMax(kIntakePort, MotorType.kBrushless);
+	private final RelativeEncoder m_encoder = m_motor.getEncoder();
 
 	/**
 	 * Initializes a new instance of the {@link IntakeSubsystem} class.
 	 */
 	public IntakeSubsystem() {
-		// Initialize Motors
-		m_neoIntakeMaster.restoreFactoryDefaults();
-		m_neoIntakeMaster.setIdleMode(IdleMode.kCoast);
-		m_neoIntakeMaster.enableVoltageCompensation(12);
-		m_neoIntakeMaster.setSmartCurrentLimit(kSmartCurrentLimit);
-		m_neoIntakeMaster.setSecondaryCurrentLimit(kPeakCurrentLimit);
+		m_motor.restoreFactoryDefaults();
+		m_motor.setIdleMode(IdleMode.kCoast);
+		m_motor.enableVoltageCompensation(12);
+		m_motor.setSmartCurrentLimit(kSmartCurrentLimit);
+		m_motor.setSecondaryCurrentLimit(kPeakCurrentLimit);
 
-		m_neoIntakeFollower.restoreFactoryDefaults();
-		m_neoIntakeFollower.setIdleMode(IdleMode.kCoast);
-		m_neoIntakeFollower.enableVoltageCompensation(12);
-		m_neoIntakeFollower.setSmartCurrentLimit(kSmartCurrentLimit);
-		m_neoIntakeFollower.setSecondaryCurrentLimit(kPeakCurrentLimit);
-		m_neoIntakeFollower.follow(m_neoIntakeMaster, kFollowerOppose);
-
-		m_neoEncoderMaster.setVelocityConversionFactor(1 / kGearRatio);
+		m_encoder.setVelocityConversionFactor(1 / kGearRatio);
 	}
 
 	/**
@@ -42,7 +33,7 @@ public class IntakeSubsystem extends SubsystemBase {
 	 * @param speed The speed.
 	 */
 	public void setSpeed(double speed) {
-		m_neoIntakeMaster.set(speed);
+		m_motor.set(speed);
 	}
 
 	/**
