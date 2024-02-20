@@ -182,7 +182,6 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * s
 	 * Stops all the motors.
 	 */
 	public void stopDriving() {
