@@ -50,9 +50,9 @@ public class ArduinoSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Sets code on the rio and sends it through the USB to the Arduino
+	 * Sets the LED pattern to send to the Arduino.
 	 * 
-	 * @param code The enum based on the byte
+	 * @param code The enum based on the LED pattern
 	 */
 	public void setCode(StatusCode code) {
 		if (m_usb != null) {
@@ -61,10 +61,10 @@ public class ArduinoSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Returns the code that you set once as to not overload
+	 * Creates a command to set the LED pattern.
 	 * 
-	 * @param code The enum based on the byte
-	 * @return The code that is set and runs it only once
+	 * @param code The enum based on the LED pattern
+	 * @return The command
 	 */
 	public Command writeStatus(StatusCode code) {
 		return runOnce(() -> setCode(code));
