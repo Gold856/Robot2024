@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 
 /**
  * The {@code DriveCommand} is responsible for moving the robot from the current
@@ -190,5 +191,13 @@ public class DriveCommand extends Command {
 	 */
 	public static double applyThreshold(double value, double threshold) {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
+	}
+
+	public static Command towardRedSpeaker(DriveSubsystem m_driveSubsystem2, LimeLightSubsystem m_limeLightSubsystem) {
+		return null;
+	}
+
+	public static Command toRedAmp(DriveSubsystem m_driveSubsystem2, LimeLightSubsystem m_limeLightSubsystem) {
+		return null;
 	}
 }
