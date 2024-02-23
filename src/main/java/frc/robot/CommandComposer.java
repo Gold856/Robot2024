@@ -209,42 +209,6 @@ public class CommandComposer {
 	}
 
 	/**
-	 * Returns a command for a four-score autonomous routine on SPEAKER left.
-	 * Use two-score routine: Shoot a note, drive forward to the next note,
-	 * intake, turn to align, and shoot the note. Play LEDs.
-	 * Third note: Turn to middle note, drive forward, intake,
-	 * turn to align (absolute 12 degrees), and shoot the note. End with LEDS.
-	 * 
-	 * @param driveSubsystem   The drive subsystem.
-	 * @param arduinoSubsystem The arduino subsystem for LEDs.
-	 * @param visionSubsystem  The vision subsystem with Limelight.
-	 *                         If visionSubsystem is used, auto will include command
-	 *                         to align with AprilTag.
-	 * @return The command.
-	 */
-	public static Command getAmpLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
-			SimpleVisionSubsystem visionSubsystem) {
-		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
-				new TurnToAngleCommand(driveSubsystem, 20, 2, false));
-		if (visionSubsystem != null) {
-			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
-		}
-		return sequence(
-				// strafe towards speaker, shoot
-				new PolarDriveCommand(driveSubsystem, 0.22, -90),
-				new PolarDriveCommand(driveSubsystem, 0.4, 0),
-				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
-		// strafe away, intake
-		// new PolarDriveCommand(driveSubsystem, -.22, 180),
-		// new PolarDriveCommand(driveSubsystem, 0.4, 90),
-		// // go back and shoot
-		// new PolarDriveCommand(driveSubsystem, -.22, 180),
-		// new PolarDriveCommand(driveSubsystem, -0.4, 90),
-		// new TimedLEDCommand(arduinoSubsystem, 0.25,
-		// StatusCode.RAINBOW_PARTY_FUN_TIME));
-	}
-
-	/**
 	 * Returns a command for a three-score autonomous routine on SPEAKER right.
 	 * Use two-score routine: Shoot a note, drive forward to the next note,
 	 * intake, turn to align, and shoot the note. Play LEDs.
@@ -274,6 +238,51 @@ public class CommandComposer {
 				new PolarDriveCommand(driveSubsystem, .5, 180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @return The command.
+	 */
+	public static Command getAmpLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				// strafe towards speaker, shoot
+				new PolarDriveCommand(driveSubsystem, 0.22, -90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 0),
+				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME),
+				// strafe away, intake
+				new PolarDriveCommand(driveSubsystem, 1, -90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 180),
+				// go back and shoot
+				new PolarDriveCommand(driveSubsystem, 1, 90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 0),
+				new TimedLEDCommand(arduinoSubsystem, 0.4, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @return The command.
+	 */
+	public static Command getShootAndAmp(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				// strafe towards speaker, shoot
+				new PolarDriveCommand(driveSubsystem, 1.4, -240, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
+				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
+				// strafe away, intake
+				new TurnToAngleCommand(driveSubsystem, 90, 2, false),
+				new PolarDriveCommand(driveSubsystem, 1, -90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 180),
+				// go back and shoot
+				new PolarDriveCommand(driveSubsystem, 1, 90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 0),
+				new TimedLEDCommand(arduinoSubsystem, 0.4, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
 	/**
