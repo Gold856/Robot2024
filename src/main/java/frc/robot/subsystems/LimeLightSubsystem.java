@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -170,6 +172,21 @@ public class LimeLightSubsystem extends SubsystemBase {
 			e.printStackTrace();
 		}
 		return m_botpose;
+	}
+
+	public Transform2d transformationTo(Pose pose) {
+		return pose.minus(estimatedPose());
+	}
+
+	public Transform2d transformationToward(Translation2d targetPosition, double distanceToTarget) {
+		var pose = estimatedPose();
+		Translation2d diff = targetPosition.minus(pose.getTranslation());
+		if (diff.getNorm() == 0)
+			throw new UnsupportedOperationException();
+		var targetPose = new Pose2d(pose.getTranslation().plus(diff.times(1 - distanceToTarget / diff.getNorm())),
+				diff.getAngle());
+		return targetPose
+				.minus(estimatedPose());
 	}
 
 }

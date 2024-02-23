@@ -13,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem.Pose;
 
 /**
  * The {@code DriveCommand} is responsible for moving the robot from the current
@@ -193,11 +194,39 @@ public class DriveCommand extends Command {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
 	}
 
-	public static Command towardRedSpeaker(DriveSubsystem m_driveSubsystem2, LimeLightSubsystem m_limeLightSubsystem) {
-		return null;
+	public static Command towardRedSpeaker(DriveSubsystem driveSubsystem, LimeLightSubsystem limeLightSubsystem) {
+		Supplier<Pose2d> s = () -> {
+			var p = limeLightSubsystem.estimatedPose();
+			var target = p;
+			if (p.getY() > 2)
+				target = new Pose(6, 2, 0);
+			else if (p.getY() < 0)
+				target = new Pose(6, 0, 0);
+			return driveSubsystem.getPose().plus(target.minus(p));
+		};
+		return new DriveCommand(driveSubsystem, s, 0.1, 5)
+				.andThen(toward(new Translation2d(7.87, 1.45), 1.2, 0.1, 5, driveSubsystem, limeLightSubsystem));
 	}
 
-	public static Command toRedAmp(DriveSubsystem m_driveSubsystem2, LimeLightSubsystem m_limeLightSubsystem) {
-		return null;
+	public static Command toRedAmp(DriveSubsystem driveSubsystem, LimeLightSubsystem limeLightSubsystem) {
+		return to(new Pose(6.44, 3.5, 90), 0.3, 20, driveSubsystem, limeLightSubsystem)
+				.andThen(to(new Pose(6.44, 3.75, 90), 0.1, 5, driveSubsystem, limeLightSubsystem));
+	}
+
+	public static Command to(Pose pose, double distanceTolerance, double angleTolerance, DriveSubsystem driveSubsystem,
+			LimeLightSubsystem limeLightSubsystem) {
+		return new DriveCommand(driveSubsystem,
+				() -> driveSubsystem.getPose().plus(limeLightSubsystem.transformationTo(pose)),
+				distanceTolerance, angleTolerance);
+	}
+
+	public static Command toward(Translation2d targetPosition, double distanceToTarget,
+			double distanceTolerance,
+			double angleTolerance, DriveSubsystem driveSubsystem,
+			LimeLightSubsystem limeLightSubsystem) {
+		return new DriveCommand(driveSubsystem,
+				() -> driveSubsystem.getPose()
+						.plus(limeLightSubsystem.transformationToward(targetPosition, distanceToTarget)),
+				distanceTolerance, angleTolerance);
 	}
 }
