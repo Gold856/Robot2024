@@ -241,13 +241,13 @@ public class CommandComposer {
 	}
 
 	/**
-	 * Returns a command for
+	 * 
 	 * 
 	 * @param driveSubsystem   The drive subsystem.
 	 * @param arduinoSubsystem The arduino subsystem for LEDs.
 	 * @return The command.
 	 */
-	public static Command getAmpLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
+	public static Command getAmpTwoAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
 				// strafe towards speaker, shoot
 				new PolarDriveCommand(driveSubsystem, 0.22, -90),
