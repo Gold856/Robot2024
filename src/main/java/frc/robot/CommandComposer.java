@@ -77,10 +77,10 @@ public class CommandComposer {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
+				new PolarDriveCommand(driveSubsystem, 0.75, 180, 0.01),
 				new PolarDriveCommand(driveSubsystem, 1.2, 240, 0.01),
-				new TurnToAngleCommand(driveSubsystem, -11, 2, false),
-				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
-				// new NinjaStarCommand(driveSubsystem, 2, 0, -15),
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
+				new PolarDriveCommand(driveSubsystem, 0.2, -180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -106,8 +106,8 @@ public class CommandComposer {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
-				new PolarDriveCommand(driveSubsystem, 1.2, -240, 0.01),
-				new TurnToAngleCommand(driveSubsystem, 45, 2, false),
+				new PolarDriveCommand(driveSubsystem, 1.4, -240, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
 				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -138,10 +138,8 @@ public class CommandComposer {
 				// right note
 				getTwoScoreRightAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// middle note
-				new TurnToAngleCommand(driveSubsystem, 78, 2, false),
-				new PolarDriveCommand(driveSubsystem, .75, 180, 0.01),
-				new PolarDriveCommand(driveSubsystem, .2, 180, 0.01),
-				// new NinjaStarCommand(driveSubsystem, 0, -.75, 0),
+				new TurnToAngleCommand(driveSubsystem, 75, 2, false),
+				new PolarDriveCommand(driveSubsystem, 1.25, 180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, .25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -172,7 +170,7 @@ public class CommandComposer {
 				getTwoScoreLeftAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// middle note
 				new TurnToAngleCommand(driveSubsystem, -75, 2, false),
-				new PolarDriveCommand(driveSubsystem, 1.5, -180, 0.01),
+				new PolarDriveCommand(driveSubsystem, 1.25, -180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 
@@ -195,18 +193,55 @@ public class CommandComposer {
 	public static Command getFourScoreLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
-				new TurnToAngleCommand(driveSubsystem, 35, 2, false));
+				new TurnToAngleCommand(driveSubsystem, -20, 2, false));
 		if (visionSubsystem != null) {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
-				// right note and middle note
+				// left note and middle note
 				getThreeScoreLeftAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
-				new PolarDriveCommand(driveSubsystem, 1.8, 300, 0.01),
-				new TurnToAngleCommand(driveSubsystem, 35, false),
-				new PolarDriveCommand(driveSubsystem, .4, 180, 0.01),
+				// right note
+				new PolarDriveCommand(driveSubsystem, 1.8, -300, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, false),
+				new PolarDriveCommand(driveSubsystem, .5, -180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for a four-score autonomous routine on SPEAKER left.
+	 * Use two-score routine: Shoot a note, drive forward to the next note,
+	 * intake, turn to align, and shoot the note. Play LEDs.
+	 * Third note: Turn to middle note, drive forward, intake,
+	 * turn to align (absolute 12 degrees), and shoot the note. End with LEDS.
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @param visionSubsystem  The vision subsystem with Limelight.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
+	 * @return The command.
+	 */
+	public static Command getAmpLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+			SimpleVisionSubsystem visionSubsystem) {
+		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
+				new TurnToAngleCommand(driveSubsystem, 20, 2, false));
+		if (visionSubsystem != null) {
+			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+		}
+		return sequence(
+				// strafe towards speaker, shoot
+				new PolarDriveCommand(driveSubsystem, 0.22, -90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 0),
+				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+		// strafe away, intake
+		// new PolarDriveCommand(driveSubsystem, -.22, 180),
+		// new PolarDriveCommand(driveSubsystem, 0.4, 90),
+		// // go back and shoot
+		// new PolarDriveCommand(driveSubsystem, -.22, 180),
+		// new PolarDriveCommand(driveSubsystem, -0.4, 90),
+		// new TimedLEDCommand(arduinoSubsystem, 0.25,
+		// StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
 	/**
@@ -226,16 +261,17 @@ public class CommandComposer {
 	public static Command getFourScoreRightAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
-				new TurnToAngleCommand(driveSubsystem, 35, 2, false));
+				new TurnToAngleCommand(driveSubsystem, 20, 2, false));
 		if (visionSubsystem != null) {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
 				// right note and middle note
 				getThreeScoreRightAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
-				new PolarDriveCommand(driveSubsystem, 1.8, 300, 0.01),
-				new TurnToAngleCommand(driveSubsystem, 35, false),
-				new PolarDriveCommand(driveSubsystem, .4, 180, 0.01),
+				// left note
+				new PolarDriveCommand(driveSubsystem, 2, 300, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, false),
+				new PolarDriveCommand(driveSubsystem, .5, 180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}

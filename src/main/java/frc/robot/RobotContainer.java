@@ -76,8 +76,12 @@ public class RobotContainer {
 				CommandComposer.getThreeScoreLeftAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
 		m_autoSelector.addOption("Right Four Score",
 				CommandComposer.getFourScoreRightAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Four Score",
+				CommandComposer.getFourScoreLeftAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
 		m_autoSelector.addOption("Get Blocks Auto",
 				CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Get Amp Auto",
+				CommandComposer.getAmpLeftAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
 		m_autoSelector.addOption("Absolute to Zero", new TurnToAngleCommand(m_driveSubsystem, 0, 0.5, false));
 		m_autoSelector.addOption("Intake With Sensor",
 				CommandComposer.getIntakeWithSensorCommand(m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
