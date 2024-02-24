@@ -203,7 +203,8 @@ public class CommandComposer {
 				// right note
 				new PolarDriveCommand(driveSubsystem, 1.8, -300, 0.01),
 				new TurnToAngleCommand(driveSubsystem, 0, false),
-				new PolarDriveCommand(driveSubsystem, .5, -180, 0.01),
+				new PolarDriveCommand(driveSubsystem, .35, -180, 0.01),
+				new PolarDriveCommand(driveSubsystem, -0.2, -180),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
