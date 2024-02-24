@@ -13,7 +13,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem;
-import frc.robot.subsystems.LimeLightSubsystem.Pose;
 
 /**
  * The {@code DriveCommand} is responsible for moving the robot from the current
@@ -77,21 +76,6 @@ public class DriveCommand extends Command {
 			var target = new Transform2d(new Translation2d(changeX, changeY), Rotation2d.fromDegrees(changeYaw));
 			return driveSubsystem.getPose().plus(target);
 		}, distanceTolerance, angleTolerance);
-	}
-
-	/**
-	 * Constructs a new {@code DriveCommand} whose purpose is to move the
-	 * robot to a certain target.
-	 * 
-	 * @param driveSubsystem    the {@code DriveSubsystem} to use
-	 * @param targetPose        the target pose whose x and y-coordinate values are
-	 *                          in meters and yaw value is in degrees
-	 * @param distanceTolerance the distance error in meters which is tolerable
-	 * @param angleTolerance    the angle error in degrees which is tolerable
-	 */
-	public DriveCommand(DriveSubsystem driveSubsystem, Pose2d targetPose, double distanceTolerance,
-			double angleTolerance) {
-		this(driveSubsystem, () -> targetPose, distanceTolerance, angleTolerance);
 	}
 
 	/**
@@ -194,33 +178,65 @@ public class DriveCommand extends Command {
 		return Math.abs(value) < threshold ? Math.signum(value) * threshold : value;
 	}
 
-	public static Command towardRedSpeaker(DriveSubsystem driveSubsystem, LimeLightSubsystem limeLightSubsystem) {
-		Supplier<Pose2d> s = () -> {
-			var p = limeLightSubsystem.estimatedPose();
-			var target = p;
-			if (p.getY() > 2)
-				target = new Pose(6, 2, 0);
-			else if (p.getY() < 0)
-				target = new Pose(6, 0, 0);
-			return driveSubsystem.getPose().plus(target.minus(p));
-		};
-		return new DriveCommand(driveSubsystem, s, 0.1, 5)
-				.andThen(toward(new Translation2d(7.87, 1.45), 1.2, 0.1, 5, driveSubsystem, limeLightSubsystem));
-	}
-
-	public static Command toRedAmp(DriveSubsystem driveSubsystem, LimeLightSubsystem limeLightSubsystem) {
-		return to(new Pose(6.44, 3.5, 90), 0.3, 20, driveSubsystem, limeLightSubsystem)
-				.andThen(to(new Pose(6.44, 3.75, 90), 0.1, 5, driveSubsystem, limeLightSubsystem));
-	}
-
-	public static Command to(Pose pose, double distanceTolerance, double angleTolerance, DriveSubsystem driveSubsystem,
+	/**
+	 * Constructs a {@code Commmand} for algining the robot to the specified
+	 * {@code Pose}.
+	 * 
+	 * @param targetPose         the target pose
+	 * @param distanceTolerance  the distance error in meters which is tolerable
+	 * @param angleTolerance     the angle error in degrees which is tolerable
+	 * @param driveSubsystem     the {@code DriveSubsystem} to use
+	 * @param limeLightSubsystem the {@code LimeLightSubsystem} to use
+	 * @return a {@code Commmand} for algining the robot to the specified
+	 *         {@code Pose}
+	 */
+	public static Command alignTo(Pose2d targetPose, double distanceTolerance, double angleTolerance,
+			DriveSubsystem driveSubsystem,
 			LimeLightSubsystem limeLightSubsystem) {
 		return new DriveCommand(driveSubsystem,
-				() -> driveSubsystem.getPose().plus(limeLightSubsystem.transformationTo(pose)),
+				() -> driveSubsystem.getPose().plus(limeLightSubsystem.transformationTo(targetPose)),
 				distanceTolerance, angleTolerance);
 	}
 
-	public static Command toward(Translation2d targetPosition, double distanceToTarget,
+	/**
+	 * Constructs a {@code Commmand} for turning the robot to the specified target
+	 * position.
+	 * 
+	 * @param targetPosition     the target position
+	 * @param distanceTolerance  the distance error in meters which is tolerable
+	 * @param angleTolerance     the angle error in degrees which is tolerable
+	 * @param driveSubsystem     the {@code DriveSubsystem} to use
+	 * @param limeLightSubsystem the {@code LimeLightSubsystem} to use
+	 * @return a {@code Commmand} for turning the robot to the specified target
+	 *         position
+	 */
+	public static Command turnTo(Translation2d targetPosition,
+			double distanceTolerance,
+			double angleTolerance, DriveSubsystem driveSubsystem,
+			LimeLightSubsystem limeLightSubsystem) {
+		return new DriveCommand(driveSubsystem,
+				() -> driveSubsystem.getPose()
+						.plus(limeLightSubsystem.transformationToward(targetPosition)),
+				distanceTolerance, angleTolerance);
+	}
+
+	/**
+	 * Constructs a {@code Commmand} for moving the robot toward the specified
+	 * target
+	 * position while ensuring that the robot is away from the target by the
+	 * specified distance.
+	 * 
+	 * @param targetPosition     the target position
+	 * @param distanceToTarget   the desired distance between the robot and the
+	 *                           target position
+	 * @param distanceTolerance  the distance error in meters which is tolerable
+	 * @param angleTolerance     the angle error in degrees which is tolerable
+	 * @param driveSubsystem     the {@code DriveSubsystem} to use
+	 * @param limeLightSubsystem the {@code LimeLightSubsystem} to use
+	 * @return a {@code Commmand} for turning the robot to the specified target
+	 *         position
+	 */
+	public static Command moveToward(Translation2d targetPosition, double distanceToTarget,
 			double distanceTolerance,
 			double angleTolerance, DriveSubsystem driveSubsystem,
 			LimeLightSubsystem limeLightSubsystem) {
@@ -229,4 +245,5 @@ public class DriveCommand extends Command {
 						.plus(limeLightSubsystem.transformationToward(targetPosition, distanceToTarget)),
 				distanceTolerance, angleTolerance);
 	}
+
 }

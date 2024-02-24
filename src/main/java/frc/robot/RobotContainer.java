@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -22,7 +19,6 @@ import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
-import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.SetSteeringCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
@@ -39,7 +35,6 @@ import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem;
-import frc.robot.subsystems.LimeLightSubsystem.Pose;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.PoseEstimationSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
@@ -175,42 +170,6 @@ public class RobotContainer {
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
-		Command[] samples = {
-				DriveCommand.towardRedSpeaker(m_driveSubsystem, m_limeLightSubsystem),
-				DriveCommand.toRedAmp(m_driveSubsystem, m_limeLightSubsystem),
-				DriveCommand.toward(new Translation2d(7.87, 1.45),
-						1.2, 0.1, 5, m_driveSubsystem, m_limeLightSubsystem)
-						.andThen(
-								DriveCommand.to(new Pose(6.5, 0.0, 0), 0.1, 5, m_driveSubsystem, m_limeLightSubsystem))
-						.andThen(
-								DriveCommand.to(new Pose(6.0, 0.0, 0), 0.1, 5, m_driveSubsystem, m_limeLightSubsystem))
-						.andThen(DriveCommand.toward(new Translation2d(7.87, 1.45),
-								1.2, 0.1, 5, m_driveSubsystem, m_limeLightSubsystem))
-						.andThen(
-								DriveCommand.to(new Pose(6.5, 1.45, 0), 0.1, 5, m_driveSubsystem, m_limeLightSubsystem))
-						.andThen(
-								DriveCommand.to(new Pose(6.0, 1.45, 0), 0.1, 5, m_driveSubsystem,
-										m_limeLightSubsystem))
-						.andThen(DriveCommand.toward(new Translation2d(7.87, 1.45),
-								1.2, 0.1, 5, m_driveSubsystem, m_limeLightSubsystem))
-						.andThen(
-								DriveCommand.to(new Pose(6.5, 2.92, 0), 0.1, 5, m_driveSubsystem, m_limeLightSubsystem))
-						.andThen(
-								DriveCommand.to(new Pose(6.0, 2.82, 0), 0.1, 5, m_driveSubsystem,
-										m_limeLightSubsystem)),
-				new DriveCommand(m_driveSubsystem, 1, 1, 60, 0.1, 5),
-				new DriveCommand(m_driveSubsystem, new Pose2d(1.0, 0, Rotation2d.fromDegrees(0)), 0.1, 5)
-						.andThen(
-								new DriveCommand(m_driveSubsystem, new Pose2d(1, 1, Rotation2d.fromDegrees(0)), 0.1, 5))
-						.andThen(new DriveCommand(m_driveSubsystem, new Pose2d(1, 1, Rotation2d.fromDegrees(45)), 0.1,
-								5))
-						.andThen(
-								new DriveCommand(m_driveSubsystem, new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 0.1, 5))
-		};
-		m_driverController.button(Button.kShare)
-				.whileTrue(samples[0]);
-		m_driverController.button(Button.kTrackpad)
-				.whileTrue(samples[1]);
 	}
 
 	public Command getAutonomousCommand() {

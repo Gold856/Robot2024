@@ -154,7 +154,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 	 *         specified target {@code Pose}; {@code null} if it has not been
 	 *         possible to reliably estimate the pose of the robot
 	 */
-	public Transform2d transformationTo(Pose targetPose) {
+	public Transform2d transformationTo(Pose2d targetPose) {
 		var pose = estimatedPose();
 		if (pose == null)
 			return null;

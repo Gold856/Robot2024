@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.robot.subsystems.LimeLightSubsystem.Pose;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -204,5 +205,14 @@ public final class Constants {
 		public static final Value kIntakeDown = Value.kReverse;
 		/** Alias for the solenoid value that makes the intake go up. */
 		public static final Value kIntakeUp = Value.kForward;
+	}
+
+	public static final class PoseConstants {
+		public static final Translation2d kBlueSpeakerPosition = new Translation2d(-7.87, 1.45);
+		public static final Pose kBlueNoteOnePose = new Pose(-6.0, 0.0, 180);
+		public static final Pose kBlueNoteTwoPose = new Pose(-6.0, 1.45, 180);
+		public static final Pose kBlueNoteThreePose = new Pose(-6.0, 2.82, 180);
+		public static final Pose kCenterNoteOnePose = new Pose(-0.5, 3.2, 180);
+
 	}
 }
