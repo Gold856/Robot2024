@@ -10,18 +10,12 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEvent;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
- * The purpose of the {@code LimeLightSubsystem} is to provide the pose of
- * the robot, each AprilTag, as well as others of interest. For stationary
- * objects such AprilTags, it stores the corresponding {@code Pose2d}s and
- * provide
- * them as needed.
- * For a moving object such as the robot, it estimates the pose based on a
- * variety of sources including LimeLight as well as encoders and sensors
- * attached to the robot.
+ * The purpose of the {@code LimeLightSubsystem} is to provide the pose of the
+ * robot, estimated based on a variety of sources including LimeLight as well as
+ * encoders and sensors attached to the robot.
  * 
  * @author Andrew Hwang (u.andrew.h@gmail.com)
  * @author Jeong-Hyon Hwang (jhhbrown@gmail.com)
@@ -30,8 +24,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 
 	/**
 	 * A subclass of {@code Pose2d} for simple construction and string
-	 * representation of
-	 * {@code Pose2d} instances.
+	 * representation of {@code Pose2d} instances.
 	 */
 	public static class Pose extends Pose2d {
 
@@ -52,18 +45,6 @@ public class LimeLightSubsystem extends SubsystemBase {
 		@Override
 		public String toString() {
 			return String.format("[%.1f, %.1f, %.1f degrees]", getX(), getY(), getRotation().getDegrees());
-		}
-
-		/**
-		 * Determines whether or not any coordinate or yaw value of this {@code Pose}
-		 * is NaN.
-		 * 
-		 * @return {@code true} if any coordinate or yaw value of this {@code Pose} is
-		 *         NaN; {@code false} otherwise
-		 */
-		public boolean hasNaN() {
-			return Double.isNaN(getX()) || Double.isNaN(getY())
-					|| Double.isNaN(getRotation().getRadians());
 		}
 
 		/**
@@ -92,6 +73,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 				return null;
 			return new Pose2d(x / poses.length, y / poses.length, Rotation2d.fromDegrees(yaw / poses.length));
 		}
+
 	}
 
 	/**
@@ -102,7 +84,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 	/**
 	 * The most recent botpose data obtained from LimeLight.
 	 */
-	protected TimestampedDoubleArray m_botpose;
+	protected double[] m_botpose;
 
 	/**
 	 * Constructs a {@code LimeLightSubsystem}.
@@ -121,17 +103,8 @@ public class LimeLightSubsystem extends SubsystemBase {
 	public Pose2d estimatedPose() {
 		if (m_botpose == null)
 			return null;
-		var pose = new Pose(m_botpose.value[0], m_botpose.value[1], m_botpose.value[5]);
-		return pose.hasNaN() || pose.equals(DEFAULT_POSE) ? null : pose;
-	}
-
-	/**
-	 * Returns the most recent botpose data obtained from LimeLight.
-	 * 
-	 * @return the most recent botpose data obtained from LimeLight
-	 */
-	public TimestampedDoubleArray botpose() {
-		return m_botpose;
+		var pose = new Pose(m_botpose[0], m_botpose[1], m_botpose[5]);
+		return pose.equals(DEFAULT_POSE) ? null : pose;
 	}
 
 	/**
@@ -158,35 +131,81 @@ public class LimeLightSubsystem extends SubsystemBase {
 	 * 
 	 * @param event a {@code NetworkTableEvent} regarding the change in the
 	 *              "botpose" entry in the "limelight" table
-	 * @return a {@code TimestampedDoubleArray} representing the pose of the robot
-	 *         in terms of the x and y-coordinate values and the yaw value (the
-	 *         orientation relative to the positive x-axis) in
-	 *         degrees
+	 * @return a {@code double} array from the "botpose" entry in the "limelight"
+	 *         table
 	 */
-	protected TimestampedDoubleArray changedBotPose(NetworkTableEvent event) {
+	protected double[] changedBotPose(NetworkTableEvent event) {
 		try {
 			var v = event.valueData.value;
-			m_botpose = new TimestampedDoubleArray(v.getTime(), v.getServerTime(), v.getDoubleArray());
+			m_botpose = v.getDoubleArray();
 		} catch (Exception e) {
 			m_botpose = null;
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		return m_botpose;
 	}
 
-	public Transform2d transformationTo(Pose pose) {
-		return pose.minus(estimatedPose());
+	/**
+	 * Returns the transformation from the estimated pose of of the robot to the
+	 * specified target {@code Pose}.
+	 * 
+	 * @param targetPose the target {@code Pose}
+	 * @return the transformation from the estimated pose of of the robot to the
+	 *         specified target {@code Pose}; {@code null} if it has not been
+	 *         possible to reliably estimate the pose of the robot
+	 */
+	public Transform2d transformationTo(Pose targetPose) {
+		var pose = estimatedPose();
+		if (pose == null)
+			return null;
+		return targetPose.minus(pose);
 	}
 
-	public Transform2d transformationToward(Translation2d targetPosition, double distanceToTarget) {
+	/**
+	 * Returns the transformation needed for the robot to face toward the specified
+	 * target
+	 * position
+	 * 
+	 * @param targetPosition the target position
+	 * @return the transformation needed for the robot to face toward the specified
+	 *         target
+	 *         position; {@code null} if it has not been
+	 *         possible to reliably estimate the pose of the robot
+	 */
+	public Transform2d transformationToward(Translation2d targetPosition) {
 		var pose = estimatedPose();
+		if (pose == null)
+			return null;
 		Translation2d diff = targetPosition.minus(pose.getTranslation());
 		if (diff.getNorm() == 0)
-			throw new UnsupportedOperationException();
+			return null;
+		var targetPose = new Pose2d(pose.getTranslation(), diff.getAngle());
+		return targetPose.minus(pose);
+	}
+
+	/**
+	 * Returns the transformation needed for the robot to face toward the specified
+	 * target position and remain the specified distance away fron the target
+	 * position.
+	 * 
+	 * @param targetPosition   the target position whose x and y-coordinate values
+	 *                         are in meters
+	 * @param distanceToTarget the desired distance in meters to the target
+	 * @return the transformation needed for the robot to face toward the specified
+	 *         target position and remain the specified distance away fron the
+	 *         target position; {@code null} if it has not been
+	 *         possible to reliably estimate the pose of the robot
+	 */
+	public Transform2d transformationToward(Translation2d targetPosition, double distanceToTarget) {
+		var pose = estimatedPose();
+		if (pose == null)
+			return null;
+		Translation2d diff = targetPosition.minus(pose.getTranslation());
+		if (diff.getNorm() == 0)
+			return null;
 		var targetPose = new Pose2d(pose.getTranslation().plus(diff.times(1 - distanceToTarget / diff.getNorm())),
 				diff.getAngle());
-		return targetPose
-				.minus(estimatedPose());
+		return targetPose.minus(pose);
 	}
 
 }

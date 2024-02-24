@@ -9,7 +9,6 @@ import java.util.stream.Stream;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.NetworkTableEvent;
-import edu.wpi.first.networktables.TimestampedDoubleArray;
 
 /**
  * The purpose of the {@code PoseEstimationSubsystem} is to provide the pose of
@@ -147,7 +146,7 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 		 *         {@code PoseEstimator} is updated based on
 		 *         the specified {@code Pose2d}
 		 */
-		public final synchronized boolean update(Pose2d sample) {
+		public final boolean update(Pose2d sample) {
 			if (isOutlier(sample))
 				return false;
 			estimatedPose(sample);
@@ -370,13 +369,12 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 	 *         degrees
 	 */
 	@Override
-	protected TimestampedDoubleArray changedBotPose(NetworkTableEvent event) {
+	protected double[] changedBotPose(NetworkTableEvent event) {
 		try {
 			var v = event.valueData.value;
-			m_botpose = new TimestampedDoubleArray(v.getTime(), v.getServerTime(), v.getDoubleArray());
+			m_botpose = v.getDoubleArray();
 			if (m_botpose != null) {
-				var pose = new Pose2d(m_botpose.value[0], m_botpose.value[1],
-						Rotation2d.fromDegrees(m_botpose.value[5]));
+				var pose = new Pose2d(m_botpose[0], m_botpose[1], Rotation2d.fromDegrees(m_botpose[5]));
 				if (pose.getX() != 0 || pose.getY() != 0 || pose.getRotation().getDegrees() != 0)
 					m_poseEstimator.update(pose);
 			}
@@ -392,4 +390,5 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 		super.periodic();
 		m_poseEstimator.update(m_poseCalculators.values());
 	}
+
 }
