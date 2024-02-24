@@ -276,13 +276,9 @@ public class CommandComposer {
 				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
 				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
 				// strafe away, intake
-				new TurnToAngleCommand(driveSubsystem, 90, 2, false),
-				new PolarDriveCommand(driveSubsystem, 1, -90),
-				new PolarDriveCommand(driveSubsystem, 0.4, 180),
-				// go back and shoot
-				new PolarDriveCommand(driveSubsystem, 1, 90),
-				new PolarDriveCommand(driveSubsystem, 0.4, 0),
-				new TimedLEDCommand(arduinoSubsystem, 0.4, StatusCode.RAINBOW_PARTY_FUN_TIME));
+				new TurnToAngleCommand(driveSubsystem, -90, 2, false),
+				new PolarDriveCommand(driveSubsystem, 0.70, 90),
+				new PolarDriveCommand(driveSubsystem, -1.05, 180));
 	}
 
 	/**
