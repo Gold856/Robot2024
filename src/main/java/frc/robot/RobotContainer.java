@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -45,6 +47,31 @@ import frc.robot.subsystems.SimpleVisionSubsystem;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+	/**
+	 * Takes the input from two {@code Double} suppliers and supplies their
+	 * difference.
+	 * Used primarily to take the difference between two turn
+	 * axes and calculate a single turn value
+	 * 
+	 * @see Supplier
+	 */
+	private class DeltaSupplier implements Supplier<Double> {
+		private final Supplier<Double> m_left;
+		private final Supplier<Double> m_right;
+
+		public DeltaSupplier(Supplier<Double> _left, Supplier<Double> _right) {
+			this.m_left = _left;
+			this.m_right = _right;
+		}
+
+		@Override
+		public Double get() {
+			return m_right.get() - m_left.get();
+		}
+
+	}
+
 	private final CommandGenericHID m_driverController = new CommandGenericHID(
 			ControllerConstants.kDriverControllerPort);
 	private final CommandGenericHID m_operatorController = new CommandGenericHID(
@@ -116,11 +143,18 @@ public class RobotContainer {
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
 		// --------------------Drive Controls---------------------------------
+		m_driveSubsystem.configureRotationInput(
+				new DeltaSupplier(
+						() -> m_driverController.getRawAxis(Axis.kLeftTrigger),
+						() -> m_driverController.getRawAxis(Axis.kRightTrigger)),
+				() -> 0.25,
+				m_visionSubsystem.getTurnSupplier());
+
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
-				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
-				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
+				m_driveSubsystem.getTurnSupplier()));
+
 		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
 		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
 		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));

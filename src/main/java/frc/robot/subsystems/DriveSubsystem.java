@@ -34,10 +34,42 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.SwerveModule;
 
 public class DriveSubsystem extends SubsystemBase {
+
+	public enum RotationType {
+		RELATIVE_TRIGGERS,
+		ABSOULUTE_STICK,
+		TO_TAG
+	}
+
+	public class TurnTypeSupplier implements Supplier<Supplier<Double>> {
+
+		@Override
+		public Supplier<Double> get() {
+			switch (rotationType) {
+				case RELATIVE_TRIGGERS:
+					return m_userRelativeRotation;
+				case ABSOULUTE_STICK:
+					return m_userAbsoluteRotation;
+				case TO_TAG:
+					return m_tagRotation;
+				default:
+					return null;
+			}
+		}
+
+	}
+
+	private RotationType rotationType = RotationType.TO_TAG;
 	private final SwerveModule m_frontLeft;
 	private final SwerveModule m_frontRight;
 	private final SwerveModule m_backLeft;
 	private final SwerveModule m_backRight;
+
+	private TurnTypeSupplier m_rotationSupplier = new TurnTypeSupplier();
+
+	private Supplier<Double> m_userRelativeRotation;
+	private Supplier<Double> m_userAbsoluteRotation;
+	private Supplier<Double> m_tagRotation;
 
 	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
@@ -51,6 +83,24 @@ public class DriveSubsystem extends SubsystemBase {
 	private final ProtobufPublisher<Pose2d> m_posePublisher;
 	private final StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
 	private final StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
+
+	public TurnTypeSupplier getTurnSupplier() {
+		return this.m_rotationSupplier;
+	}
+
+	public void setRotationInput(RotationType input) {
+		this.rotationType = input;
+	}
+
+	public void configureRotationInput(
+			Supplier<Double> relativeRotation,
+			Supplier<Double> absoluteRotation,
+			Supplier<Double> tagRotation) {
+		this.m_userRelativeRotation = relativeRotation;
+		this.m_userAbsoluteRotation = absoluteRotation;
+		this.m_tagRotation = tagRotation;
+
+	}
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
@@ -273,10 +323,13 @@ public class DriveSubsystem extends SubsystemBase {
 	/**
 	 * Creates a command to drive the robot with joystick input.
 	 * 
+	 * @param forwardSpeed     the foward speed
+	 * @param strafeSpeed      the sideways speed
+	 * @param TurnTypeSupplier the
 	 * @return A command to drive the robot.
 	 */
 	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
-			Supplier<Double> rotationRight, Supplier<Double> rotationLeft) {
+			TurnTypeSupplier rotation) {
 		return run(() -> {
 			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
 			// input so slight movements don't move the robot
@@ -284,7 +337,7 @@ public class DriveSubsystem extends SubsystemBase {
 					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
 			double strSpeed = -kTeleopMaxSpeed
 					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			double rotSpeed = kTeleopMaxTurnSpeed * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
+			double rotSpeed = kTeleopMaxTurnSpeed * MathUtil.applyDeadband(rotation.get().get(),
 					ControllerConstants.kDeadzone);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true)); // TODO:
 																											// back to
