@@ -16,9 +16,9 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Targeter.PhysicsAndMathTargeter;
-import frc.robot.commands.AimHeightCommand;
-import frc.robot.commands.AimHeightCommand.AimHeightOperation;
-import frc.robot.commands.AimerDriveCommand;
+import frc.robot.commands.aimshooter.AimHeightCommand;
+import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
+import frc.robot.commands.aimshooter.AimerDriveCommand;
 import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
@@ -31,6 +31,7 @@ import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
 import frc.robot.commands.indexer.IndexerCommand;
 import frc.robot.commands.indexer.IndexerShootCommand;
 import frc.robot.commands.indexer.IndexerStopCommand;
+import frc.robot.subsystems.AimerSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -39,7 +40,6 @@ import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
 /**
@@ -58,8 +58,8 @@ public class RobotContainer {
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();
-	private final ShooterSubsystem m_shooterSubsystem = new ShooterSubsystem();
-	private final PhysicsAndMathTargeter m_targeter = new PhysicsAndMathTargeter();
+	private final AimerSubsystem m_aimerSubsystem = new AimerSubsystem();
+	private final Targeter m_targeter = new PhysicsAndMathTargeter();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
 	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
@@ -170,10 +170,10 @@ public class RobotContainer {
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 		m_operatorController.button(Button.kTriangle).onTrue(
-				new AimHeightCommand(m_shooterSubsystem, AimHeightOperation.SET_PRESET_DEFAULT)
-						.andThen(new AimHeightCommand(m_shooterSubsystem, AimHeightOperation.SETTLE)));
-		m_shooterSubsystem.setDefaultCommand(
-				new AimerDriveCommand(m_shooterSubsystem, () -> m_operatorController.getRawAxis(Axis.kLeftY)));
+				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)
+						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
+		m_aimerSubsystem.setDefaultCommand(
+				new AimerDriveCommand(m_aimerSubsystem, () -> m_operatorController.getRawAxis(Axis.kLeftY)));
 
 	}
 

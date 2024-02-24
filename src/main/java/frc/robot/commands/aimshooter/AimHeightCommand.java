@@ -2,17 +2,19 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.aimshooter;
 
-import static frc.robot.Constants.ShooterConstants.*;
+import static frc.robot.Constants.AimerConstants.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.Targeter;
+import frc.robot.subsystems.AimerSubsystem;
 
 public class AimHeightCommand extends Command {
 	private AimHeightOperation m_operation;
 	private double m_distanceMeters;
-	private ShooterSubsystem m_shooterSubsystem;
+	private AimerSubsystem m_aimerSubsystem;
+	private Targeter m_targeter;
 
 	public enum AimHeightOperation {
 		CALC_AND_SET, // Calculate Angle at current position (changes)
@@ -27,10 +29,11 @@ public class AimHeightCommand extends Command {
 	}
 
 	/** Creates a new AimCommand. */
-	public AimHeightCommand(ShooterSubsystem subsystem, AimHeightOperation operation) {
+	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation) {
 		m_operation = operation;
-		m_shooterSubsystem = subsystem;
-		addRequirements(m_shooterSubsystem);
+		m_aimerSubsystem = subsystem;
+		m_targeter = targeter;
+		addRequirements(m_aimerSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
@@ -38,20 +41,20 @@ public class AimHeightCommand extends Command {
 	public void initialize() {
 		switch (m_operation) {
 			case CALC_AND_SET:
-				double actuatorHeightSetpoint = m_shooterSubsystem.calcActuatorHeightFromDistance(m_distanceMeters);
-				m_shooterSubsystem.setActuatorHeight(actuatorHeightSetpoint);
+				double actuatorHeightSetpoint = m_targeter.calcAimerHeightFromDistance(m_distanceMeters);
+				m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
 				break;
 			case SET_PRESET_DEFAULT:
-				m_shooterSubsystem.setActuatorHeight(kDefaultActuatorHeight);
+				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
 				break;
 			case UP_ADJUST:
-				m_shooterSubsystem.adjustActuatorSetpoint(kAdjustAmount);
+				m_aimerSubsystem.adjustAimerSetpoint(kAdjustAmount);
 				break;
 			case DOWN_ADJUST:
-				m_shooterSubsystem.adjustActuatorSetpoint(-kAdjustAmount);
+				m_aimerSubsystem.adjustAimerSetpoint(-kAdjustAmount);
 				break;
 			case HOLD:
-				m_shooterSubsystem.setActuatorHeight(m_shooterSubsystem.getActuatorHeight());
+				m_aimerSubsystem.setAimerHeight(m_aimerSubsystem.getAimerHeight());
 				break;
 			default:
 				break;
@@ -67,7 +70,7 @@ public class AimHeightCommand extends Command {
 	@Override
 	public boolean isFinished() {
 		if (m_operation == AimHeightOperation.SETTLE) {
-			return m_shooterSubsystem.atActuatorSetpoint();
+			return m_aimerSubsystem.atAimerSetpoint();
 		}
 		return true;
 	}
@@ -76,7 +79,7 @@ public class AimHeightCommand extends Command {
 	@Override
 	public void end(boolean interrupted) {
 		if (m_operation == AimHeightOperation.STOP) {
-			m_shooterSubsystem.stopMotor();
+			m_aimerSubsystem.stopMotor();
 		}
 	}
 }

@@ -188,10 +188,10 @@ public final class Constants {
 		public static final Value kIntakeUp = Value.kForward;
 	}
 
-	public static final class ShooterConstants {
-		public static final double kShooterMaxEncoderValue = 0.4; // Value when it's at it's peak TODO: make right
-		public static final int kShooterLeadScrewPort = 48; // TODO: 48
-		public static final int kShooterEncoderPort = 51; // TODO: 51
+	public static final class AimerConstants {
+		public static final double kAimerMaxEncoderValue = 0.4; // Value when it's at it's peak TODO: make right
+		public static final int kAimerLeadScrewPort = 48; // TODO: 48
+		public static final int kAimerEncoderPort = 51; // TODO: 51
 		public static final boolean kMasterInvert = false;
 		public static final boolean kFollowerOppose = true;
 		public static final int kSmartCurrentLimit = 55; // 90
@@ -206,11 +206,11 @@ public final class Constants {
 		public static final double kMinOutput = 0;
 		public static final double kGearRatio = 3;
 		public static final double speakerHeight = 2.032145; // TODO change to this height - robot height
-		public static final double shooterLength = .25; // TODO change to deltaX between edge of robot and shooter axis
+		public static final double aimerLength = .25; // TODO change to deltaX between edge of robot and aimer axis
 														// on robot
 		public static final double kDefaultActuatorHeight = 0.2; // TODO fix actuator height
-		public static final double kShooterTolerance = 0.05; // TODO experiment
+		public static final double kAimerTolerance = 0.05; // TODO experiment
 		public static final double kAdjustAmount = 0.2; // Adjust with testing
-		public static final double kMaxShooterPower = 0.4;
+		public static final double kMaxAimerPower = 0.4;
 	}
 }

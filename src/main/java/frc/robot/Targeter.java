@@ -4,19 +4,17 @@ package frc.robot;
 
 public interface Targeter {
 
-	public double m_speakerHeight = Constants.ShooterConstants.speakerHeight;
-	public double m_shooterLength = Constants.ShooterConstants.shooterLength;
+	public double m_speakerHeight = Constants.AimerConstants.speakerHeight;
+	public double m_aimerLength = Constants.AimerConstants.aimerLength;
 	// aka small delta x and big delta y
 
 	public double getAngle(double distanceMeters);
 
 	public double getRPM(double distanceMeters);
 
-	public double calcActuatorHeightFromAngle(double distanceMeters);
+	public double calcAimerHeightFromDistance(double distanceMeters);
 
-	public double calcActuatorHeightFromDistance(double distanceMeters);
-
-	public class RegressionTargeter { // quadratic regression
+	public class RegressionTargeter implements Targeter { // quadratic regression
 
 		public double getAngle(double distanceMeters) {
 			// Calculated using regression from experimentally determined constants
@@ -32,15 +30,14 @@ public interface Targeter {
 			return RPM;
 		}
 
-		public double calcActuatorHeightFromAngle(double distanceMeters) {
+		public double calcAimerHeightFromDistance(double distanceMeters) {
 			// get actuator height from getAngle method above
-			double angle = getAngle(distanceMeters);
-			double actuatorHeight = m_shooterLength / (Math.tan(angle));
-			return actuatorHeight;
+			double aimerHeight = getAngle(distanceMeters) / 360;
+			return aimerHeight;
 		}
 	}
 
-	public class LookupTargeter {
+	public class LookupTargeter implements Targeter {
 		// Table values determined by experiment. See _____
 		// distanceToTarget [0], bestAngle [1], bestRPM [2]
 		public double[][] m_table = { { 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0, 0, 0 } };
@@ -96,30 +93,34 @@ public interface Targeter {
 			return RPM;
 		}
 
-		public double calcActuatorHeightFromAngle(double distanceMeters) {
+		public double calcAimerHeightFromDistance(double distanceMeters) {
 			// get actuator height from getAngle method above
-			double angle = getAngle(distanceMeters);
-			double actuatorHeight = m_shooterLength / (Math.tan(angle));
-			return actuatorHeight;
+			double aimerHeight = getAngle(distanceMeters) / 360;
+			return aimerHeight;
 		}
 	}
 
-	public class PhysicsAndMathTargeter { // using physics and trig
+	public class PhysicsAndMathTargeter implements Targeter { // using physics and trig
 
-		public double calculateAngle(double distanceMeters) {
-			double angle = Math.atan2(m_speakerHeight, distanceMeters);
+		public double getAngle(double distanceMeters) {
+			double angle = (Math.atan2(m_speakerHeight, distanceMeters));
 			return angle;
 		}
 
-		public double calculateVelocity(double distanceMeters) {
+		public double getRPM(double distanceMeters) {
+			return 1500;
+		}
+
+		public double getVelocity(double distanceMeters) {
 			double initialVelocity = (distanceMeters * 9.8)
-					/ (Math.cos(calculateAngle(distanceMeters)) * (Math.sin(calculateAngle(distanceMeters))));
+					/ (Math.cos(getAngle(distanceMeters)) * (Math.sin(getAngle(distanceMeters))));
 			return initialVelocity;
 		}
 
-		public double calcActuatorHeightFromDistance(double distanceMeters) {
-			double actuatorHeight = (m_shooterLength * m_speakerHeight) / distanceMeters;
-			return actuatorHeight;
+		public double calcAimerHeightFromDistance(double distanceMeters) {
+			// get actuator height from getAngle method above
+			double aimerHeight = getAngle(distanceMeters) / 360;
+			return aimerHeight;
 		}
 	}
 }
