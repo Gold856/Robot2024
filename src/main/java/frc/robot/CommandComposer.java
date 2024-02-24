@@ -10,10 +10,14 @@ import frc.robot.commands.drive.BangBangDriveCommand;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
+import frc.robot.commands.flywheel.FlywheelCommand;
+import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
 import frc.robot.commands.indexer.IndexWithSensorCommand;
+import frc.robot.commands.indexer.IndexerCommand;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
@@ -210,5 +214,13 @@ public class CommandComposer {
 				pneumaticsSubsystem.downIntakeCommand(),
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				pneumaticsSubsystem.upIntakeCommand());
+	}
+
+	public static Command getBallPathTest(IntakeSubsystem intakeSubsystem, IndexerSubsystem indexerSubsystem,
+			FlywheelSubsystem flywheelSubsystem) {
+		return parallel(
+				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 3000),
+				intakeSubsystem.forwardIntakeCommand(),
+				IndexerCommand.getFowardCommand(indexerSubsystem));
 	}
 }
