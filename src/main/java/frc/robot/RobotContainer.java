@@ -97,8 +97,10 @@ public class RobotContainer {
 				CommandComposer.getFourScoreLeftAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
 		m_autoSelector.addOption("Get Blocks Auto",
 				CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
-		m_autoSelector.addOption("Get Amp Auto",
-				CommandComposer.getAmpTwoAuto(m_driveSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Get Amp Auto Red",
+				CommandComposer.getAmpTwoAutoRed(m_driveSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Get Amp Auto Blue",
+				CommandComposer.getAmpTwoAutoBlue(m_driveSubsystem, m_arduinoSubsystem));
 		m_autoSelector.addOption("Get Shoot and Amp Auto",
 				CommandComposer.getShootAndAmp(m_driveSubsystem, m_arduinoSubsystem));
 		m_autoSelector.addOption("Absolute to Zero", new TurnToAngleCommand(m_driveSubsystem, 0, 0.5, false));

@@ -431,7 +431,7 @@ public class CommandComposer {
 	 * @param arduinoSubsystem The arduino subsystem for LEDs.
 	 * @return The command.
 	 */
-	public static Command getAmpTwoAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
+	public static Command getAmpTwoAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
 				// strafe towards speaker, shoot
 				new PolarDriveCommand(driveSubsystem, 0.22, -90),
@@ -442,6 +442,28 @@ public class CommandComposer {
 				new PolarDriveCommand(driveSubsystem, 0.4, 180),
 				// go back and shoot
 				new PolarDriveCommand(driveSubsystem, 1, 90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 0),
+				new TimedLEDCommand(arduinoSubsystem, 0.4, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @return The command.
+	 */
+	public static Command getAmpTwoAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				// strafe towards speaker, shoot
+				new PolarDriveCommand(driveSubsystem, 0.22, 90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 0),
+				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME),
+				// strafe away, intake
+				new PolarDriveCommand(driveSubsystem, 1, 90),
+				new PolarDriveCommand(driveSubsystem, 0.4, 180),
+				// go back and shoot
+				new PolarDriveCommand(driveSubsystem, 1, -90),
 				new PolarDriveCommand(driveSubsystem, 0.4, 0),
 				new TimedLEDCommand(arduinoSubsystem, 0.4, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
