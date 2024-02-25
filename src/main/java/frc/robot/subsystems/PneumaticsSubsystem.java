@@ -14,10 +14,14 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PneumaticsSubsystem extends SubsystemBase {
 	private final PneumaticHub m_hub = new PneumaticHub(kPneumaticHubID);
-	private final DoubleSolenoid m_ampBarSolenoid = m_hub.makeDoubleSolenoid(kAmpBarForwardChannel,
-			kAmpBarReverseChannel);
-	private final DoubleSolenoid m_intakeSolenoid = m_hub.makeDoubleSolenoid(kIntakeForwardChannel,
-			kIntakeReverseChannel);
+	private final DoubleSolenoid m_leftAmpBarSolenoid = m_hub.makeDoubleSolenoid(kLeftAmpBarForwardChannel,
+			kLeftAmpBarReverseChannel);
+	private final DoubleSolenoid m_rightAmpBarSolenoid = m_hub.makeDoubleSolenoid(kRightAmpBarForwardChannel,
+			kRightAmpBarReverseChannel);
+	private final DoubleSolenoid m_leftIntakeSolenoid = m_hub.makeDoubleSolenoid(kLeftIntakeForwardChannel,
+			kLeftIntakeReverseChannel);
+	private final DoubleSolenoid m_rightIntakeSolenoid = m_hub.makeDoubleSolenoid(kRightIntakeForwardChannel,
+			kRightIntakeReverseChannel);
 	private boolean m_ampBarExtended;
 	private boolean m_intakeExtended;
 
@@ -33,10 +37,12 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	public Command toggleIntakeCommand() {
 		return runOnce(() -> {
 			if (!m_intakeExtended) {
-				m_intakeSolenoid.set(kIntakeUp);
+				m_leftIntakeSolenoid.set(kIntakeUp);
+				m_rightIntakeSolenoid.set(kIntakeUp);
 				m_intakeExtended = true;
 			} else {
-				m_intakeSolenoid.toggle();
+				m_leftIntakeSolenoid.toggle();
+				m_rightIntakeSolenoid.toggle();
 			}
 		});
 	}
@@ -47,7 +53,10 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command upIntakeCommand() {
-		return runOnce(() -> m_intakeSolenoid.set(kIntakeUp));
+		return runOnce(() -> {
+			m_leftIntakeSolenoid.set(kIntakeUp);
+			m_rightIntakeSolenoid.set(kIntakeUp);
+		});
 	}
 
 	/**
@@ -56,7 +65,10 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command downIntakeCommand() {
-		return runOnce(() -> m_intakeSolenoid.set(kIntakeDown));
+		return runOnce(() -> {
+			m_leftIntakeSolenoid.set(kIntakeDown);
+			m_rightIntakeSolenoid.set(kIntakeDown);
+		});
 	}
 
 	/**
@@ -67,10 +79,12 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	public Command toggleAmpBarCommand() {
 		return runOnce(() -> {
 			if (!m_ampBarExtended) {
-				m_ampBarSolenoid.set(Value.kForward);
+				m_leftAmpBarSolenoid.set(Value.kForward);
+				m_rightAmpBarSolenoid.set(Value.kForward);
 				m_ampBarExtended = true;
 			} else {
-				m_ampBarSolenoid.toggle();
+				m_leftAmpBarSolenoid.toggle();
+				m_rightAmpBarSolenoid.toggle();
 			}
 		});
 	}
@@ -81,7 +95,11 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command extendAmpBarCommand() {
-		return runOnce(() -> m_ampBarSolenoid.set(Value.kForward));
+		return runOnce(() -> {
+			m_leftAmpBarSolenoid.set(Value.kForward);
+			m_rightAmpBarSolenoid.set(Value.kForward);
+
+		});
 	}
 
 	/**
@@ -90,6 +108,9 @@ public class PneumaticsSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command retractAmpBarCommand() {
-		return runOnce(() -> m_ampBarSolenoid.set(Value.kReverse));
+		return runOnce(() -> {
+			m_leftAmpBarSolenoid.set(Value.kReverse);
+			m_rightAmpBarSolenoid.set(Value.kReverse);
+		});
 	}
 }
