@@ -24,11 +24,20 @@ public class ClampedController extends PIDController {
 
 	@Override
 	public double calculate(double currentValue, double setpoint) {
-		return clamp(super.calculate(currentValue, setpoint));
+		double power = clamp(super.calculate(currentValue));
+		super.setSetpoint(setpoint);
+		if (super.atSetpoint()) {
+			power = 0;
+		}
+		return power;
 	}
 
 	@Override
 	public double calculate(double currentValue) {
-		return clamp(super.calculate(currentValue));
+		double power = clamp(super.calculate(currentValue));
+		if (super.atSetpoint()) {
+			power = 0;
+		}
+		return power;
 	}
 }
