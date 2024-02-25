@@ -12,11 +12,11 @@ public class IndexerCommand extends Command {
 	private final IndexerSubsystem m_indexerSubsystem;
 
 	public static IndexerCommand getFowardCommand(IndexerSubsystem indexerSubsystem) {
-		return new IndexerCommand(indexerSubsystem, 1.0);
+		return new IndexerCommand(indexerSubsystem, -.8);
 	}
 
 	public static IndexerCommand getReverseCommand(IndexerSubsystem indexerSubsystem) {
-		return new IndexerCommand(indexerSubsystem, -1.0);
+		return new IndexerCommand(indexerSubsystem, .8);
 	}
 
 	/** Creates a new IndexerFowardCommand. */
