@@ -69,7 +69,7 @@ public class CommandComposer {
 	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
-	public static Command getTwoScoreRightAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+	public static Command getTwoScoreRightAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, -35, 2, false));
@@ -79,6 +79,33 @@ public class CommandComposer {
 		return sequence(
 				new PolarDriveCommand(driveSubsystem, 0.75, 180, 0.01),
 				new PolarDriveCommand(driveSubsystem, 1.2, 240, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
+				new PolarDriveCommand(driveSubsystem, 0.2, -180, 0.01),
+				alignCommand,
+				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for a two-score autonomous routine on SPEAKER right.
+	 * Shoot a note, drive forward to the next note, intake,
+	 * turn to align (absolute -35 degrees), and shoot the note. End with LEDs.
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @param visionSubsystem  The vision subsystem with Limelight.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
+	 * @return The command.
+	 */
+	public static Command getTwoScoreRightAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+			SimpleVisionSubsystem visionSubsystem) {
+		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
+				new TurnToAngleCommand(driveSubsystem, -25, 2, false));
+		if (visionSubsystem != null) {
+			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+		}
+		return sequence(
+				new PolarDriveCommand(driveSubsystem, 1.4, 240, 0.01),
 				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
 				new PolarDriveCommand(driveSubsystem, 0.2, -180, 0.01),
 				alignCommand,
@@ -98,7 +125,7 @@ public class CommandComposer {
 	 * 
 	 * @return The command.
 	 */
-	public static Command getTwoScoreLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+	public static Command getTwoScoreLeftAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, 35, 2, false));
@@ -109,6 +136,35 @@ public class CommandComposer {
 				new PolarDriveCommand(driveSubsystem, 1.4, -240, 0.01),
 				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
 				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
+				alignCommand,
+				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for a two-score autonomous routine on SPEAKER left.
+	 * Shoot a note, drive forward to the next note, intake,
+	 * turn to align (absolute 35 degrees), and shoot the note. End with LEDs.
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @param visionSubsystem  The vision subsystem with Limelight.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
+	 * 
+	 * @return The command.
+	 */
+	public static Command getTwoScoreLeftAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+			SimpleVisionSubsystem visionSubsystem) {
+		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
+				new TurnToAngleCommand(driveSubsystem, 35, 2, false));
+		if (visionSubsystem != null) {
+			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+		}
+		return sequence(
+				new PolarDriveCommand(driveSubsystem, 0.75, -180, 0.01),
+				new PolarDriveCommand(driveSubsystem, 1, -240, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false),
+				new PolarDriveCommand(driveSubsystem, 0.2, 180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -127,7 +183,7 @@ public class CommandComposer {
 	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
-	public static Command getThreeScoreRightAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+	public static Command getThreeScoreRightAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, 0, 2, false));
@@ -136,7 +192,38 @@ public class CommandComposer {
 		}
 		return sequence(
 				// right note
-				getTwoScoreRightAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
+				getTwoScoreRightAutoBlue(driveSubsystem, arduinoSubsystem, visionSubsystem),
+				// middle note
+				new TurnToAngleCommand(driveSubsystem, 75, 2, false),
+				new PolarDriveCommand(driveSubsystem, 1.25, 180, 0.01),
+				alignCommand,
+				new TimedLEDCommand(arduinoSubsystem, .25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for a three-score autonomous routine on SPEAKER right.
+	 * Use two-score routine: Shoot a note, drive forward to the next note,
+	 * intake, turn to align, and shoot the note. Play LEDs.
+	 * Third note: Turn to middle note, drive forward, intake,
+	 * turn to align (absolute 12 degrees), and shoot the note. End with LEDS.
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @param visionSubsystem  The vision subsystem with Limelight.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
+	 * @return The command.
+	 */
+	public static Command getThreeScoreRightAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+			SimpleVisionSubsystem visionSubsystem) {
+		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false));
+		if (visionSubsystem != null) {
+			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+		}
+		return sequence(
+				// right note
+				getTwoScoreRightAutoRed(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// middle note
 				new TurnToAngleCommand(driveSubsystem, 75, 2, false),
 				new PolarDriveCommand(driveSubsystem, 1.25, 180, 0.01),
@@ -158,7 +245,7 @@ public class CommandComposer {
 	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
-	public static Command getThreeScoreLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+	public static Command getThreeScoreLeftAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, 0, 2, false));
@@ -167,21 +254,20 @@ public class CommandComposer {
 		}
 		return sequence(
 				// right note
-				getTwoScoreLeftAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
+				getTwoScoreLeftAutoBlue(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// middle note
 				new TurnToAngleCommand(driveSubsystem, -75, 2, false),
 				new PolarDriveCommand(driveSubsystem, 1.25, -180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
-
 	}
 
 	/**
-	 * Returns a command for a four-score autonomous routine on SPEAKER left.
+	 * Returns a command for a three-score autonomous routine on SPEAKER left.
 	 * Use two-score routine: Shoot a note, drive forward to the next note,
 	 * intake, turn to align, and shoot the note. Play LEDs.
 	 * Third note: Turn to middle note, drive forward, intake,
-	 * turn to align (absolute 12 degrees), and shoot the note. End with LEDS.
+	 * turn to align (absolute -12 degrees), and shoot the note. End with LEDS.
 	 * 
 	 * @param driveSubsystem   The drive subsystem.
 	 * @param arduinoSubsystem The arduino subsystem for LEDs.
@@ -190,21 +276,19 @@ public class CommandComposer {
 	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
-	public static Command getFourScoreLeftAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+	public static Command getThreeScoreLeftAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
-				new TurnToAngleCommand(driveSubsystem, -20, 2, false));
+				new TurnToAngleCommand(driveSubsystem, 0, 2, false));
 		if (visionSubsystem != null) {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
-				// left note and middle note
-				getThreeScoreLeftAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// right note
-				new PolarDriveCommand(driveSubsystem, 1.8, -300, 0.01),
-				new TurnToAngleCommand(driveSubsystem, 0, false),
-				new PolarDriveCommand(driveSubsystem, .35, -180, 0.01),
-				new PolarDriveCommand(driveSubsystem, -0.2, -180),
+				getTwoScoreLeftAutoRed(driveSubsystem, arduinoSubsystem, visionSubsystem),
+				// middle note
+				new TurnToAngleCommand(driveSubsystem, -75, 2, false),
+				new PolarDriveCommand(driveSubsystem, 1.25, -180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -223,7 +307,7 @@ public class CommandComposer {
 	 *                         to align with AprilTag.
 	 * @return The command.
 	 */
-	public static Command getFourScoreRightAuto(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+	public static Command getFourScoreRightAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, 20, 2, false));
@@ -232,11 +316,109 @@ public class CommandComposer {
 		}
 		return sequence(
 				// right note and middle note
-				getThreeScoreRightAuto(driveSubsystem, arduinoSubsystem, visionSubsystem),
+				getThreeScoreRightAutoBlue(driveSubsystem, arduinoSubsystem, visionSubsystem),
 				// left note
 				new PolarDriveCommand(driveSubsystem, 2, 300, 0.01),
 				new TurnToAngleCommand(driveSubsystem, 0, false),
 				new PolarDriveCommand(driveSubsystem, .5, 180, 0.01),
+				alignCommand,
+				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for a three-score autonomous routine on SPEAKER right.
+	 * Use two-score routine: Shoot a note, drive forward to the next note,
+	 * intake, turn to align, and shoot the note. Play LEDs.
+	 * Third note: Turn to middle note, drive forward, intake,
+	 * turn to align (absolute 12 degrees), and shoot the note. End with LEDS.
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @param visionSubsystem  The vision subsystem with Limelight.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
+	 * @return The command.
+	 */
+	public static Command getFourScoreRightAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+			SimpleVisionSubsystem visionSubsystem) {
+		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
+				new TurnToAngleCommand(driveSubsystem, 20, 2, false));
+		if (visionSubsystem != null) {
+			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+		}
+		return sequence(
+				// right note and middle note
+				getThreeScoreRightAutoRed(driveSubsystem, arduinoSubsystem, visionSubsystem),
+				// left note
+				new PolarDriveCommand(driveSubsystem, 1.5, 300, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, false),
+				new PolarDriveCommand(driveSubsystem, .5, 180, 0.01),
+				new PolarDriveCommand(driveSubsystem, -0.2, -180),
+				alignCommand,
+				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for a four-score autonomous routine on SPEAKER left.
+	 * Use two-score routine: Shoot a note, drive forward to the next note,
+	 * intake, turn to align, and shoot the note. Play LEDs.
+	 * Third note: Turn to middle note, drive forward, intake,
+	 * turn to align (absolute 12 degrees), and shoot the note. End with LEDS.
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @param visionSubsystem  The vision subsystem with Limelight.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
+	 * @return The command.
+	 */
+	public static Command getFourScoreLeftAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+			SimpleVisionSubsystem visionSubsystem) {
+		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
+				new TurnToAngleCommand(driveSubsystem, -20, 2, false));
+		if (visionSubsystem != null) {
+			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+		}
+		return sequence(
+				// left note and middle note
+				getThreeScoreLeftAutoBlue(driveSubsystem, arduinoSubsystem, visionSubsystem),
+				// right note
+				new PolarDriveCommand(driveSubsystem, 1.8, -300, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, false),
+				new PolarDriveCommand(driveSubsystem, .35, -180, 0.01),
+				new PolarDriveCommand(driveSubsystem, -0.2, -180),
+				alignCommand,
+				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
+	/**
+	 * Returns a command for a four-score autonomous routine on SPEAKER left.
+	 * Use two-score routine: Shoot a note, drive forward to the next note,
+	 * intake, turn to align, and shoot the note. Play LEDs.
+	 * Third note: Turn to middle note, drive forward, intake,
+	 * turn to align (absolute 12 degrees), and shoot the note. End with LEDS.
+	 * 
+	 * @param driveSubsystem   The drive subsystem.
+	 * @param arduinoSubsystem The arduino subsystem for LEDs.
+	 * @param visionSubsystem  The vision subsystem with Limelight.
+	 *                         If visionSubsystem is used, auto will include command
+	 *                         to align with AprilTag.
+	 * @return The command.
+	 */
+	public static Command getFourScoreLeftAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
+			SimpleVisionSubsystem visionSubsystem) {
+		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
+				new TurnToAngleCommand(driveSubsystem, -20, 2, false));
+		if (visionSubsystem != null) {
+			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
+		}
+		return sequence(
+				// left note and middle note
+				getThreeScoreLeftAutoRed(driveSubsystem, arduinoSubsystem, visionSubsystem),
+				// right note
+				new PolarDriveCommand(driveSubsystem, 1.8, -280, 0.01),
+				new TurnToAngleCommand(driveSubsystem, 0, false),
+				new PolarDriveCommand(driveSubsystem, .35, -180, 0.01),
 				alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}

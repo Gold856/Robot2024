@@ -66,18 +66,30 @@ public class RobotContainer {
 		m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 				new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
 		m_autoSelector.addOption("Polar Drive Two Meters", new PolarDriveCommand(m_driveSubsystem, 2, 180));
-		m_autoSelector.addOption("Right Two Score",
-				CommandComposer.getTwoScoreRightAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
-		m_autoSelector.addOption("Left Two Score",
-				CommandComposer.getTwoScoreLeftAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
-		m_autoSelector.addOption("Right Three Score",
-				CommandComposer.getThreeScoreRightAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
-		m_autoSelector.addOption("Left Three Score",
-				CommandComposer.getThreeScoreLeftAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
-		m_autoSelector.addOption("Right Four Score",
-				CommandComposer.getFourScoreRightAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
-		m_autoSelector.addOption("Left Four Score",
-				CommandComposer.getFourScoreLeftAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Right Two Score Blue",
+				CommandComposer.getTwoScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Right Two Score Red",
+				CommandComposer.getTwoScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Two Score Blue",
+				CommandComposer.getTwoScoreLeftAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Two Score Red",
+				CommandComposer.getTwoScoreLeftAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Right Three Score Blue",
+				CommandComposer.getThreeScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Right Three Score Red",
+				CommandComposer.getThreeScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Three Score Blue",
+				CommandComposer.getThreeScoreLeftAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Three Score Red",
+				CommandComposer.getThreeScoreLeftAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Right Four Score Blue",
+				CommandComposer.getFourScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Right Four Score Red",
+				CommandComposer.getFourScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Four Score Blue",
+				CommandComposer.getFourScoreLeftAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
+		m_autoSelector.addOption("Left Four Score Red",
+				CommandComposer.getFourScoreLeftAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem));
 		m_autoSelector.addOption("Get Blocks Auto",
 				CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
 		m_autoSelector.addOption("Get Amp Auto",
