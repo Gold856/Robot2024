@@ -145,18 +145,17 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
-		m_driverController.button(Button.kCircle).onTrue(m_driveSubsystem.resetHeadingCommand());
-		m_driverController.button(Button.kSquare).onTrue(m_driveSubsystem.resetEncodersCommand());
-		m_driverController.button(Button.kX).onTrue(new DriveDistanceCommand(m_driveSubsystem, 10, 0.01));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
 
 		// -------------------Flywheel Controls--------------------------------
-		m_driverController.button(Button.kTriangle)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000));
+		m_operatorController.button(Button.kTriangle)
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 1500));
 
 		// -------------------Indexer Controls---------------------------------
 		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem));
-		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(m_indexerSubsystem));
+		m_operatorController.button(Button.kRightBumper).onTrue(IndexerCommand.getFowardCommand(m_indexerSubsystem));
+		// m_operatorController.button(Button.kRightBumper).onTrue(new
+		// IndexerShootCommand(m_indexerSubsystem));
 
 		// ------------------Intake Controls-----------------------------------
 		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getTeleopIntakeCommand(
@@ -169,6 +168,10 @@ public class RobotContainer {
 		// and this one
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper))
 				.onFalse(m_intakeSubsystem.stopIntakeCommand().alongWith(new IndexerStopCommand(m_indexerSubsystem)));
+
+		// TESTING TESTING TESTING TODO TESTING TODO: REMOVE TESTING
+		m_operatorController.button(Button.kShare).onTrue(CommandComposer.getBallPathTest(
+				m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
 
 		// ------------------Amp Bar Controls, removal later------------------- TODO
 		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());

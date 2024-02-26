@@ -65,7 +65,6 @@ public final class Constants {
 
 	public static final class DriveConstants {
 		// CAN IDs (updated)
-		public static final int kCounterWeightPort = 17;
 		public static final int kFrontRightDrivePort = 10;
 		public static final int kFrontRightSteerPort = 11;
 		public static final int kFrontLeftDrivePort = 40;
@@ -167,8 +166,8 @@ public final class Constants {
 		public static final double kIndexerMinSpeed = 0.1;
 
 		// Shoot Command Constants
-		public static final double kShootTime = 0.5;
-		public static final double kShootSpeed = 0.8;
+		public static final double kShootTime = 2;
+		public static final double kShootSpeed = -0.8;
 	}
 
 	public static final class PneumaticsConstants {

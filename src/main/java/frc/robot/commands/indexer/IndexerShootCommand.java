@@ -23,7 +23,7 @@ public class IndexerShootCommand extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		m_timer.start();
+		m_timer.reset();
 		m_indexerSubsystem.setSpeed(Constants.IndexerConstants.kShootSpeed);
 	}
 
