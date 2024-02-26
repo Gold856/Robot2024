@@ -19,7 +19,6 @@ import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
-import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.NinjaStarCommand;
 import frc.robot.commands.drive.PolarDriveCommand;
 import frc.robot.commands.drive.SetSteeringCommand;
@@ -36,7 +35,9 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
+import frc.robot.subsystems.PoseEstimationSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
 /**
@@ -60,6 +61,11 @@ public class RobotContainer {
 	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 	private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+	private final LimeLightSubsystem m_limeLightSubsystem = new PoseEstimationSubsystem() {
+		{
+			addPoseSupplier("BotPose@Odometry", () -> m_driveSubsystem.getPose());
+		}
+	};
 
 	/**
 	 * The container for the robot. Contains subsystems, OI devices, and commands.
