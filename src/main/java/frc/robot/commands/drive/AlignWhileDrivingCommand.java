@@ -9,7 +9,6 @@ import static frc.robot.Constants.DriveConstants.*;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedController;
 import frc.robot.Constants.ControllerConstants;
@@ -36,14 +35,16 @@ public class AlignWhileDrivingCommand extends Command {
 
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
-  public void execute() {
-			double fwdSpeed = -kTeleopMaxSpeed
-					* MathUtil.applyDeadband(m_forwardSpeed.get(), ControllerConstants.kDeadzone);
-			double strSpeed = -kTeleopMaxSpeed
-					* MathUtil.applyDeadband(m_strafeSpeed.get(), ControllerConstants.kDeadzone);
-			m_controller.calculate()
-			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
-  }
+	public void execute() {
+		double fwdSpeed = -kTeleopMaxSpeed
+				* MathUtil.applyDeadband(m_forwardSpeed.get(), ControllerConstants.kDeadzone);
+		double strSpeed = -kTeleopMaxSpeed
+				* MathUtil.applyDeadband(m_strafeSpeed.get(), ControllerConstants.kDeadzone);
+		// TODO
+		m_controller.calculate(0);
+		// setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed,
+		// rotSpeed), true));
+	}
 
 	// Called once the command ends or is interrupted.
 	@Override

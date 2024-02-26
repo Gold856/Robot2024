@@ -48,6 +48,16 @@ public class LimeLightSubsystem extends SubsystemBase {
 		}
 
 		/**
+		 * Returns the sum of this {@code Pose} and the specified {@code Pose}.
+		 * 
+		 * @param other a {@code Pose}
+		 * @return the sum of this {@code Pose} and the specified {@code Pose}
+		 */
+		public Pose2d add(Pose other) {
+			return new Pose2d(getTranslation().plus(other.getTranslation()), getRotation().plus(other.getRotation()));
+		}
+
+		/**
 		 * Returns the average of the specified {@code Pose2d}s.
 		 * 
 		 * @param poses
@@ -159,6 +169,21 @@ public class LimeLightSubsystem extends SubsystemBase {
 		if (pose == null)
 			return null;
 		return targetPose.minus(pose);
+	}
+
+	/**
+	 * Returns the distance to the specified target position.
+	 * 
+	 * @param targetPosition the target position
+	 * @return the distance to the specified target position; {@code null} if it has
+	 *         not been
+	 *         possible to reliably estimate the pose of the robot
+	 */
+	public Double distanceTo(Translation2d targetPosition) {
+		var transform = transformationToward(targetPosition);
+		if (transform == null)
+			return null;
+		return transform.getTranslation().getNorm();
 	}
 
 	/**

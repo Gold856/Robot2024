@@ -93,13 +93,13 @@ public final class Constants {
 		public static final double kDriveP = 0.4; // up to 1.0?
 		public static final double kDriveI = 0;
 		public static final double kDriveD = 0;
-		public static final double kDriveMaxVelocity = 2;
-		public static final double kDriveMaxAcceleration = 4; // up to 10?
+		public static final double kDriveMaxVelocity = 3; // up to 5?
+		public static final double kDriveMaxAcceleration = 3; // up to 10?
 
 		public static final double kTurnP = 0.02; // was 0.005 upto 0.2?
 		public static final double kTurnI = 0; // was 0.003
 		public static final double kTurnD = 0; // 0.0
-		public static final double kTurnMaxVelocity = 120;
+		public static final double kTurnMaxVelocity = 120; // up to 240?
 		public static final double kTurnMaxAcceleration = 240; // up to 360?
 
 		/*** Distance between center of front wheel and center of back wheel */
@@ -209,10 +209,13 @@ public final class Constants {
 
 	public static final class PoseConstants {
 		public static final Translation2d kBlueSpeakerPosition = new Translation2d(-7.87, 1.45);
-		public static final Pose kBlueNoteOnePose = new Pose(-6.0, 0.0, 180);
+		public static final Pose kBlueNoteOnePose = new Pose(-6.0 + 0.25, 2.82 - 0.25, 205);
 		public static final Pose kBlueNoteTwoPose = new Pose(-6.0, 1.45, 180);
-		public static final Pose kBlueNoteThreePose = new Pose(-6.0, 2.82, 180);
+		public static final Pose kBlueNoteThreePose = new Pose(-6.0 + 0.25, 0.0 + 0.25, 155);
 		public static final Pose kCenterNoteOnePose = new Pose(-0.5, 3.2, 180);
-
+		public static final Pose kCenterNoteTwoPose = new Pose(-0.5 + 0.25, 1.7 + 0.25, 135);
+		public static final Pose kCenterNoteThreePose = new Pose(-0.5, 0, 180);
+		public static final Pose kCenterNoteFourPose = new Pose(-0.5 + 0.25, -1.7 - 0.25, 225);
+		public static final Pose kCenterNoteFivePose = new Pose(-0.5, -3.2, 180);
 	}
 }
