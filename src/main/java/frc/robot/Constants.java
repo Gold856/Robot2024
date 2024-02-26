@@ -22,7 +22,7 @@ public final class Constants {
 	public static final class ControllerConstants {
 		public static final int kDriverControllerPort = 0;
 		public static final int kOperatorControllerPort = 1;
-		public static final double kDeadzone = 0.1;
+		public static final double kDeadzone = 0.05;
 		public static final double kTriggerDeadzone = .05;
 
 		public static final class Axis {
@@ -92,7 +92,7 @@ public final class Constants {
 		// testing, because crashing into people's shins would be bad
 		public static final double kMaxSpeed = 1;
 		public static final double kMinSpeed = 0.1;
-		public static final double kTeleopMaxSpeed = 0.8;
+		public static final double kTeleopMaxSpeed = 1;
 		public static final double kTeleopMaxTurnSpeed = 0.6;
 		public static final double kModuleResponseTimeSeconds = 0.02;
 		public static final double kGearRatio = 6.12;
