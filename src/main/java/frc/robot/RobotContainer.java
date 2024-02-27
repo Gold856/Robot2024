@@ -157,11 +157,11 @@ public class RobotContainer {
 		// IndexerShootCommand(m_indexerSubsystem));
 
 		// ------------------Intake Controls-----------------------------------
-		// m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getTeleopIntakeCommand(
-		// m_intakeSubsystem, m_pneumaticsSubsystem, m_indexerSubsystem,
-		// m_arduinoSubsystem));
-		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getIntakeWithSensorCommand(
-				m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
+		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getTeleopIntakeCommand(
+				m_intakeSubsystem, m_pneumaticsSubsystem, m_indexerSubsystem,
+				m_arduinoSubsystem));
+		// m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getIntakeWithSensorCommand(
+		// m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
 		m_operatorController.button(Button.kRightTrigger)
 				.onTrue(m_pneumaticsSubsystem.upIntakeCommand().andThen(m_intakeSubsystem.stopIntakeCommand()));
 		// sorry about this one
