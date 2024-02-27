@@ -160,8 +160,6 @@ public class RobotContainer {
 		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getTeleopIntakeCommand(
 				m_intakeSubsystem, m_pneumaticsSubsystem, m_indexerSubsystem,
 				m_arduinoSubsystem));
-		// m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getIntakeWithSensorCommand(
-		// m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
 		m_operatorController.button(Button.kRightTrigger)
 				.onTrue(m_pneumaticsSubsystem.upIntakeCommand().andThen(m_intakeSubsystem.stopIntakeCommand()));
 		// sorry about this one
@@ -174,6 +172,8 @@ public class RobotContainer {
 		// TESTING TESTING TESTING TODO TESTING TODO: REMOVE TESTING
 		m_operatorController.button(Button.kShare).onTrue(CommandComposer.getBallPathTest(
 				m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
+		m_operatorController.button(Button.kPS).onTrue(CommandComposer.getIntakeWithSensorCommand(
+				m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
 
 		// ------------------Amp Bar Controls, removal later------------------- TODO
 		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
