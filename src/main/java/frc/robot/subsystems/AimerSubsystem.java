@@ -69,13 +69,14 @@ public class AimerSubsystem extends SubsystemBase {
 
 	// TODO: document 0-1.0
 	public void setAimerHeight(double actuatorHeightSetpoint) {
-		m_controller.setSetpoint(actuatorHeightSetpoint);
+		m_aimerHeightSetpoint = actuatorHeightSetpoint;
+		m_controller.setSetpoint(m_aimerHeightSetpoint);
 	}
 
-	public void adjustAimerSetpoint(double adjustAmount) {
-		m_aimerHeightSetpoint += adjustAmount;
-		setAimerHeight(m_aimerHeightSetpoint);
-	}
+	// public void adjustAimerSetpoint(double adjustAmount) {
+	// m_aimerHeightSetpoint += adjustAmount;
+	// setAimerHeight(m_aimerHeightSetpoint);
+	// }
 
 	public void setSpeed(double speed) {
 		speed = Math.signum(speed) * MathUtil.clamp(Math.abs(speed), 0, AimerConstants.kMaxAimerPower);

@@ -47,13 +47,10 @@ public class AimHeightCommand extends Command {
 			case SET_PRESET_DEFAULT:
 				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
 				break;
-			case UP_ADJUST:
-				m_aimerSubsystem.adjustAimerSetpoint(kAdjustAmount);
-				break;
-			case DOWN_ADJUST:
-				m_aimerSubsystem.adjustAimerSetpoint(-kAdjustAmount);
-				break;
 			case HOLD:
+				m_aimerSubsystem.setAimerHeight(m_aimerSubsystem.getAimerHeight());
+				break;
+			case STOP:
 				m_aimerSubsystem.setAimerHeight(m_aimerSubsystem.getAimerHeight());
 				break;
 			default:
