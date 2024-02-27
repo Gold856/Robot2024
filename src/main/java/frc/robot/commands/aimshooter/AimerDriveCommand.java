@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.AimerConstants;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.subsystems.AimerSubsystem;
 
@@ -36,7 +35,7 @@ public class AimerDriveCommand extends Command {
 		if (speed != 0) {
 			m_aimerSubsystem.setManual(true); // Joystick control
 			// Prevent lead screw from going out of bounds
-			if ((m_aimerSubsystem.getAimerHeight() > AimerConstants.kAimerMaxEncoderValue) && (speed > 0)) {
+			if ((m_aimerSubsystem.getAimerHeight() > 1) && (speed > 0)) {
 				speed = 0;
 			} else if ((m_aimerSubsystem.getAimerHeight() <= 0.05) && (speed < 0)) {
 				speed = 0;

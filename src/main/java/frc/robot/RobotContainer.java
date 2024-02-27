@@ -161,6 +161,7 @@ public class RobotContainer {
 				() -> m_operatorController.getRawAxis(Axis.kLeftY),
 				() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
+		// -------------------Aimer Commands-----------------------------------
 		m_operatorController.button(Button.kTriangle)
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP,
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
@@ -172,8 +173,8 @@ public class RobotContainer {
 		m_operatorController.button(Button.kTriangle).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
-		m_aimerSubsystem.setDefaultCommand(
-				new AimerDriveCommand(m_aimerSubsystem, () -> m_operatorController.getRawAxis(Axis.kLeftY)));
+		m_aimerSubsystem.setDefaultCommand( // TODO: remove, testing
+				new AimerDriveCommand(m_aimerSubsystem, () -> m_driverController.getRawAxis(Axis.kRightY)));
 
 	}
 

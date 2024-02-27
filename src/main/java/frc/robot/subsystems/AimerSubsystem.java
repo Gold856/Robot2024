@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkLimitSwitch;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ClampedController;
 import frc.robot.Constants.AimerConstants;
@@ -41,6 +42,9 @@ public class AimerSubsystem extends SubsystemBase {
 
 	public void periodic() {
 		// If using a setpoint
+		SmartDashboard.putNumber("Aimcoder Value", m_aimCancoder.getAbsolutePosition().getValueAsDouble());
+		SmartDashboard.putNumber("Aimer Height", getAimerHeight());
+		SmartDashboard.putNumber("Aimer 550 Amp Draw", m_neoAimer.getAppliedOutput());
 		if (!m_isManual) {
 			if (m_controller.atSetpoint()) {
 				m_neoAimer.set(0);
@@ -54,12 +58,11 @@ public class AimerSubsystem extends SubsystemBase {
 		setSpeed(0);
 	}
 
-	// public double calcAimerHeightFromDistance(double distanceMeters) {
-	// return (AimerConstants.aimerLength * AimerConstants.speakerHeight) /
-	// distanceMeters;
-	// }
-
-	// TODO: Returns 0 - 1.0
+	/**
+	 * Gets the "height" of the aimer.
+	 * 
+	 * @return the "height" from 0-1 (cancoder value / maximum)
+	 */
 	public double getAimerHeight() {
 		return m_aimCancoder.getAbsolutePosition().getValueAsDouble() / AimerConstants.kAimerMaxEncoderValue;
 	}
