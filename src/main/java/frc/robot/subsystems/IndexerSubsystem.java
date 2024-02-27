@@ -6,14 +6,17 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkLimitSwitch;
+import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
 
 public class IndexerSubsystem extends SubsystemBase {
-	private CANSparkMax m_indexerMotor;
-	private SparkLimitSwitch m_forwardLimitSwitch;
+	private CANSparkMax m_indexerMotor = new CANSparkMax(IndexerConstants.kIndexerPort, MotorType.kBrushless);;
+	private final RelativeEncoder m_encoder = m_indexerMotor.getEncoder();
+	private DigitalInput m_proximitySensor;
 
 	/**
 	 * Creates a new IndexerSubsystem.
@@ -21,13 +24,12 @@ public class IndexerSubsystem extends SubsystemBase {
 	 * 
 	 */
 	public IndexerSubsystem() {
-		m_indexerMotor = new CANSparkMax(IndexerConstants.kIndexerPort, MotorType.kBrushless);
 		m_indexerMotor.setIdleMode(IdleMode.kBrake);
+		m_indexerMotor.setInverted(IndexerConstants.kInvert);
 		m_indexerMotor.enableVoltageCompensation(12);
 		m_indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerSmartCurrentLimit);
 		m_indexerMotor.setSecondaryCurrentLimit(IndexerConstants.kIndexerPeakCurrentLimit);
-		m_forwardLimitSwitch = m_indexerMotor.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
-		m_forwardLimitSwitch.enableLimitSwitch(false);
+		m_proximitySensor = new DigitalInput(0);
 	}
 
 	public void setSpeed(double speed) {
@@ -39,6 +41,11 @@ public class IndexerSubsystem extends SubsystemBase {
 	}
 
 	public boolean getLimitSwitch() {
-		return m_forwardLimitSwitch.isPressed();
+		return !m_proximitySensor.get();
+	}
+
+	public void periodic() {
+		SmartDashboard.putNumber("Indexer Current", m_indexerMotor.getOutputCurrent());
+		SmartDashboard.putNumber("Indexer Velocity", m_encoder.getVelocity());
 	}
 }

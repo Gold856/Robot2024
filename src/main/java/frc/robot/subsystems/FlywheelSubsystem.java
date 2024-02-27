@@ -41,8 +41,7 @@ public class FlywheelSubsystem extends SubsystemBase {
 				kPeakCurrentDurationMillis);
 		m_neoFlywheelFollower.follow(m_neoFlywheelMaster, kFollowerOppose);
 
-		m_neoEncoderMaster.setVelocityConversionFactor(1 / kGearRatio);
-
+		m_neoEncoderMaster.setVelocityConversionFactor(kGearRatio);
 		m_neoController.setP(kP);
 		m_neoController.setI(kI);
 		m_neoController.setD(kD);
@@ -52,9 +51,9 @@ public class FlywheelSubsystem extends SubsystemBase {
 	}
 
 	public void periodic() {
-		SmartDashboard.putBoolean("Flywheel at Setpoint", atSetpoint());
-		// SmartDashboard.putNumber("Flywheel Velocity", getVelocity());
-		// SmartDashboard.putNumber("Flywheel Setpoint", m_setVelocity);
+		SmartDashboard.putNumber("Flywheel Velocity", getVelocity());
+		SmartDashboard.putNumber("Flywheel Master Current", m_neoFlywheelMaster.getOutputCurrent());
+		SmartDashboard.putNumber("Flywheel Follower Current", m_neoFlywheelFollower.getOutputCurrent());
 		// essentially the end method of the flywheel velocity setpoint mode
 		if (m_setVelocity == 0 && Math.abs(m_neoEncoderMaster.getVelocity()) > 0.05) {
 			m_neoFlywheelMaster.stopMotor();

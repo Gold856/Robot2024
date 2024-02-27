@@ -24,7 +24,7 @@ public class IndexerShootCommand extends Command {
 	@Override
 	public void initialize() {
 		m_timer.reset();
-		m_indexerSubsystem.setSpeed(Constants.IndexerConstants.kShootSpeed);
+		m_indexerSubsystem.setSpeed(Constants.IndexerConstants.kKickSpeed);
 	}
 
 	// Called once the command ends or is interrupted.
@@ -36,6 +36,6 @@ public class IndexerShootCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return m_timer.hasElapsed(Constants.IndexerConstants.kShootTime);
+		return m_timer.hasElapsed(Constants.IndexerConstants.kKickTime);
 	}
 }

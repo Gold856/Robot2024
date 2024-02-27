@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -20,11 +21,11 @@ public class IntakeSubsystem extends SubsystemBase {
 	public IntakeSubsystem() {
 		m_motor.restoreFactoryDefaults();
 		m_motor.setIdleMode(IdleMode.kCoast);
+		m_motor.setInverted(kInvert);
 		m_motor.enableVoltageCompensation(12);
 		m_motor.setSmartCurrentLimit(kSmartCurrentLimit);
 		m_motor.setSecondaryCurrentLimit(kPeakCurrentLimit);
-
-		m_encoder.setVelocityConversionFactor(1 / kGearRatio);
+		m_encoder.setVelocityConversionFactor(kIntakeGearRatio);
 	}
 
 	/**
@@ -42,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command reverseIntakeCommand() {
-		return runOnce(() -> setSpeed(.1));
+		return runOnce(() -> setSpeed(kReverseSpeed));
 	}
 
 	/**
@@ -51,7 +52,7 @@ public class IntakeSubsystem extends SubsystemBase {
 	 * @return The command.
 	 */
 	public Command forwardIntakeCommand() {
-		return runOnce(() -> setSpeed(-.8));
+		return runOnce(() -> setSpeed(kIntakeSpeed));
 	}
 
 	/**
@@ -61,5 +62,10 @@ public class IntakeSubsystem extends SubsystemBase {
 	 */
 	public Command stopIntakeCommand() {
 		return runOnce(() -> setSpeed(0));
+	}
+
+	public void periodic() {
+		SmartDashboard.putNumber("Intake Current", m_motor.getOutputCurrent());
+		SmartDashboard.putNumber("Intake Velocity", m_encoder.getVelocity());
 	}
 }
