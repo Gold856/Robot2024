@@ -4,6 +4,8 @@
 
 package frc.robot.commands.indexer;
 
+import static frc.robot.Constants.IndexerConstants.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
 
@@ -12,11 +14,11 @@ public class IndexerCommand extends Command {
 	private final IndexerSubsystem m_indexerSubsystem;
 
 	public static IndexerCommand getFowardCommand(IndexerSubsystem indexerSubsystem) {
-		return new IndexerCommand(indexerSubsystem, -.8);
+		return new IndexerCommand(indexerSubsystem, kIntakeSpeed);
 	}
 
 	public static IndexerCommand getReverseCommand(IndexerSubsystem indexerSubsystem) {
-		return new IndexerCommand(indexerSubsystem, .8);
+		return new IndexerCommand(indexerSubsystem, kReverseSpeed);
 	}
 
 	/** Creates a new IndexerFowardCommand. */

@@ -128,7 +128,6 @@ public final class Constants {
 		public static final double kIz = 0.0;
 		public static final double kFF = .000_1050;
 		public static final double kMaxOutput = 1;
-
 		public static final double kMinOutput = 0;
 		public static final double kGearRatio = 2;
 		public static final double kAllowedError = 50;
@@ -152,22 +151,29 @@ public final class Constants {
 
 	public static final class IntakeConstants {
 		public static final int kIntakePort = 46;
+		public static final boolean kInvert = true;
 		public static final int kSmartCurrentLimit = 60;
 		public static final int kPeakCurrentLimit = 60;
 		public static final boolean kFollowerOppose = false;
-		public static final int kGearRatio = 60;
+		public static final double kIntakeGearRatio = 1.0 / 10.0;
+		public static final double kIntakeSpeed = 0.75;
+		public static final double kReverseSpeed = -0.1;
 	}
 
 	public static final class IndexerConstants {
 		public static final int kIndexerPort = 47;
+		public static final boolean kInvert = true;
 		public static final int kIndexerPeakCurrentLimit = 55;
 		public static final int kIndexerSmartCurrentLimit = 55;
 		public static final double kIndexerMaxSpeed = 1;
 		public static final double kIndexerMinSpeed = 0.1;
 
 		// Shoot Command Constants
-		public static final double kShootTime = 2;
-		public static final double kShootSpeed = -0.8;
+		public static final double kKickTime = 2;
+		public static final double kKickSpeed = 0.8;
+		public static final double kIndexerGearRatio = 1.0 / 4.0;
+		public static final double kIntakeSpeed = 0.2;
+		public static final double kReverseSpeed = -0.1;
 	}
 
 	public static final class PneumaticsConstants {

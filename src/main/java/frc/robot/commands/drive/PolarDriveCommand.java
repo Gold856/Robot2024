@@ -47,6 +47,7 @@ public class PolarDriveCommand extends Command {
 	public void initialize() {
 		m_target = m_driveSubsystem.getModulePositions()[0].distanceMeters + m_distance;
 		m_controller.setSetpoint(m_target);
+		m_controller.setTolerance(m_tolerance);
 	}
 
 	@Override
