@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 
 public class SimpleVisionSubsystem extends SubsystemBase {
 	private final DoubleSubscriber m_subscription;
@@ -11,6 +12,7 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 
 	public SimpleVisionSubsystem() {
 		// Setup subscription
+		LimelightHelpers.setPipelineIndex("limelight", 1);
 		m_subscription = NetworkTableInstance.getDefault().getTable("limelight")
 				.getDoubleTopic("tx")
 				.subscribe(0);
