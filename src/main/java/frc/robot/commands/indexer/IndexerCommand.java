@@ -4,7 +4,7 @@
 
 package frc.robot.commands.indexer;
 
-import static frc.robot.Constants.IntakeConstants.*;
+import static frc.robot.Constants.IndexerConstants.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IndexerSubsystem;
