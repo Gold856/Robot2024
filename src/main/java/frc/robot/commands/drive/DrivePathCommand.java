@@ -123,23 +123,15 @@ public class DrivePathCommand extends Command {
 		Pose2d pose = m_driveSubsystem.getPose();
 		m_targetPoses = List.of(pose);
 		try {
-			m_targetPoses = m_pathSupplier.get();
+			var targetPoses = m_pathSupplier.get();
+			if (targetPoses != null && targetPoses.size() > 0)
+				m_targetPoses = targetPoses;
 		} catch (Exception e) {
 		}
 		m_controllerX.reset(pose.getX());
 		m_controllerY.reset(pose.getY());
 		m_controllerYaw.reset(pose.getRotation().getDegrees());
-		m_controllerX.setGoal(m_targetPoses.get(m_current).getX());
-		m_controllerY.setGoal(m_targetPoses.get(m_current).getY());
-		m_controllerYaw.setGoal(m_targetPoses.get(m_current).getRotation().getDegrees());
-		m_controllerX
-				.setTolerance(m_current < m_targetPoses.size() - 1 ? m_intermediateTolerance * m_distanceTolerance
-						: m_distanceTolerance);
-		m_controllerY
-				.setTolerance(m_current < m_targetPoses.size() - 1 ? m_intermediateTolerance * m_distanceTolerance
-						: m_distanceTolerance);
-		m_controllerYaw.setTolerance(
-				m_current < m_targetPoses.size() - 1 ? m_intermediateTolerance * m_angleTolerance : m_angleTolerance);
+		setControllers();
 	}
 
 	/**
@@ -179,21 +171,29 @@ public class DrivePathCommand extends Command {
 		boolean atGoal = m_controllerX.atGoal() && m_controllerY.atGoal() && m_controllerYaw.atGoal();
 		if (atGoal && m_current < m_targetPoses.size() - 1) {
 			m_current++;
-			m_controllerX.setGoal(m_targetPoses.get(m_current).getX());
-			m_controllerY.setGoal(m_targetPoses.get(m_current).getY());
-			m_controllerYaw.setGoal(m_targetPoses.get(m_current).getRotation().getDegrees());
-			m_controllerX
-					.setTolerance(m_current < m_targetPoses.size() - 1 ? m_intermediateTolerance * m_distanceTolerance
-							: m_distanceTolerance);
-			m_controllerY
-					.setTolerance(m_current < m_targetPoses.size() - 1 ? m_intermediateTolerance * m_distanceTolerance
-							: m_distanceTolerance);
-			m_controllerYaw
-					.setTolerance(m_current < m_targetPoses.size() - 1 ? m_intermediateTolerance * m_angleTolerance
-							: m_angleTolerance);
+			setControllers();
 			return false;
 		}
 		return atGoal;
+	}
+
+	/**
+	 * Sets the {@code PIDController}s to move to the next target pose.
+	 */
+	private void setControllers() {
+		var targetPose = m_targetPoses.get(m_current);
+		m_controllerX.setGoal(targetPose.getX());
+		m_controllerY.setGoal(targetPose.getY());
+		m_controllerYaw.setGoal(targetPose.getRotation().getDegrees());
+		if (m_current < m_targetPoses.size() - 1) {
+			m_controllerX.setTolerance(m_intermediateTolerance * m_distanceTolerance);
+			m_controllerY.setTolerance(m_intermediateTolerance * m_distanceTolerance);
+			m_controllerYaw.setTolerance(m_intermediateTolerance * m_angleTolerance);
+		} else {
+			m_controllerX.setTolerance(m_distanceTolerance);
+			m_controllerY.setTolerance(m_distanceTolerance);
+			m_controllerYaw.setTolerance(m_angleTolerance);
+		}
 	}
 
 	/**

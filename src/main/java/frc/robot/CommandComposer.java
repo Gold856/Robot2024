@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.SimpleVisionAlignCommand;
@@ -521,22 +520,22 @@ public class CommandComposer {
 
 	public static Command getAlignToBlueAmpCommand(DriveSubsystem driveSubsystem,
 			LimeLightSubsystem limeLightSubsystem) {
-		return DriveCommand.alignTo(new Pose(-6.44, 3.5, 90), 0.2, 10, driveSubsystem, limeLightSubsystem)
-				.andThen(DriveCommand.alignTo(new Pose(-6.44, 3.75, 90), 0.1, 5, driveSubsystem, limeLightSubsystem));
+		return DriveCommand.alignTo(kBlueAmpPose.add(new Pose(0, -0.3, 0)), 0.2, 10, driveSubsystem, limeLightSubsystem)
+				.andThen(DriveCommand.alignTo(kBlueAmpPose, 0.1, 5, driveSubsystem, limeLightSubsystem));
 	}
 
 	public static Command getAlignToRedAmpCommand(DriveSubsystem driveSubsystem,
 			LimeLightSubsystem limeLightSubsystem) {
-		return DriveCommand.alignTo(new Pose(6.44, 3.5, 90), 0.2, 10, driveSubsystem, limeLightSubsystem)
-				.andThen(DriveCommand.alignTo(new Pose(6.44, 3.75, 90), 0.1, 5, driveSubsystem, limeLightSubsystem));
+		return DriveCommand.alignTo(kRedAmpPose.add(new Pose(0, -0.3, 0)), 0.2, 10, driveSubsystem, limeLightSubsystem)
+				.andThen(DriveCommand.alignTo(kRedAmpPose, 0.1, 5, driveSubsystem, limeLightSubsystem));
 	}
 
 	public static Command getTurnToBlueSpeaker(DriveSubsystem driveSubsystem, LimeLightSubsystem limeLightSubsystem) {
-		return DriveCommand.turnTo(new Translation2d(-7.87, 1.45), 0.1, 5, driveSubsystem, limeLightSubsystem);
+		return DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem, limeLightSubsystem);
 	}
 
 	public static Command getTurnToRedSpeaker(DriveSubsystem driveSubsystem, LimeLightSubsystem limeLightSubsystem) {
-		return DriveCommand.turnTo(new Translation2d(7.87, 1.45), 0.1, 5, driveSubsystem, limeLightSubsystem);
+		return DriveCommand.turnTo(kRedSpeakerPosition, 0.1, 5, driveSubsystem, limeLightSubsystem);
 	}
 
 	public static Command getMoveToBlueSpeaker(DriveSubsystem driveSubsystem, LimeLightSubsystem limeLightSubsystem) {
@@ -550,7 +549,7 @@ public class CommandComposer {
 			return driveSubsystem.getPose().plus(target.minus(p));
 		};
 		return new DriveCommand(driveSubsystem, s, 0.1, 5)
-				.andThen(DriveCommand.turnTo(new Translation2d(-7.87, 1.45), 0.1, 5, driveSubsystem,
+				.andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
 						limeLightSubsystem));
 	}
 
@@ -565,7 +564,7 @@ public class CommandComposer {
 			return driveSubsystem.getPose().plus(target.minus(p));
 		};
 		return new DriveCommand(driveSubsystem, s, 0.1, 5)
-				.andThen(DriveCommand.turnTo(new Translation2d(7.87, 1.45), 0.1, 5, driveSubsystem,
+				.andThen(DriveCommand.turnTo(kRedSpeakerPosition, 0.1, 5, driveSubsystem,
 						limeLightSubsystem));
 	}
 
@@ -577,24 +576,18 @@ public class CommandComposer {
 		// 2nd note
 		DriveCommand.alignTo(kBlueNoteThreePose, 0.1, 5, driveSubsystem,
 				limeLightSubsystem)
-				// .andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
-				// limeLightSubsystem))
 				.andThen( // 3rd note
 						DriveCommand.alignTo(kBlueNoteTwoPose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
-				// .andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
-				// limeLightSubsystem))
 				.andThen( // 4th note
 						DriveCommand.alignTo(kBlueNoteOnePose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
-				// .andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
-				// limeLightSubsystem))
 				.andThen(
 						DriveCommand.alignTo(
-								kCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), 0.2, 10, driveSubsystem,
+								kBlueCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), 0.2, 10, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(// 5th note
-						DriveCommand.alignTo(kCenterNoteOnePose, 0.1, 5, driveSubsystem,
+						DriveCommand.alignTo(kBlueCenterNoteOnePose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DriveCommand.alignTo(kBlueNoteOnePose, 0.1, 5, driveSubsystem,
@@ -620,7 +613,8 @@ public class CommandComposer {
 								limeLightSubsystem))
 				.andThen( // 5th note
 						DrivePathCommand.passThrough(
-								List.of(kCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), kCenterNoteOnePose), 0.2, 10,
+								List.of(kBlueCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), kBlueCenterNoteOnePose), 0.2,
+								10,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
@@ -638,21 +632,21 @@ public class CommandComposer {
 				// .andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
 				// limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), 0.1, 5,
+						DriveCommand.alignTo(kBlueCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), 0.1, 5,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteOnePose, 0.1, 5, driveSubsystem,
+						DriveCommand.alignTo(kBlueCenterNoteOnePose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DriveCommand.alignTo(kBlueNoteOnePose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteTwoPose.add(new Pose(-0.5, 0.5, 0)), 0.2, 10,
+						DriveCommand.alignTo(kBlueCenterNoteTwoPose.add(new Pose(-0.5, 0.5, 0)), 0.2, 10,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteTwoPose, 0.1, 5, driveSubsystem,
+						DriveCommand.alignTo(kBlueCenterNoteTwoPose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DriveCommand.alignTo(kBlueNoteOnePose, 0.1, 5, driveSubsystem,
@@ -670,7 +664,8 @@ public class CommandComposer {
 				// limeLightSubsystem))
 				.andThen(
 						DrivePathCommand.passThrough(
-								List.of(kCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), kCenterNoteOnePose), 0.1, 5,
+								List.of(kBlueCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), kBlueCenterNoteOnePose), 0.1,
+								5,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
@@ -678,7 +673,8 @@ public class CommandComposer {
 								limeLightSubsystem))
 				.andThen(
 						DrivePathCommand.passThrough(
-								List.of(kCenterNoteTwoPose.add(new Pose(-0.5, 0.5, 0)), kCenterNoteTwoPose), 0.2, 10,
+								List.of(kBlueCenterNoteTwoPose.add(new Pose(-0.5, 0.5, 0)), kBlueCenterNoteTwoPose),
+								0.2, 10,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
@@ -696,28 +692,28 @@ public class CommandComposer {
 				// .andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
 				// limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), 0.1, 5,
+						DriveCommand.alignTo(kBlueCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), 0.1, 5,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteOnePose, 0.1, 5, driveSubsystem,
+						DriveCommand.alignTo(kBlueCenterNoteOnePose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteOnePose.add(new Pose(-2, 0, 0)), 0.1, 5,
+						DriveCommand.alignTo(kBlueCenterNoteOnePose.add(new Pose(-2, 0, 0)), 0.1, 5,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DriveCommand.alignTo(kBlueNoteTwoPose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteThreePose.add(new Pose(-0.5, 0, 0)), 0.2, 10,
+						DriveCommand.alignTo(kBlueCenterNoteThreePose.add(new Pose(-0.5, 0, 0)), 0.2, 10,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteThreePose, 0.1, 5, driveSubsystem,
+						DriveCommand.alignTo(kBlueCenterNoteThreePose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteThreePose.add(new Pose(-2.75, 0, 0)), 0.2, 10,
+						DriveCommand.alignTo(kBlueCenterNoteThreePose.add(new Pose(-2.75, 0, 0)), 0.2, 10,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
@@ -736,22 +732,24 @@ public class CommandComposer {
 				// limeLightSubsystem))
 				.andThen(
 						DrivePathCommand.passThrough(
-								List.of(kCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), kCenterNoteOnePose), 0.1, 5,
+								List.of(kBlueCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), kBlueCenterNoteOnePose), 0.1,
+								5,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DrivePathCommand.passThrough(
-								List.of(kCenterNoteOnePose.add(new Pose(-2, 0, 0)), kBlueNoteTwoPose), 0.1, 5,
+								List.of(kBlueCenterNoteOnePose.add(new Pose(-2, 0, 0)), kBlueNoteTwoPose), 0.1, 5,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DrivePathCommand.passThrough(
-								List.of(kCenterNoteThreePose.add(new Pose(-0.5, 0, 0)), kCenterNoteThreePose), 0.2, 10,
+								List.of(kBlueCenterNoteThreePose.add(new Pose(-0.5, 0, 0)), kBlueCenterNoteThreePose),
+								0.2, 10,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DrivePathCommand.passThrough(
-								List.of(kCenterNoteThreePose.add(new Pose(-2.75, 0, 0)), kBlueNoteTwoPose), 0.2, 10,
+								List.of(kBlueCenterNoteThreePose.add(new Pose(-2.75, 0, 0)), kBlueNoteTwoPose), 0.2, 10,
 								driveSubsystem,
 								limeLightSubsystem))
 		// .andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
@@ -774,11 +772,11 @@ public class CommandComposer {
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteFourPose.add(new Pose(-.3, -.3, 0)), 0.1, 5,
+						DriveCommand.alignTo(kBlueCenterNoteFourPose.add(new Pose(-.3, -.3, 0)), 0.1, 5,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteFourPose, 0.1, 5, driveSubsystem,
+						DriveCommand.alignTo(kBlueCenterNoteFourPose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DriveCommand.alignTo(kBlueNoteThreePose.add(new Pose(2.3, -2.5, 0)), 0.1, 5,
@@ -789,11 +787,11 @@ public class CommandComposer {
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteFivePose.add(new Pose(-.5, 0, 0)), 0.2, 10,
+						DriveCommand.alignTo(kBlueCenterNoteFivePose.add(new Pose(-.5, 0, 0)), 0.2, 10,
 								driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
-						DriveCommand.alignTo(kCenterNoteFivePose, 0.1, 5, driveSubsystem,
+						DriveCommand.alignTo(kBlueCenterNoteFivePose, 0.1, 5, driveSubsystem,
 								limeLightSubsystem))
 				.andThen(
 						DriveCommand.alignTo(kBlueNoteThreePose.add(new Pose(2.3, -2.5, 0)), 0.2, 10,
@@ -818,7 +816,7 @@ public class CommandComposer {
 						DrivePathCommand.passThrough(
 								List.of(kBlueNoteThreePose.add(new Pose(0, -1, 0)),
 										kBlueNoteThreePose.add(new Pose(2.3, -2.5, 0)),
-										kCenterNoteFourPose.add(new Pose(-.3, -.3, 0)), kCenterNoteFourPose),
+										kBlueCenterNoteFourPose.add(new Pose(-.3, -.3, 0)), kBlueCenterNoteFourPose),
 								0.1, 5,
 								driveSubsystem,
 								limeLightSubsystem))
@@ -831,7 +829,7 @@ public class CommandComposer {
 								limeLightSubsystem))
 				.andThen(
 						DrivePathCommand.passThrough(
-								List.of(kCenterNoteFivePose.add(new Pose(-.5, 0, 0)), kCenterNoteFivePose),
+								List.of(kBlueCenterNoteFivePose.add(new Pose(-.5, 0, 0)), kBlueCenterNoteFivePose),
 								0.2, 10,
 								driveSubsystem,
 								limeLightSubsystem))
