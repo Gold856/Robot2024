@@ -2,8 +2,6 @@ package frc.robot;
 
 import static frc.robot.Constants.AimerConstants.*;
 
-// imports
-
 public interface Targeter {
 
 	// aka small delta x and big delta y
