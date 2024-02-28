@@ -17,7 +17,7 @@ import frc.robot.Constants.AimerConstants;
 public class AimerSubsystem extends SubsystemBase {
 	private final CANSparkMax m_neoAimer = new CANSparkMax(AimerConstants.kAimerLeadScrewPort,
 			MotorType.kBrushless);
-	private final ClampedController m_controller = new ClampedController(.75, 0.05, kMaxAimerPower);
+	private final ClampedController m_controller = new ClampedController(kP, kMinAimerPower, kMaxAimerPower);
 	private final CANcoder m_aimCancoder = new CANcoder(AimerConstants.kAimerEncoderPort);
 	private double m_aimerHeightSetpoint;
 	private boolean m_isManual;
@@ -38,6 +38,7 @@ public class AimerSubsystem extends SubsystemBase {
 		forwardSwitch.enableLimitSwitch(true);
 		SparkLimitSwitch reverseSwitch = m_neoAimer.getReverseLimitSwitch(SparkLimitSwitch.Type.kNormallyOpen);
 		reverseSwitch.enableLimitSwitch(true);
+		m_controller.setTolerance(AimerConstants.kAimerTolerance);
 	}
 
 	public void periodic() {

@@ -20,6 +20,7 @@ public class AimHeightCommand extends Command {
 		CALC_AND_SET, // Calculate Angle at current position (changes)
 		SET_PRESET_DEFAULT, // For checkout, set shooter down (static)
 		PRESET_AMP,
+		SET_LOW,
 		PRESET_SUBWOOFER,
 		HOLD,
 		DOWN_ADJUST, // Fine tune down
@@ -46,6 +47,9 @@ public class AimHeightCommand extends Command {
 				break;
 			case SET_PRESET_DEFAULT:
 				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
+				break;
+			case SET_LOW:
+				m_aimerSubsystem.setAimerHeight(0.2);
 				break;
 			case HOLD:
 				m_aimerSubsystem.setAimerHeight(m_aimerSubsystem.getAimerHeight());
