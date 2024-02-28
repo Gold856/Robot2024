@@ -1,11 +1,11 @@
 package frc.robot;
 
+import static frc.robot.Constants.AimerConstants.*;
+
 // imports
 
 public interface Targeter {
 
-	public double m_speakerHeight = Constants.AimerConstants.speakerHeight;
-	public double m_aimerLength = Constants.AimerConstants.aimerLength;
 	// aka small delta x and big delta y
 
 	public double getAngle(double distanceMeters);
@@ -103,7 +103,7 @@ public interface Targeter {
 	public class PhysicsAndMathTargeter implements Targeter { // using physics and trig
 
 		public double getAngle(double distanceMeters) {
-			double angle = (Math.atan2(m_speakerHeight, distanceMeters));
+			double angle = (Math.atan2(kSpeakerHeight, distanceMeters));
 			return angle;
 		}
 
