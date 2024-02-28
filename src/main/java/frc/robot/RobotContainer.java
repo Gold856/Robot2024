@@ -15,6 +15,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
+import frc.robot.Targeter.PhysicsAndMathTargeter;
+import frc.robot.commands.aimshooter.AimHeightCommand;
+import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
+import frc.robot.commands.aimshooter.AimerDriveCommand;
 import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
@@ -28,6 +32,7 @@ import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
 import frc.robot.commands.indexer.IndexerCommand;
 import frc.robot.commands.indexer.IndexerShootCommand;
 import frc.robot.commands.indexer.IndexerStopCommand;
+import frc.robot.subsystems.AimerSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -54,6 +59,8 @@ public class RobotContainer {
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();
+	private final AimerSubsystem m_aimerSubsystem = new AimerSubsystem();
+	private final Targeter m_targeter = new PhysicsAndMathTargeter();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
 	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
@@ -182,6 +189,7 @@ public class RobotContainer {
 				() -> m_operatorController.getRawAxis(Axis.kLeftY),
 				() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
+		// -------------------Aimer Commands-----------------------------------
 		m_operatorController.button(Button.kTriangle)
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP,
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
@@ -190,6 +198,12 @@ public class RobotContainer {
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.ZERO,
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
+		m_operatorController.button(Button.kTriangle).onTrue(
+				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)
+						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
+		m_aimerSubsystem.setDefaultCommand( // TODO: remove, testing
+				new AimerDriveCommand(m_aimerSubsystem, () -> m_driverController.getRawAxis(Axis.kRightY)));
+
 	}
 
 	public Command getAutonomousCommand() {

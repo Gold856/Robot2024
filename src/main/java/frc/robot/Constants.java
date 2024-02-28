@@ -192,4 +192,29 @@ public final class Constants {
 		/** Alias for the solenoid value that makes the intake go up. */
 		public static final Value kIntakeUp = Value.kForward;
 	}
+
+	public static final class AimerConstants {
+		public static final double kAimerMaxEncoderValue = 0.28;
+		public static final int kAimerLeadScrewPort = 48;
+		public static final int kAimerEncoderPort = 51;
+		public static final boolean kMasterInvert = false;
+		public static final int kSmartCurrentLimit = 55; // 90
+		public static final double kPeakCurrentLimit = 65; // 100
+		public static final int kPeakCurrentDurationMillis = 100;
+		public static final double kP = 0.06000; // 0.000_1; // TODO tune PID values
+		public static final double kI = 0.000;
+		public static final double kD = 0;
+		public static final double kIz = 5; // 0.0;
+		public static final double kFF = 0.0; // .000_1050;
+		public static final double kMaxOutput = 1;
+		public static final double kMinOutput = 0;
+		public static final double kGearRatio = 3;
+		public static final double kSpeakerHeight = 2.032145; // TODO change to this height - robot height
+		public static final double kAimerLength = .25; // TODO change to deltaX between edge of robot and aimer axis
+														// on robot
+		public static final double kDefaultActuatorHeight = 0.4; // TODO fix actuator height
+		public static final double kAimerTolerance = 0.05; // TODO experiment
+		public static final double kAdjustAmount = 0.05; // Adjust with testing
+		public static final double kMaxAimerPower = 0.4;
+	}
 }
