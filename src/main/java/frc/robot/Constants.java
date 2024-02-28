@@ -137,7 +137,7 @@ public final class Constants {
 		public static final int kLeftPort = 44;
 		public static final int kRightPort = 45;
 		public static final boolean kLeftInvert = true;
-		public static final boolean kRightInvert = false;
+		public static final boolean kRightInvert = true;
 		public static final int kSmartCurrentLimit = 60;
 		public static final int kSecondaryCurrentLimit = 70;
 		public static final double kMinOutput = -1;
@@ -201,20 +201,15 @@ public final class Constants {
 		public static final int kSmartCurrentLimit = 55; // 90
 		public static final double kPeakCurrentLimit = 65; // 100
 		public static final int kPeakCurrentDurationMillis = 100;
-		public static final double kP = 0.06000; // 0.000_1; // TODO tune PID values
-		public static final double kI = 0.000;
-		public static final double kD = 0;
-		public static final double kIz = 5; // 0.0;
-		public static final double kFF = 0.0; // .000_1050;
-		public static final double kMaxOutput = 1;
-		public static final double kMinOutput = 0;
 		public static final double kGearRatio = 3;
 		public static final double kSpeakerHeight = 2.032145; // TODO change to this height - robot height
 		public static final double kAimerLength = .25; // TODO change to deltaX between edge of robot and aimer axis
 														// on robot
-		public static final double kDefaultActuatorHeight = 0.4; // TODO fix actuator height
-		public static final double kAimerTolerance = 0.05; // TODO experiment
+		public static final double kDefaultActuatorHeight = 0.8;
+		public static final double kAimerTolerance = 0.01;
 		public static final double kAdjustAmount = 0.05; // Adjust with testing
-		public static final double kMaxAimerPower = 0.4;
+		public static final double kP = 0.75;
+		public static final double kMaxAimerPower = 0.8;
+		public static final double kMinAimerPower = 0.3;
 	}
 }

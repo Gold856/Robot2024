@@ -188,18 +188,21 @@ public class RobotContainer {
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
 				() -> m_operatorController.getRawAxis(Axis.kLeftY),
 				() -> m_operatorController.getRawAxis(Axis.kRightY)));
-
-		// -------------------Aimer Commands-----------------------------------
-		m_operatorController.button(Button.kTriangle)
+		m_driverController.button(Button.kTriangle)
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP,
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
-		m_operatorController.button(Button.kX)
+		m_driverController.button(Button.kX)
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.ZERO,
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
+
+		// -------------------Aimer Commands-----------------------------------
 		m_operatorController.button(Button.kTriangle).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)
+						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
+		m_operatorController.button(Button.kCircle).onTrue(
+				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_LOW)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
 		m_aimerSubsystem.setDefaultCommand( // TODO: remove, testing
 				new AimerDriveCommand(m_aimerSubsystem, () -> m_driverController.getRawAxis(Axis.kRightY)));
