@@ -68,7 +68,11 @@ public class AimerSubsystem extends SubsystemBase {
 		return m_aimCancoder.getAbsolutePosition().getValueAsDouble() / AimerConstants.kAimerMaxEncoderValue;
 	}
 
-	// TODO: document 0-1.0
+	/**
+	 * Sets the "height" of the aimer
+	 * 
+	 * @param the angle of the shooter from 0-1 (min to max)
+	 */
 	public void setAimerHeight(double actuatorHeightSetpoint) {
 		m_aimerHeightSetpoint = actuatorHeightSetpoint;
 		m_controller.setSetpoint(m_aimerHeightSetpoint);

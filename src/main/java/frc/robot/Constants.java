@@ -205,8 +205,8 @@ public final class Constants {
 		public static final double kSpeakerHeight = 2.032145; // TODO change to this height - robot height
 		public static final double kAimerLength = .25; // TODO change to deltaX between edge of robot and aimer axis
 														// on robot
-		public static final double kDefaultActuatorHeight = 0.8; // TODO fix actuator height
-		public static final double kAimerTolerance = 0.01; // TODO experiment
+		public static final double kDefaultActuatorHeight = 0.8;
+		public static final double kAimerTolerance = 0.01;
 		public static final double kAdjustAmount = 0.05; // Adjust with testing
 		public static final double kP = 0.75;
 		public static final double kMaxAimerPower = 0.8;
