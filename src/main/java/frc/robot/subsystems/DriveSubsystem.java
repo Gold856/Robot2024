@@ -153,8 +153,6 @@ public class DriveSubsystem extends SubsystemBase {
 		if (RobotBase.isSimulation()) {
 			updateSimPose(speeds);
 		}
-		SmartDashboard.putNumber("Heading Radians", getHeading().getRadians());
-		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
@@ -257,6 +255,7 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
+		SmartDashboard.putNumber("Heading Radians", getHeading().getRadians());
 		if (RobotBase.isReal()) {
 			m_pose = m_odometry.update(getHeading(), getModulePositions());
 			m_posePublisher.set(m_pose);
