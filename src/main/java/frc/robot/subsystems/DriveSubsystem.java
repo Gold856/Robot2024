@@ -21,8 +21,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -48,14 +48,18 @@ public class DriveSubsystem extends SubsystemBase {
 	private Rotation2d m_heading = new Rotation2d(Math.PI / 2);
 	private final Field2d m_field = new Field2d();
 
-	private final ProtobufPublisher<Pose2d> m_posePublisher;
+	private final StructPublisher<Pose2d> m_posePublisher;
+	private final StructPublisher<ChassisSpeeds> m_chassisSpeedsPublisher;
 	private final StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
 	private final StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
 		SmartDashboard.putData("Field", m_field);
-		m_posePublisher = NetworkTableInstance.getDefault().getProtobufTopic("/SmartDashboard/Pose", Pose2d.proto)
+		m_posePublisher = NetworkTableInstance.getDefault().getStructTopic("/SmartDashboard/Pose", Pose2d.struct)
+				.publish();
+		m_chassisSpeedsPublisher = NetworkTableInstance.getDefault()
+				.getStructTopic("/SmartDashboard/Chassis Speeds", ChassisSpeeds.struct)
 				.publish();
 		m_targetModuleStatePublisher = NetworkTableInstance.getDefault()
 				.getStructArrayTopic("/SmartDashboard/Target Swerve Modules States", SwerveModuleState.struct)
@@ -145,6 +149,7 @@ public class DriveSubsystem extends SubsystemBase {
 		if (isFieldRelative) {
 			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
 		}
+		m_chassisSpeedsPublisher.set(speeds);
 		if (RobotBase.isSimulation()) {
 			updateSimPose(speeds);
 		}
