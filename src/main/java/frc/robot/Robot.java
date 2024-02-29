@@ -4,10 +4,16 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
+import org.littletonrobotics.urcl.URCL;
+
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Constants.DriveConstants;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -28,6 +34,17 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		DataLogManager.start();
 		DataLogManager.logNetworkTables(true);
+		DriverStation.startDataLog(DataLogManager.getLog());
+		var aliases = new HashMap<Integer, String>();
+		aliases.put(DriveConstants.kFrontRightDrivePort, "FR Drive");
+		aliases.put(DriveConstants.kFrontRightSteerPort, "FR Steer");
+		aliases.put(DriveConstants.kFrontLeftDrivePort, "FL Drive");
+		aliases.put(DriveConstants.kFrontLeftSteerPort, "FL Steer");
+		aliases.put(DriveConstants.kBackRightDrivePort, "BR Drive");
+		aliases.put(DriveConstants.kBackRightSteerPort, "BR Steer");
+		aliases.put(DriveConstants.kBackLeftDrivePort, "BL Drive");
+		aliases.put(DriveConstants.kBackLeftSteerPort, "BL Steer");
+		URCL.start(aliases);
 		m_robotContainer = new RobotContainer();
 	}
 

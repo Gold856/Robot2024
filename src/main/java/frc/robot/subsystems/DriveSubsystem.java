@@ -256,7 +256,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putNumber("Current Position", getModulePositions()[0].distanceMeters);
 		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 		if (RobotBase.isReal()) {
 			m_pose = m_odometry.update(getHeading(), getModulePositions());
@@ -265,14 +264,6 @@ public class DriveSubsystem extends SubsystemBase {
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
-		SmartDashboard.putNumber("Drive FR motor temperature", m_frontRight.getDriveTemperature());
-		SmartDashboard.putNumber("Drive BR motor temperature", m_backRight.getDriveTemperature());
-		SmartDashboard.putNumber("Drive BL motor temperature", m_backLeft.getDriveTemperature());
-		SmartDashboard.putNumber("Drive FL motor temperature", m_frontLeft.getDriveTemperature());
-		SmartDashboard.putNumber("Drive FR steer current", m_frontRight.getSteerCurrent());
-		SmartDashboard.putNumber("Drive BR steer current", m_backRight.getSteerCurrent());
-		SmartDashboard.putNumber("Drive BL steer current", m_backLeft.getSteerCurrent());
-		SmartDashboard.putNumber("Drive FL steer current", m_frontLeft.getSteerCurrent());
 	}
 
 	/**

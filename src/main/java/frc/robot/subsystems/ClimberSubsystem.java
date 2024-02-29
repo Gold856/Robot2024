@@ -11,7 +11,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimbConstants;
 
@@ -68,12 +67,6 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_rightPidController.setOutputRange(ClimbConstants.kMinOutput, ClimbConstants.kMaxOutput);
 
 		resetEncoder();
-	}
-
-	@Override
-	public void periodic() {
-		SmartDashboard.putNumber("leftNumber", getleftPosition());
-		SmartDashboard.putNumber("rightNumber", getrightPosition());
 	}
 
 	// returns the position of the left or right motor

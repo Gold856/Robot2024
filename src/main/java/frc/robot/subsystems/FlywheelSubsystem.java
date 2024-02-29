@@ -52,8 +52,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 
 	public void periodic() {
 		SmartDashboard.putNumber("Flywheel Velocity", getVelocity());
-		SmartDashboard.putNumber("Flywheel Master Current", m_neoFlywheelMaster.getOutputCurrent());
-		SmartDashboard.putNumber("Flywheel Follower Current", m_neoFlywheelFollower.getOutputCurrent());
 		// essentially the end method of the flywheel velocity setpoint mode
 		if (m_setVelocity == 0 && Math.abs(m_neoEncoderMaster.getVelocity()) > 0.05) {
 			m_neoFlywheelMaster.stopMotor();

@@ -45,7 +45,6 @@ public class AimerSubsystem extends SubsystemBase {
 		// If using a setpoint
 		SmartDashboard.putNumber("Aimcoder Value", m_aimCancoder.getAbsolutePosition().getValueAsDouble());
 		SmartDashboard.putNumber("Aimer Height", getAimerHeight());
-		SmartDashboard.putNumber("Aimer 550 Amp Draw", m_neoAimer.getAppliedOutput());
 		if (!m_isManual) {
 			if (m_controller.atSetpoint()) {
 				m_neoAimer.set(0);
