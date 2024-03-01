@@ -61,33 +61,11 @@ public class SwerveModule {
 		return this.m_driveEncoder.getPosition() * kMotorRotationsPerMeter;
 	}
 
-	public double getSteerCurrent() {
-		return m_steerMotor.getOutputCurrent();
-	}
-
 	/**
 	 * Resets drive encoder to zero.
 	 */
 	public void resetDriveEncoder() {
 		m_driveEncoder.setPosition(0);
-	}
-
-	/**
-	 * Gets the current drive motor speed.
-	 * 
-	 * @return The motor speed in percent output
-	 */
-	public double getDriveSpeed() {
-		return m_driveMotor.getAppliedOutput();
-	}
-
-	/**
-	 * Gets the current drive motor temperature.
-	 * 
-	 * @return The temperature in degrees celcius
-	 */
-	public double getDriveTemperature() {
-		return m_driveMotor.getMotorTemperature();
 	}
 
 	/**
