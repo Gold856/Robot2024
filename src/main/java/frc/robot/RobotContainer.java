@@ -153,10 +153,6 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
 
-		// -------------------Flywheel Controls--------------------------------
-		m_operatorController.button(Button.kTriangle)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 1500));
-
 		// -------------------Indexer Controls---------------------------------
 		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem));
 		m_operatorController.button(Button.kRightBumper).onTrue(IndexerCommand.getFowardCommand(m_indexerSubsystem));
@@ -174,15 +170,6 @@ public class RobotContainer {
 		// and this one
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper))
 				.onFalse(m_intakeSubsystem.stopIntakeCommand().alongWith(new IndexerStopCommand(m_indexerSubsystem)));
-
-		// TESTING TESTING TESTING TODO TESTING TODO: REMOVE TESTING
-		m_operatorController.button(Button.kShare).onTrue(CommandComposer.getBallPathTest(
-				m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
-		m_operatorController.button(Button.kPS).onTrue(CommandComposer.getIntakeWithSensorCommand(
-				m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
-
-		// ------------------Amp Bar Controls, removal later------------------- TODO
-		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 
 		// -------------------Climber Commands---------------------------------
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
@@ -204,8 +191,26 @@ public class RobotContainer {
 		m_operatorController.button(Button.kCircle).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_LOW)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
+
+		// TESTING TESTING TESTING TODO TESTING TODO: REMOVE TESTING
 		m_aimerSubsystem.setDefaultCommand( // TODO: remove, testing
 				new AimerDriveCommand(m_aimerSubsystem, () -> m_driverController.getRawAxis(Axis.kRightY)));
+
+		m_operatorController.button(Button.kShare).onTrue(CommandComposer.getBallPathTest(
+				m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
+		m_operatorController.button(Button.kPS).onTrue(CommandComposer.getIntakeWithSensorCommand(
+				m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
+
+		// ------------------Intake Bar Controls, removal later------------------- TODO
+
+		m_operatorController.button(Button.kTrackpad).onTrue(m_pneumaticsSubsystem.toggleIntakeCommand());
+
+		// ------------------Amp Bar Controls, removal later------------------- TODO
+		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
+
+		// -------------------Flywheel Controls, removal later----------------- TODO
+		m_operatorController.button(Button.kTriangle)
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 80000));
 
 	}
 

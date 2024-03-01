@@ -532,7 +532,7 @@ public class CommandComposer {
 	public static Command getBallPathTest(IntakeSubsystem intakeSubsystem, IndexerSubsystem indexerSubsystem,
 			FlywheelSubsystem flywheelSubsystem) {
 		return parallel(
-				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 3000),
+				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000),
 				intakeSubsystem.forwardIntakeCommand(),
 				IndexerCommand.getFowardCommand(indexerSubsystem));
 	}

@@ -177,15 +177,15 @@ public final class Constants {
 	}
 
 	public static final class PneumaticsConstants {
-		public static final int kPneumaticHubID = 50;
-		public static final int kLeftAmpBarForwardChannel = 0;
-		public static final int kLeftAmpBarReverseChannel = 1;
-		public static final int kRightAmpBarForwardChannel = 2;
-		public static final int kRightAmpBarReverseChannel = 3;
-		public static final int kLeftIntakeForwardChannel = 4;
-		public static final int kLeftIntakeReverseChannel = 5;
-		public static final int kRightIntakeForwardChannel = 6;
-		public static final int kRightIntakeReverseChannel = 7;
+		public static final int kPneumaticHubID = 5;
+		public static final int kLeftAmpBarForwardChannel = 4;
+		public static final int kLeftAmpBarReverseChannel = 5;
+		public static final int kRightAmpBarForwardChannel = 6;
+		public static final int kRightAmpBarReverseChannel = 7;
+		public static final int kLeftIntakeForwardChannel = 0;
+		public static final int kLeftIntakeReverseChannel = 1;
+		public static final int kRightIntakeForwardChannel = 2;
+		public static final int kRightIntakeReverseChannel = 3;
 		// TODO direction/starting state?
 		/** Alias for the solenoid value that makes the intake go down. */
 		public static final Value kIntakeDown = Value.kReverse;
@@ -194,7 +194,7 @@ public final class Constants {
 	}
 
 	public static final class AimerConstants {
-		public static final double kAimerMaxEncoderValue = 0.28;
+		public static final double kAimerMaxEncoderValue = 0.25;
 		public static final int kAimerLeadScrewPort = 48;
 		public static final int kAimerEncoderPort = 51;
 		public static final boolean kMasterInvert = false;
