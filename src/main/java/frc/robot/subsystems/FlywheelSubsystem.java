@@ -10,6 +10,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class FlywheelSubsystem extends SubsystemBase {
@@ -91,7 +92,15 @@ public class FlywheelSubsystem extends SubsystemBase {
 	/**
 	 * @return Whether the flywheel is at its setpoint ABOVE 0
 	 */
+	public Command stopFlywheel() {
+		return runOnce(() -> m_neoFlywheelMaster.set(0));
+	}
+
+	/**
+	 * @return Whether the flywheel is at its setpoint ABOVE 0
+	 */
 	public boolean atSetpoint() {
 		return Math.abs(getVelocity() - getSetpoint()) < kAllowedError;
 	}
+
 }

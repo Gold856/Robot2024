@@ -154,14 +154,16 @@ public class RobotContainer {
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
 
 		// -------------------Indexer Controls---------------------------------
-		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem));
-		m_operatorController.button(Button.kRightBumper).onTrue(IndexerCommand.getFowardCommand(m_indexerSubsystem));
+		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem)
+				.andThen(m_flywheelSubsystem.stopFlywheel()));
+		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(m_indexerSubsystem)
+				.andThen(m_flywheelSubsystem.stopFlywheel()));
 		// m_operatorController.button(Button.kRightBumper).onTrue(new
 		// IndexerShootCommand(m_indexerSubsystem));
 
 		// ------------------Intake Controls-----------------------------------
-		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getTeleopIntakeCommand(
-				m_intakeSubsystem, m_pneumaticsSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
+		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getIntakeWithSensorCommand(
+				m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
 		m_operatorController.button(Button.kRightTrigger)
 				.onTrue(m_pneumaticsSubsystem.upIntakeCommand().andThen(m_intakeSubsystem.stopIntakeCommand()));
 		// sorry about this one
@@ -173,8 +175,8 @@ public class RobotContainer {
 
 		// -------------------Climber Commands---------------------------------
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
-				() -> m_operatorController.getRawAxis(Axis.kLeftY),
-				() -> m_operatorController.getRawAxis(Axis.kRightY)));
+				() -> -m_operatorController.getRawAxis(Axis.kLeftY),
+				() -> -m_operatorController.getRawAxis(Axis.kRightY)));
 		m_driverController.button(Button.kTriangle)
 				.onTrue(new ClimberPresetCommand(m_climberSubsystem, ClimberOperation.TOP,
 						() -> m_operatorController.getRawAxis(Axis.kLeftY),
@@ -209,8 +211,10 @@ public class RobotContainer {
 		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 
 		// -------------------Flywheel Controls, removal later----------------- TODO
-		m_operatorController.button(Button.kTriangle)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 80000));
+		m_driverController.button(Button.kPS)
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000));
+		m_driverController.button(Button.kPS)
+				.onFalse(m_flywheelSubsystem.stopFlywheel());
 
 	}
 

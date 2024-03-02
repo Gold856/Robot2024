@@ -48,6 +48,9 @@ public class AimHeightCommand extends Command {
 			case SET_PRESET_DEFAULT:
 				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
 				break;
+			case PRESET_SUBWOOFER:
+				m_aimerSubsystem.setAimerHeight(kSubwooferActuatorHeight);
+				break;
 			case SET_LOW:
 				m_aimerSubsystem.setAimerHeight(0.2);
 				break;

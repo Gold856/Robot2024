@@ -100,10 +100,10 @@ public final class Constants {
 
 		public static final double kMotorRotationsPerMeter = (1 / kGearRatio) * (Math.PI * kWheelDiameter);
 
-		public static final Translation2d kFrontLeftLocation = new Translation2d(-0.381, 0.381); // -+
-		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, 0.381); // ++
-		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, -0.381); // --
-		public static final Translation2d kBackRightLocation = new Translation2d(0.381, -0.381); // +-
+		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381); // --
+		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381); // +-
+		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381); // ++
+		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381); // -+
 
 		public static final int kDriveSmartCurrentLimit = 55;
 		public static final int kDrivePeakCurrentLimit = 65;
@@ -112,6 +112,7 @@ public final class Constants {
 
 		// The amount of time to go from 0 to full power in seconds
 		public static final double kRampRate = .1;
+
 	}
 
 	public static final class FlywheelConstants {
@@ -134,19 +135,19 @@ public final class Constants {
 	}
 
 	public static final class ClimbConstants {
-		public static final int kLeftPort = 44;
-		public static final int kRightPort = 45;
-		public static final boolean kLeftInvert = true;
-		public static final boolean kRightInvert = true;
+		public static final int kLeftPort = 45;
+		public static final int kRightPort = 44;
+		public static final boolean kLeftInvert = false;
+		public static final boolean kRightInvert = false;
 		public static final int kSmartCurrentLimit = 60;
 		public static final int kSecondaryCurrentLimit = 70;
 		public static final double kMinOutput = -1;
 		public static final double kMaxOutput = 1;
-		public static final double kP = 0.1;
+		public static final double kP = 0.3;
 		public static final double kI = 0;
 		public static final double kD = 0;
 		public static final double kTolerance = 1;
-		public static final int kMaxExtension = 50;
+		public static final int kMaxExtension = 250;
 	}
 
 	public static final class IntakeConstants {
@@ -157,7 +158,7 @@ public final class Constants {
 		public static final boolean kFollowerOppose = false;
 		public static final double kIntakeGearRatio = 1.0 / 10.0;
 		public static final double kIntakeSpeed = 0.75;
-		public static final double kReverseSpeed = -0.1;
+		public static final double kReverseSpeed = -0.3;
 	}
 
 	public static final class IndexerConstants {
@@ -173,7 +174,7 @@ public final class Constants {
 		public static final double kKickSpeed = 0.8;
 		public static final double kIndexerGearRatio = 1.0 / 4.0;
 		public static final double kIntakeSpeed = 0.2;
-		public static final double kReverseSpeed = -0.1;
+		public static final double kReverseSpeed = -0.3;
 	}
 
 	public static final class PneumaticsConstants {
@@ -194,7 +195,7 @@ public final class Constants {
 	}
 
 	public static final class AimerConstants {
-		public static final double kAimerMaxEncoderValue = 0.25;
+		public static final double kAimerMaxEncoderValue = 0.268;
 		public static final int kAimerLeadScrewPort = 48;
 		public static final int kAimerEncoderPort = 51;
 		public static final boolean kMasterInvert = false;
@@ -206,6 +207,7 @@ public final class Constants {
 		public static final double kAimerLength = .25; // TODO change to deltaX between edge of robot and aimer axis
 														// on robot
 		public static final double kDefaultActuatorHeight = 0.8;
+		public static final double kSubwooferActuatorHeight = 0.243;
 		public static final double kAimerTolerance = 0.01;
 		public static final double kAdjustAmount = 0.05; // Adjust with testing
 		public static final double kP = 0.75;

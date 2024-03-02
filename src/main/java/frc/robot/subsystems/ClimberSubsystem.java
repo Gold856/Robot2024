@@ -72,8 +72,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putNumber("leftNumber", getleftPosition());
-		SmartDashboard.putNumber("rightNumber", getrightPosition());
+		SmartDashboard.putNumber("Left Climber Position", getleftPosition());
+		SmartDashboard.putNumber("Right Climber Position", getrightPosition());
 	}
 
 	// returns the position of the left or right motor

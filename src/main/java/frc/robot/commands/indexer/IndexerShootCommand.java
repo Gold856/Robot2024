@@ -24,6 +24,7 @@ public class IndexerShootCommand extends Command {
 	@Override
 	public void initialize() {
 		m_timer.reset();
+		m_timer.start();
 		m_indexerSubsystem.setSpeed(Constants.IndexerConstants.kKickSpeed);
 	}
 

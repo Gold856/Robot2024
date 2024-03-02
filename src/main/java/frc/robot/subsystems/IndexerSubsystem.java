@@ -29,7 +29,7 @@ public class IndexerSubsystem extends SubsystemBase {
 		m_indexerMotor.enableVoltageCompensation(12);
 		m_indexerMotor.setSmartCurrentLimit(IndexerConstants.kIndexerSmartCurrentLimit);
 		m_indexerMotor.setSecondaryCurrentLimit(IndexerConstants.kIndexerPeakCurrentLimit);
-		m_proximitySensor = new DigitalInput(0);
+		m_proximitySensor = new DigitalInput(1);
 	}
 
 	public void setSpeed(double speed) {
@@ -47,5 +47,6 @@ public class IndexerSubsystem extends SubsystemBase {
 	public void periodic() {
 		SmartDashboard.putNumber("Indexer Current", m_indexerMotor.getOutputCurrent());
 		SmartDashboard.putNumber("Indexer Velocity", m_encoder.getVelocity());
+		SmartDashboard.putBoolean("Limit Switch Value", m_proximitySensor.get());
 	}
 }
