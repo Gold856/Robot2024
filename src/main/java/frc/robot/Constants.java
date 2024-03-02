@@ -116,10 +116,10 @@ public final class Constants {
 	}
 
 	public static final class FlywheelConstants {
-		public static final int kMasterPort = 50;
-		public static final int kFollowerPort = 49;
-		public static final boolean kMasterInvert = true;
-		public static final boolean kFollowerOppose = false;
+		public static final int kBottomPort = 50;
+		public static final int kTopPort = 49;
+		public static final boolean kBottomInvert = true;
+		public static final boolean kTopInvert = true;
 		public static final int kSmartCurrentLimit = 50;
 		public static final double kPeakCurrentLimit = 60;
 		public static final int kPeakCurrentDurationMillis = 100;
@@ -164,14 +164,14 @@ public final class Constants {
 	public static final class IndexerConstants {
 		public static final int kIndexerPort = 47;
 		public static final boolean kInvert = true;
-		public static final int kIndexerPeakCurrentLimit = 55;
+		public static final int kIndexerPeakCurrentLimit = 60;
 		public static final int kIndexerSmartCurrentLimit = 55;
 		public static final double kIndexerMaxSpeed = 1;
 		public static final double kIndexerMinSpeed = 0.1;
 
 		// Shoot Command Constants
 		public static final double kKickTime = 2;
-		public static final double kKickSpeed = 0.8;
+		public static final double kKickSpeed = 0.3;
 		public static final double kIndexerGearRatio = 1.0 / 4.0;
 		public static final double kIntakeSpeed = 0.2;
 		public static final double kReverseSpeed = -0.3;
@@ -189,9 +189,9 @@ public final class Constants {
 		public static final int kRightIntakeReverseChannel = 3;
 		// TODO direction/starting state?
 		/** Alias for the solenoid value that makes the intake go down. */
-		public static final Value kIntakeDown = Value.kReverse;
+		public static final Value kIntakeDown = Value.kForward;
 		/** Alias for the solenoid value that makes the intake go up. */
-		public static final Value kIntakeUp = Value.kForward;
+		public static final Value kIntakeUp = Value.kReverse;
 	}
 
 	public static final class AimerConstants {
@@ -199,19 +199,19 @@ public final class Constants {
 		public static final int kAimerLeadScrewPort = 48;
 		public static final int kAimerEncoderPort = 51;
 		public static final boolean kMasterInvert = false;
-		public static final int kSmartCurrentLimit = 55; // 90
-		public static final double kPeakCurrentLimit = 65; // 100
+		public static final int kSmartCurrentLimit = 25; // 90 (NO MORE THAN 25 A)
+		public static final double kPeakCurrentLimit = 35; // 100 (NO MORE THAN 40 A)
 		public static final int kPeakCurrentDurationMillis = 100;
 		public static final double kGearRatio = 3;
 		public static final double kSpeakerHeight = 2.032145; // TODO change to this height - robot height
 		public static final double kAimerLength = .25; // TODO change to deltaX between edge of robot and aimer axis
 														// on robot
-		public static final double kDefaultActuatorHeight = 0.8;
-		public static final double kSubwooferActuatorHeight = 0.243;
+		public static final double kDefaultActuatorHeight = 0.973; // percent
+		public static final double kSubwooferActuatorHeight = 0.973;
 		public static final double kAimerTolerance = 0.01;
 		public static final double kAdjustAmount = 0.05; // Adjust with testing
 		public static final double kP = 0.75;
-		public static final double kMaxAimerPower = 0.8;
+		public static final double kMaxAimerPower = 1;
 		public static final double kMinAimerPower = 0.3;
 	}
 }

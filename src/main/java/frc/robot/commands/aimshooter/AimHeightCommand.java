@@ -26,7 +26,9 @@ public class AimHeightCommand extends Command {
 		DOWN_ADJUST, // Fine tune down
 		UP_ADJUST, // Fine tune up
 		SETTLE, // Paired with above in Robot Container
-		STOP // Currently not in use (??)
+		STOP, // Currently not in use (??)
+		SOURCE,
+		PRESET_PODIUM
 	}
 
 	/** Creates a new AimCommand. */
@@ -50,6 +52,14 @@ public class AimHeightCommand extends Command {
 				break;
 			case PRESET_SUBWOOFER:
 				m_aimerSubsystem.setAimerHeight(kSubwooferActuatorHeight);
+				break;
+			case PRESET_AMP:
+				// TODO add amp constant
+				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
+				break;
+			case SOURCE:
+				// TODO add source constant
+				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
 				break;
 			case SET_LOW:
 				m_aimerSubsystem.setAimerHeight(0.2);

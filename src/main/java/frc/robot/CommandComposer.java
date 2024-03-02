@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.SimpleVisionAlignCommand;
 import frc.robot.commands.TimedLEDCommand;
+import frc.robot.commands.aimshooter.AimHeightCommand;
+import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.PolarDriveCommand;
@@ -14,6 +16,7 @@ import frc.robot.commands.flywheel.FlywheelCommand;
 import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
 import frc.robot.commands.indexer.IndexWithSensorCommand;
 import frc.robot.commands.indexer.IndexerCommand;
+import frc.robot.subsystems.AimerSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
@@ -520,6 +523,15 @@ public class CommandComposer {
 				arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
 	}
 
+	public static Command getAmpCommand(AimerSubsystem aimerSubsystem, Targeter targeter,
+			FlywheelSubsystem flywheelSubsystem) {
+		return sequence(
+				new AimHeightCommand(aimerSubsystem, targeter, AimHeightOperation.SET_PRESET_DEFAULT),
+				new FlywheelCommand(flywheelSubsystem,
+						FlywheelOperation.SET_VELOCITY, 1500, 1500)); // 1300 1650
+
+	}
+
 	public static Command getTeleopIntakeCommand(IntakeSubsystem intakeSubsystem,
 			PneumaticsSubsystem pneumaticsSubsystem, IndexerSubsystem indexerSubsystem,
 			ArduinoSubsystem arduinoSubsystem) {
@@ -532,7 +544,7 @@ public class CommandComposer {
 	public static Command getBallPathTest(IntakeSubsystem intakeSubsystem, IndexerSubsystem indexerSubsystem,
 			FlywheelSubsystem flywheelSubsystem) {
 		return parallel(
-				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000),
+				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000),
 				intakeSubsystem.forwardIntakeCommand(),
 				IndexerCommand.getFowardCommand(indexerSubsystem));
 	}

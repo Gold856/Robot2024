@@ -10,13 +10,16 @@ import frc.robot.subsystems.FlywheelSubsystem;
 public class FlywheelCommand extends Command {
 	private final FlywheelOperation m_operation;
 	private final FlywheelSubsystem m_flywheelSubsystem;
-	private final double m_rpm;
+	private final double m_topRPM;
+	private final double m_bottomRPM;
 
 	public enum FlywheelOperation {
 		/** Set the velocity and end immediately. */
 		SET_VELOCITY,
 		/** Set the velocity and end when at setpoint. */
-		SETTLE;
+		SETTLE,
+		/** Reverses the flywheel */
+		REVERSE;
 	}
 
 	/**
@@ -26,9 +29,11 @@ public class FlywheelCommand extends Command {
 	 * @param operation        The operation.
 	 * @param rpm              The RPM to spin the motor at.
 	 */
-	public FlywheelCommand(FlywheelSubsystem flywheelSubsytem, FlywheelOperation operation, double rpm) {
+	public FlywheelCommand(FlywheelSubsystem flywheelSubsytem, FlywheelOperation operation, double top_rpm,
+			double bottom_rpm) {
 		m_flywheelSubsystem = flywheelSubsytem;
-		m_rpm = rpm;
+		m_topRPM = top_rpm;
+		m_bottomRPM = bottom_rpm;
 		m_operation = operation;
 		addRequirements(m_flywheelSubsystem);
 	}
@@ -37,7 +42,8 @@ public class FlywheelCommand extends Command {
 	@Override
 	public void initialize() {
 		if (m_operation == FlywheelOperation.SET_VELOCITY) {
-			m_flywheelSubsystem.setVelocity(m_rpm);
+			m_flywheelSubsystem.setBottomVelocity(m_bottomRPM);
+			m_flywheelSubsystem.setTopVelocity(m_topRPM);
 		}
 	}
 

@@ -31,7 +31,6 @@ import frc.robot.commands.flywheel.FlywheelCommand;
 import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
 import frc.robot.commands.indexer.IndexerCommand;
 import frc.robot.commands.indexer.IndexerShootCommand;
-import frc.robot.commands.indexer.IndexerStopCommand;
 import frc.robot.subsystems.AimerSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
@@ -162,16 +161,23 @@ public class RobotContainer {
 		// IndexerShootCommand(m_indexerSubsystem));
 
 		// ------------------Intake Controls-----------------------------------
-		m_operatorController.button(Button.kLeftTrigger).onTrue(CommandComposer.getIntakeWithSensorCommand(
-				m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
 		m_operatorController.button(Button.kRightTrigger)
 				.onTrue(m_pneumaticsSubsystem.upIntakeCommand().andThen(m_intakeSubsystem.stopIntakeCommand()));
+		m_operatorController.button(Button.kLeftTrigger)
+				.onTrue(m_pneumaticsSubsystem.downIntakeCommand().alongWith(CommandComposer.getIntakeWithSensorCommand(
+						m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem)));
+		m_operatorController.button(Button.kLeftBumper).and(m_operatorController.povUp())
+				.onTrue(m_intakeSubsystem.stopIntakeCommand());
 		// sorry about this one
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper)).onTrue(m_intakeSubsystem
 				.reverseIntakeCommand().alongWith(IndexerCommand.getReverseCommand(m_indexerSubsystem)));
-		// and this one
-		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper))
-				.onFalse(m_intakeSubsystem.stopIntakeCommand().alongWith(new IndexerStopCommand(m_indexerSubsystem)));
+		// TODO
+		// m_operatorController.povRight().and(m_operatorController.button(Button.kLeftBumper))
+		// .onTrue(new AimHeightCommand(m_aimerSubsystem, m_targeter,
+		// AimHeightOperation.SOURCE))
+		// .alongWith(new FlywheelCommand(m_flywheelSubsystem,
+		// FlywheelOperation.SET_VELOCITY, -6000))
+		// .onRelease(IndexerCommand.getReverseCommand(m_indexerSubsystem));
 
 		// -------------------Climber Commands---------------------------------
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
@@ -187,12 +193,20 @@ public class RobotContainer {
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
 		// -------------------Aimer Commands-----------------------------------
-		m_operatorController.button(Button.kTriangle).onTrue(
+		m_operatorController.button(Button.kCircle).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
-		m_operatorController.button(Button.kCircle).onTrue(
-				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_LOW)
+		m_operatorController.button(Button.kTriangle).onTrue(
+				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_PODIUM)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
+		m_operatorController.button(Button.kSquare).onTrue(
+				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_SUBWOOFER)
+						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE).andThen(
+								new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000))));
+
+		// ------------------Amp Bar Controls -------------------
+		m_operatorController.button(Button.kX)
+				.onTrue(CommandComposer.getAmpCommand(m_aimerSubsystem, m_targeter, m_flywheelSubsystem));
 
 		// TESTING TESTING TESTING TODO TESTING TODO: REMOVE TESTING
 		m_aimerSubsystem.setDefaultCommand( // TODO: remove, testing
@@ -202,19 +216,14 @@ public class RobotContainer {
 				m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
 		m_operatorController.button(Button.kPS).onTrue(CommandComposer.getIntakeWithSensorCommand(
 				m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
-
 		// ------------------Intake Bar Controls, removal later------------------- TODO
-
 		m_operatorController.button(Button.kTrackpad).onTrue(m_pneumaticsSubsystem.toggleIntakeCommand());
-
-		// ------------------Amp Bar Controls, removal later------------------- TODO
-		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
-
 		// -------------------Flywheel Controls, removal later----------------- TODO
 		m_driverController.button(Button.kPS)
-				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000));
+				.onTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000)); // 8000
 		m_driverController.button(Button.kPS)
 				.onFalse(m_flywheelSubsystem.stopFlywheel());
+		m_operatorController.button(Button.kOptions).onTrue(m_flywheelSubsystem.stopFlywheel());
 
 	}
 
