@@ -60,13 +60,14 @@ public class ClimberSubsystem extends SubsystemBase {
 		m_leftPidController.setP(ClimbConstants.kP);
 		m_leftPidController.setI(ClimbConstants.kI);
 		m_leftPidController.setD(ClimbConstants.kD);
+		m_leftPidController.setFF(ClimbConstants.kFF);
 		m_leftPidController.setOutputRange(ClimbConstants.kMinOutput, ClimbConstants.kMaxOutput);
 
 		m_rightPidController.setP(ClimbConstants.kP);
 		m_rightPidController.setI(ClimbConstants.kI);
 		m_rightPidController.setD(ClimbConstants.kD);
+		m_rightPidController.setFF(ClimbConstants.kFF);
 		m_rightPidController.setOutputRange(ClimbConstants.kMinOutput, ClimbConstants.kMaxOutput);
-
 		resetEncoder();
 	}
 
