@@ -399,11 +399,14 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 		if (DriverStation.getAlliance().isPresent()) {
 			Alliance alliance = DriverStation.getAlliance().get();
 			try {
+				var pose = estimatedPose();
+				if (pose != null)
+					SmartDashboard.putNumberArray("pose estimation: pose estimated",
+							new double[] { pose.getX() + 8.27, pose.getY() + 4.05, pose.getRotation().getRadians() });
 				SmartDashboard.putNumber("pose estimation: rotation angle to " + alliance + " speaker (degrees)",
 						angleToSpeaker());
 				SmartDashboard.putNumber("pose estimation: distance to " + alliance + " speaker (meters)",
 						distanceToSpeaker());
-
 			} catch (Exception e) {
 			}
 		}
