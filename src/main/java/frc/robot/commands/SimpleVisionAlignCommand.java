@@ -31,7 +31,7 @@ public class SimpleVisionAlignCommand extends Command {
 		m_timer = new Timer();
 		m_controller = new PIDController(0.0075, 0, 0);
 		m_controller.enableContinuousInput(0, 360);
-		addRequirements(m_driveSubsystem, m_visionSubsystem);
+		addRequirements(m_driveSubsystem);
 	}
 
 	// Called when the command is initially scheduled.

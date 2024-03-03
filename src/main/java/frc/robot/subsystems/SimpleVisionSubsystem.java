@@ -7,22 +7,29 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
 public class SimpleVisionSubsystem extends SubsystemBase {
-	private final DoubleSubscriber m_subscription;
+	private final DoubleSubscriber m_angleSubscription;
+	private final DoubleSubscriber m_distanceSubscription;
 	private double m_angle;
+	private double m_distance;
 
 	public SimpleVisionSubsystem() {
 		// Setup subscription
-		LimelightHelpers.setPipelineIndex("limelight", 1);
-		m_subscription = NetworkTableInstance.getDefault().getTable("limelight")
+		LimelightHelpers.setPipelineIndex("limelight", 0);
+		m_angleSubscription = NetworkTableInstance.getDefault().getTable("limelight")
 				.getDoubleTopic("tx")
 				.subscribe(0);
+		m_distanceSubscription = NetworkTableInstance.getDefault().getTable("limelight").getDoubleTopic("tz")
+				.subscribe(1);
+
 	}
 
 	@Override
 	public void periodic() {
 		// get the data from limelight
-		m_angle = m_subscription.get();
+		m_angle = m_angleSubscription.get();
+		m_distance = m_distanceSubscription.get() - 0.5;
 		SmartDashboard.putNumber("limelight angle to turn", m_angle);
+		SmartDashboard.putNumber("limelight distance from tag", m_angle);
 	}
 
 	/**
@@ -33,5 +40,14 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	 */
 	public double getAngle() {
 		return m_angle;
+	}
+
+	/**
+	 * Returns the distance of the camera to the tag.
+	 * 
+	 * @return The angle of the camera
+	 */
+	public double getDistance() {
+		return Math.tan(m_distance / m_angle);
 	}
 }

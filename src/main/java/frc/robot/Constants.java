@@ -210,8 +210,8 @@ public final class Constants {
 		public static final double kSubwooferActuatorHeight = 0.973;
 		public static final double kAimerTolerance = 0.01;
 		public static final double kAdjustAmount = 0.05; // Adjust with testing
-		public static final double kP = 0.75;
+		public static final double kP = 1;
 		public static final double kMaxAimerPower = 1;
-		public static final double kMinAimerPower = 0.3;
+		public static final double kMinAimerPower = 0.5;
 	}
 }

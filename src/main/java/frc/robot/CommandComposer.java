@@ -213,7 +213,8 @@ public class CommandComposer {
 	 * @return The command.
 	 */
 	public static Command getThreeScoreRightAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
-			AimerSubsystem aimerSubsystem, SimpleVisionSubsystem visionSubsystem, IntakeSubsystem intakeSubsystem,
+			AimerSubsystem aimerSubsystem, Targeter targeter, PneumaticsSubsystem pneumaticsSubsystem,
+			SimpleVisionSubsystem visionSubsystem, IntakeSubsystem intakeSubsystem,
 			IndexerSubsystem indexerSubsystem, FlywheelSubsystem flywheelSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, 0, 2, false));
@@ -222,7 +223,9 @@ public class CommandComposer {
 		}
 		return sequence(
 				// right note
-				getTwoScoreRightAutoBlue(driveSubsystem, arduinoSubsystem, aimerSubsystem, visionSubsystem,
+				getTwoScoreRightAutoBlue(driveSubsystem, arduinoSubsystem, aimerSubsystem, targeter,
+						pneumaticsSubsystem,
+						visionSubsystem,
 						intakeSubsystem,
 						indexerSubsystem, flywheelSubsystem),
 				// middle note
@@ -349,7 +352,8 @@ public class CommandComposer {
 	 * @return The command.
 	 */
 	public static Command getFourScoreRightAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
-			AimerSubsystem aimerSubsystem, SimpleVisionSubsystem visionSubsystem, IntakeSubsystem intakeSubsystem,
+			AimerSubsystem aimerSubsystem, Targeter targeter, PneumaticsSubsystem pneumaticsSubsystem,
+			SimpleVisionSubsystem visionSubsystem, IntakeSubsystem intakeSubsystem,
 			IndexerSubsystem indexerSubsystem, FlywheelSubsystem flywheelSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, 30, 2, false));
@@ -358,7 +362,9 @@ public class CommandComposer {
 		}
 		return sequence(
 				// right note and middle note
-				getThreeScoreRightAutoBlue(driveSubsystem, arduinoSubsystem, aimerSubsystem, visionSubsystem,
+				getThreeScoreRightAutoBlue(driveSubsystem, arduinoSubsystem, aimerSubsystem, targeter,
+						pneumaticsSubsystem,
+						visionSubsystem,
 						intakeSubsystem,
 						indexerSubsystem, flywheelSubsystem),
 				// left note
@@ -599,5 +605,19 @@ public class CommandComposer {
 				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000),
 				intakeSubsystem.forwardIntakeCommand(),
 				IndexerCommand.getFowardCommand(indexerSubsystem));
+	}
+
+	public static Command getAimAndShootCommand(DriveSubsystem driveSubsystem,
+			SimpleVisionSubsystem simpleVisionSubsystem, FlywheelSubsystem flywheelSubsystem,
+			AimerSubsystem aimerSubsystem, IndexerSubsystem indexerSubsystem, Targeter regressionTargeter) {
+		return sequence(
+				parallel(
+						sequence(
+								new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000),
+								new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SETTLE, 0, 0)),
+						// new AimHeightCommand(aimerSubsystem, regressionTargeter,
+						// AimHeightOperation.CALC_AND_SET),
+						new SimpleVisionAlignCommand(driveSubsystem, simpleVisionSubsystem)),
+				new IndexerShootCommand(indexerSubsystem));
 	}
 }

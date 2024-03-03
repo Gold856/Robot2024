@@ -9,6 +9,7 @@ import static frc.robot.Constants.AimerConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter;
 import frc.robot.subsystems.AimerSubsystem;
+import frc.robot.subsystems.SimpleVisionSubsystem;
 
 public class AimHeightCommand extends Command {
 	private AimHeightOperation m_operation;
@@ -36,6 +37,16 @@ public class AimHeightCommand extends Command {
 		m_operation = operation;
 		m_aimerSubsystem = subsystem;
 		m_targeter = targeter;
+		addRequirements(m_aimerSubsystem);
+	}
+
+	/** Creates a new AimCommand. */
+	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation,
+			SimpleVisionSubsystem simpleVisionSubsystem) {
+		m_operation = operation;
+		m_aimerSubsystem = subsystem;
+		m_targeter = targeter;
+		m_distanceMeters = simpleVisionSubsystem.getDistance();
 		addRequirements(m_aimerSubsystem);
 	}
 

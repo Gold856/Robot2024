@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
-import frc.robot.Targeter.PhysicsAndMathTargeter;
+import frc.robot.Targeter.RegressionTargeter;
 import frc.robot.commands.aimshooter.AimHeightCommand;
 import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
 import frc.robot.commands.aimshooter.AimerDriveCommand;
@@ -59,7 +59,7 @@ public class RobotContainer {
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();
 	private final AimerSubsystem m_aimerSubsystem = new AimerSubsystem();
-	private final Targeter m_targeter = new PhysicsAndMathTargeter();
+	private final RegressionTargeter m_targeter = new RegressionTargeter();
 	private final SendableChooser<Command> m_autoSelector = new SendableChooser<Command>();
 	private final IndexerSubsystem m_indexerSubsystem = new IndexerSubsystem();
 	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
@@ -78,7 +78,8 @@ public class RobotContainer {
 		m_autoSelector.addOption("Polar Drive Two Meters", new PolarDriveCommand(m_driveSubsystem, 2, 180));
 		m_autoSelector.addOption("Right Two Score Blue",
 				CommandComposer.getTwoScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_aimerSubsystem,
-						m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
+						m_targeter, m_pneumaticsSubsystem, m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem,
+						m_flywheelSubsystem));
 		m_autoSelector.addOption("Right Two Score Red",
 				CommandComposer.getTwoScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_aimerSubsystem,
 						m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
@@ -90,7 +91,8 @@ public class RobotContainer {
 						m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
 		m_autoSelector.addOption("Right Three Score Blue",
 				CommandComposer.getThreeScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_aimerSubsystem,
-						m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
+						m_targeter, m_pneumaticsSubsystem, m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem,
+						m_flywheelSubsystem));
 		m_autoSelector.addOption("Right Three Score Red",
 				CommandComposer.getThreeScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_aimerSubsystem,
 						m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
@@ -102,7 +104,8 @@ public class RobotContainer {
 						m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
 		m_autoSelector.addOption("Right Four Score Blue",
 				CommandComposer.getFourScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_aimerSubsystem,
-						m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
+						m_targeter, m_pneumaticsSubsystem, m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem,
+						m_flywheelSubsystem));
 		m_autoSelector.addOption("Right Four Score Red",
 				CommandComposer.getFourScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_aimerSubsystem,
 						m_visionSubsystem, m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
@@ -220,12 +223,14 @@ public class RobotContainer {
 								new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000))));
 
 		// ------------------Amp Bar Controls -------------------
-		m_operatorController.button(Button.kX)
-				.onTrue(CommandComposer.getAmpCommand(m_aimerSubsystem, m_targeter, m_flywheelSubsystem));
+		// m_operatorController.button(Button.kX)
+		// .onTrue(CommandComposer.getAmpCommand(m_aimerSubsystem, m_targeter,
+		// m_flywheelSubsystem));
 
 		// TESTING TESTING TESTING TODO TESTING TODO: REMOVE TESTING
 		m_aimerSubsystem.setDefaultCommand( // TODO: remove, testing
 				new AimerDriveCommand(m_aimerSubsystem, () -> m_driverController.getRawAxis(Axis.kRightY)));
+		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 
 		m_operatorController.button(Button.kShare).onTrue(CommandComposer.getBallPathTest(
 				m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));
@@ -239,6 +244,10 @@ public class RobotContainer {
 		m_driverController.button(Button.kPS)
 				.onFalse(m_flywheelSubsystem.stopFlywheel());
 		m_operatorController.button(Button.kOptions).onTrue(m_flywheelSubsystem.stopFlywheel());
+
+		// TODO testing da cool thing
+		m_driverController.button(Button.kRightBumper).onTrue(CommandComposer.getAimAndShootCommand(m_driveSubsystem,
+				m_visionSubsystem, m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter));
 
 	}
 
