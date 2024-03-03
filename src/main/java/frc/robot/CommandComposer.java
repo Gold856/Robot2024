@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.SimpleVisionAlignCommand;
 import frc.robot.commands.TimedLEDCommand;
+import frc.robot.commands.aimshooter.AimHeightCommand;
+import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
 import frc.robot.commands.drive.PolarDriveCommand;
@@ -64,16 +66,7 @@ public class CommandComposer {
 			alignCommand.addCommands(new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem));
 		}
 		return sequence(
-				new AimHeightCommand(aimerSubsystem, targeter, AimHeightOperation.PRESET_SUBWOOFER),
-				new IndexerShootCommand(indexerSubsystem),
-				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000),
 				alignCommand,
-				new AimHeightCommand(aimerSubsystem, targeter, null), // TODO Aim height
-				pneumaticsSubsystem.downIntakeCommand(),
-				CommandComposer.getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
-				new IndexerShootCommand(indexerSubsystem),
-				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000), // TODO: Possibly
-																									// change this value
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
@@ -90,9 +83,7 @@ public class CommandComposer {
 	 * @return The command.
 	 */
 	public static Command getTwoScoreRightAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
-			AimerSubsystem aimerSubsystem, Targeter targeter, PneumaticsSubsystem pneumaticsSubsystem,
-			SimpleVisionSubsystem visionSubsystem, IntakeSubsystem intakeSubsystem, IndexerSubsystem indexerSubsystem,
-			FlywheelSubsystem flywheelSubsystem) {
+			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, -35, 2, false));
 		if (visionSubsystem != null) {
@@ -120,8 +111,7 @@ public class CommandComposer {
 	 * @return The command.
 	 */
 	public static Command getTwoScoreRightAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
-			AimerSubsystem aimerSubsystem, SimpleVisionSubsystem visionSubsystem, IntakeSubsystem intakeSubsystem,
-			IndexerSubsystem indexerSubsystem, FlywheelSubsystem flywheelSubsystem) {
+			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, -35, 2, false));
 		if (visionSubsystem != null) {
@@ -149,8 +139,7 @@ public class CommandComposer {
 	 * @return The command.
 	 */
 	public static Command getTwoScoreLeftAutoBlue(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
-			AimerSubsystem aimerSubsystem, SimpleVisionSubsystem visionSubsystem, IntakeSubsystem intakeSubsystem,
-			IndexerSubsystem indexerSubsystem, FlywheelSubsystem flywheelSubsystem) {
+			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, 25, 2, false));
 		if (visionSubsystem != null) {
@@ -178,8 +167,7 @@ public class CommandComposer {
 	 * @return The command.
 	 */
 	public static Command getTwoScoreLeftAutoRed(DriveSubsystem driveSubsystem, ArduinoSubsystem arduinoSubsystem,
-			AimerSubsystem aimerSubsystem, SimpleVisionSubsystem visionSubsystem, IntakeSubsystem intakeSubsystem,
-			IndexerSubsystem indexerSubsystem, FlywheelSubsystem flywheelSubsystem) {
+			SimpleVisionSubsystem visionSubsystem) {
 		SequentialCommandGroup alignCommand = new SequentialCommandGroup(
 				new TurnToAngleCommand(driveSubsystem, 35, 2, false));
 		if (visionSubsystem != null) {

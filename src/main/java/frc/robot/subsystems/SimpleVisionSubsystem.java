@@ -4,7 +4,7 @@ import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelper;
 
 public class SimpleVisionSubsystem extends SubsystemBase {
 	private final DoubleSubscriber m_angleSubscription;
@@ -14,7 +14,7 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 
 	public SimpleVisionSubsystem() {
 		// Setup subscription
-		LimelightHelpers.setPipelineIndex("limelight", 0);
+		LimelightHelper.setPipelineIndex("limelight", 0);
 		m_angleSubscription = NetworkTableInstance.getDefault().getTable("limelight")
 				.getDoubleTopic("tx")
 				.subscribe(0);
