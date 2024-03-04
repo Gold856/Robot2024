@@ -1,7 +1,11 @@
 package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
+import static frc.robot.Constants.PoseConstants.*;
 
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.PoseConstants;
 import frc.robot.commands.TimedLEDCommand;
@@ -26,6 +30,7 @@ import frc.robot.subsystems.FlywheelSubsystem;
 import frc.robot.subsystems.IndexerSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem.Pose;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
@@ -767,5 +772,40 @@ public class CommandComposer {
 	public static Command TurnToAngleCommand(DriveSubsystem driveSubsystem, double targetAngle, double angleThreshold,
 			boolean relative) {
 		return new TurnToAngleCommand(driveSubsystem, targetAngle, angleThreshold, relative);
+	}
+
+	public static Command getTurnToClosestSpeakerCommand(DriveSubsystem driveSubsystem,
+			LimeLightSubsystem limeLightSubsystem) {
+		Supplier<Pose2d> s = () -> {
+			var target = limeLightSubsystem.closest(kBlueSpeakerPosition, kRedSpeakerPosition);
+			var t = limeLightSubsystem.transformationToward(target);
+			return driveSubsystem.getPose().plus(t);
+		};
+		return new DriveCommand(driveSubsystem, s, 0.1, 5);
+	}
+
+	public static Command getMoveTowardClosestSpeakerCommand(double distanceToTarget, DriveSubsystem driveSubsystem,
+			LimeLightSubsystem limeLightSubsystem) {
+		Supplier<Pose2d> s = () -> {
+			var target = limeLightSubsystem.closest(kBlueSpeakerPosition, kRedSpeakerPosition);
+			var t = limeLightSubsystem.transformationToward(target, distanceToTarget);
+			return driveSubsystem.getPose().plus(t);
+		};
+		return new DriveCommand(driveSubsystem, s, 0.1, 5);
+	}
+
+	public static Command getAlignToClosestAmpCommand(DriveSubsystem driveSubsystem,
+			LimeLightSubsystem limeLightSubsystem) {
+		Supplier<Pose2d> s1 = () -> {
+			Pose target = new Pose(limeLightSubsystem.closest(kBlueAmpPose, kRedAmpPose));
+			var t = limeLightSubsystem.transformationTo(target.add(new Pose(0, -0.3, 0)));
+			return driveSubsystem.getPose().plus(t);
+		};
+		Supplier<Pose2d> s2 = () -> {
+			var target = limeLightSubsystem.closest(kBlueAmpPose, kRedAmpPose);
+			var t = limeLightSubsystem.transformationTo(target);
+			return driveSubsystem.getPose().plus(t);
+		};
+		return new DriveCommand(driveSubsystem, s1, 0.1, 5).andThen(new DriveCommand(driveSubsystem, s2, 0.1, 5));
 	}
 }

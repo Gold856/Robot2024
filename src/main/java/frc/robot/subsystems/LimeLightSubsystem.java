@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.PoseConstants.*;
+
 import java.util.EnumSet;
 import java.util.function.Consumer;
 
@@ -38,6 +40,15 @@ public class LimeLightSubsystem extends SubsystemBase {
 		 */
 		public Pose(double x, double y, double yawInDegrees) {
 			super(x, y, Rotation2d.fromDegrees(yawInDegrees));
+		}
+
+		/**
+		 * Constrcuts a copy of the specified {@code Pose2d}
+		 * 
+		 * @param pose a {@code Pose2d}
+		 */
+		public Pose(Pose2d pose) {
+			super(pose.getX(), pose.getY(), pose.getRotation());
 		}
 
 		/**
@@ -258,11 +269,21 @@ public class LimeLightSubsystem extends SubsystemBase {
 		var a = DriverStation.getAlliance();
 		if (a.isPresent()) {
 			if (a.get() == DriverStation.Alliance.Blue)
-				return distanceTo(new Translation2d(-7.87, 1.45));
-			return distanceTo(new Translation2d(7.87, 1.45));
+				return distanceTo(kBlueSpeakerPosition);
+			return distanceTo(kRedSpeakerPosition);
 		}
-		System.out.println(0 / 0);
 		return null;
+	}
+
+	/**
+	 * Calculates the distance in meters to the closest speaker.
+	 * 
+	 * @return the distance to the closest speaker; ; {@code null} if
+	 *         it has not been possible to reliably estimate the pose of the robot
+	 */
+	public Double distanceToClosestSpeaker() {
+		Translation2d closestSpeaker = closest(kBlueSpeakerPosition, kRedSpeakerPosition);
+		return distanceTo(closestSpeaker);
 	}
 
 	/**
@@ -276,10 +297,65 @@ public class LimeLightSubsystem extends SubsystemBase {
 		var a = DriverStation.getAlliance();
 		if (a.isPresent()) {
 			if (a.get() == DriverStation.Alliance.Blue)
-				return angleTo(new Translation2d(-7.87, 1.45));
-			return angleTo(new Translation2d(7.87, 1.45));
+				return angleTo(kBlueSpeakerPosition);
+			return angleTo(kRedSpeakerPosition);
 		}
 		return null;
+	}
+
+	/**
+	 * Calculates the rotation angle in degrees to the closest speaker.
+	 * 
+	 * @return the rotation angle in degrees to the closest speaker; {@code null} if
+	 *         it has not been possible to reliably estimate the pose of the robot
+	 */
+	public Double angleToClosestSpeaker() {
+		Translation2d closestSpeaker = closest(kBlueSpeakerPosition, kRedSpeakerPosition);
+		return angleTo(closestSpeaker);
+	}
+
+	/**
+	 * Returns the closest to the current position of the robot among the specified
+	 * positions.
+	 * 
+	 * @param positions an array of positions
+	 * @return the closest to the current position of the robot among the specified
+	 *         positions; {@code null} if it has not been possible to reliably
+	 *         estimate the pose of the robot
+	 */
+	public Translation2d closest(Translation2d... positions) {
+		Translation2d closest = null;
+		Double min = null;
+		for (Translation2d position : positions) {
+			Double d = distanceTo(position);
+			if (min == null || (min != null && d != null && d < min)) {
+				min = d;
+				closest = position;
+			}
+		}
+		return closest;
+	}
+
+	/**
+	 * Returns the closest to the current position of the robot among the specified
+	 * positions.
+	 * 
+	 * @param positions an array of {@code Pose2d}s
+	 * @return the closest to the current position of the robot among the specified
+	 *         positions; {@code null} if it has not been possible to reliably
+	 *         estimate the pose of the robot
+	 */
+	public Pose2d closest(Pose2d... poses) {
+		Pose2d closest = null;
+		Double min = null;
+		for (Pose2d pose : poses) {
+			Double d = distanceTo(pose.getTranslation());
+			if (min == null || (min != null && d != null && d < min)) {
+				min = d;
+				closest = pose;
+			}
+		}
+		return closest;
 	}
 
 }

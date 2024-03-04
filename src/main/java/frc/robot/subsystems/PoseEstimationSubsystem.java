@@ -407,8 +407,12 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 						angleToSpeaker());
 				SmartDashboard.putNumber("pose estimation: distance to " + alliance + " speaker (meters)",
 						distanceToSpeaker());
+				SmartDashboard.putNumber("pose estimation: rotation angle to the closest speaker (degrees)",
+						angleToClosestSpeaker());
+				SmartDashboard.putNumber("pose estimation: distance to the closest speaker (meters)",
+						distanceToClosestSpeaker());
 			} catch (Exception e) {
-
+				e.printStackTrace();
 			}
 		}
 	}
