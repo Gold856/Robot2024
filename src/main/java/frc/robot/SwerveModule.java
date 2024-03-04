@@ -66,6 +66,10 @@ public class SwerveModule {
 		return m_steerMotor.getOutputCurrent();
 	}
 
+	public double getDriveCurrent() {
+		return m_driveMotor.getOutputCurrent();
+	}
+
 	/**
 	 * Resets drive encoder to zero.
 	 */

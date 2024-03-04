@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ControllerConstants;
@@ -162,22 +163,19 @@ public class RobotContainer {
 
 		// ------------------Intake Controls-----------------------------------
 		m_operatorController.button(Button.kRightTrigger)
-				.onTrue(m_pneumaticsSubsystem.upIntakeCommand().andThen(m_intakeSubsystem.stopIntakeCommand()));
+				.onTrue(m_pneumaticsSubsystem.upIntakeCommand()
+						.andThen(m_intakeSubsystem.reverseIntakeCommand()).andThen(new WaitCommand(1.4))
+						.andThen(m_intakeSubsystem.stopIntakeCommand()));
 		m_operatorController.button(Button.kLeftTrigger)
-				.onTrue(m_pneumaticsSubsystem.downIntakeCommand().alongWith(CommandComposer.getIntakeWithSensorCommand(
-						m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem)));
+				.onTrue(CommandComposer.getTeleopIntakeCommand(m_intakeSubsystem, m_pneumaticsSubsystem,
+						m_indexerSubsystem, m_arduinoSubsystem));
+		m_operatorController.button(Button.kLeftTrigger).and(m_operatorController.button(Button.kLeftBumper))
+				.onTrue(m_pneumaticsSubsystem.downIntakeCommand());
 		m_operatorController.povUp().and(m_operatorController.button(Button.kLeftBumper))
 				.onTrue(m_intakeSubsystem.stopIntakeCommand());
 		// sorry about this one
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper)).onTrue(m_intakeSubsystem
 				.reverseIntakeCommand().alongWith(IndexerCommand.getReverseCommand(m_indexerSubsystem)));
-		// TODO
-		// m_operatorController.povRight().and(m_operatorController.button(Button.kLeftBumper))
-		// .onTrue(new AimHeightCommand(m_aimerSubsystem, m_targeter,
-		// AimHeightOperation.SOURCE))
-		// .alongWith(new FlywheelCommand(m_flywheelSubsystem,
-		// FlywheelOperation.SET_VELOCITY, -6000))
-		// .onRelease(IndexerCommand.getReverseCommand(m_indexerSubsystem));
 
 		// -------------------Climber Commands---------------------------------
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
@@ -202,7 +200,13 @@ public class RobotContainer {
 		m_operatorController.button(Button.kSquare).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_SUBWOOFER)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE).andThen(
-								new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 8000, 8000))));
+								new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 4000, 4000))));
+		m_operatorController.button(Button.kX).onTrue(
+				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_AMP)
+						.andThen(
+								new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE).alongWith(
+										new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 500,
+												1700))));
 
 		// ------------------Amp Bar Controls -------------------
 		// m_operatorController.button(Button.kX)
@@ -212,7 +216,7 @@ public class RobotContainer {
 		// TESTING TESTING TESTING TODO TESTING TODO: REMOVE TESTING
 		m_aimerSubsystem.setDefaultCommand( // TODO: remove, testing
 				new AimerDriveCommand(m_aimerSubsystem, () -> m_driverController.getRawAxis(Axis.kRightY)));
-		m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
+		// m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 
 		m_operatorController.button(Button.kShare).onTrue(CommandComposer.getBallPathTest(
 				m_intakeSubsystem, m_indexerSubsystem, m_flywheelSubsystem));

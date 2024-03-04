@@ -268,6 +268,10 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Drive BR steer current", m_backRight.getSteerCurrent());
 		SmartDashboard.putNumber("Drive BL steer current", m_backLeft.getSteerCurrent());
 		SmartDashboard.putNumber("Drive FL steer current", m_frontLeft.getSteerCurrent());
+		SmartDashboard.putNumber("Back Right Current", m_backRight.getDriveCurrent());
+		SmartDashboard.putNumber("Back Left Current", m_backLeft.getDriveCurrent());
+		SmartDashboard.putNumber("Front Right Current", m_frontRight.getDriveCurrent());
+		SmartDashboard.putNumber("Front Left Current", m_frontLeft.getDriveCurrent());
 	}
 
 	/**
@@ -280,12 +284,15 @@ public class DriveSubsystem extends SubsystemBase {
 		return run(() -> {
 			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
 			// input so slight movements don't move the robot
-			double fwdSpeed = kTeleopMaxSpeed
-					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-			double strSpeed = kTeleopMaxSpeed
-					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			double rotSpeed = kTeleopMaxTurnSpeed * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
 					ControllerConstants.kDeadzone);
+			rotSpeed = Math.signum(rotSpeed) * Math.pow(rotSpeed, 2);
+			double fwdSpeed = kTeleopMaxSpeed
+					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+			fwdSpeed = Math.signum(fwdSpeed) * Math.pow(fwdSpeed, 2);
+			double strSpeed = kTeleopMaxSpeed
+					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+			strSpeed = Math.signum(strSpeed) * Math.pow(strSpeed, 2);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
 		});
 	}

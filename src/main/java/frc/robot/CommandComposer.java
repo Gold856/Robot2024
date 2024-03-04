@@ -568,4 +568,9 @@ public class CommandComposer {
 						new SimpleVisionAlignCommand(driveSubsystem, simpleVisionSubsystem)),
 				new IndexerShootCommand(indexerSubsystem));
 	}
+
+	// public static Command getSourceIntakeCommand(FlywheelSubsystem
+	// flywheelSubsystem, IndexerSubsystem indexerSubsystem){
+
+	// }
 }
