@@ -135,6 +135,7 @@ public final class Constants {
 	}
 
 	public static final class ClimbConstants {
+		public static final double kFF = 0.00008040000102482736;
 		public static final int kLeftPort = 45;
 		public static final int kRightPort = 44;
 		public static final boolean kLeftInvert = false;

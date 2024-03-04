@@ -17,7 +17,7 @@ public interface Targeter {
 		public double getAngle(double distanceMeters) {
 			// Calculated using regression from experimentally determined constants
 			// Determined with spreadsheet ____
-			double angle = 1.82 * Math.pow(Math.E, -0.708 * (distanceMeters));
+			double angle = 1.82 * Math.pow(Math.E, -0.708 * (distanceMeters - 0.1));
 			return angle;
 		}
 
