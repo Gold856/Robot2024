@@ -111,7 +111,7 @@ public final class Constants {
 		public static final int kSteerPeakCurrentLimit = 35;
 
 		// The amount of time to go from 0 to full power in seconds
-		public static final double kRampRate = .1;
+		public static final double kRampRate = .1; // .1
 
 	}
 
@@ -159,7 +159,7 @@ public final class Constants {
 		public static final boolean kFollowerOppose = false;
 		public static final double kIntakeGearRatio = 1.0 / 10.0;
 		public static final double kIntakeSpeed = 0.75;
-		public static final double kReverseSpeed = -0.3;
+		public static final double kReverseSpeed = -0.4;
 	}
 
 	public static final class IndexerConstants {
@@ -209,7 +209,8 @@ public final class Constants {
 														// on robot
 		public static final double kDefaultActuatorHeight = 0.973; // percent
 		public static final double kSubwooferActuatorHeight = 0.973;
-		public static final double kAimerTolerance = 0.01;
+		public static final double kAmpActuatorHeight = 0.964720;
+		public static final double kAimerTolerance = 0.003; // previously 0.01
 		public static final double kAdjustAmount = 0.05; // Adjust with testing
 		public static final double kP = 1;
 		public static final double kMaxAimerPower = 1;

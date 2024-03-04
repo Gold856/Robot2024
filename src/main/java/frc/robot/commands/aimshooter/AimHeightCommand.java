@@ -67,8 +67,7 @@ public class AimHeightCommand extends Command {
 				m_aimerSubsystem.setAimerHeight(kSubwooferActuatorHeight);
 				break;
 			case PRESET_AMP:
-				// TODO add amp constant
-				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
+				m_aimerSubsystem.setAimerHeight(kAmpActuatorHeight);
 				break;
 			case SOURCE:
 				// TODO add source constant
