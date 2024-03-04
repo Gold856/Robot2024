@@ -9,11 +9,12 @@ import static frc.robot.Constants.AimerConstants.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter;
 import frc.robot.subsystems.AimerSubsystem;
-import frc.robot.subsystems.SimpleVisionSubsystem;
+import frc.robot.subsystems.PoseEstimationSubsystem;
 
 public class AimHeightCommand extends Command {
 	private AimHeightOperation m_operation;
-	private double m_distanceMeters;
+	// private double m_distanceMeters;
+	private double m_distanceToSpeaker;
 	private AimerSubsystem m_aimerSubsystem;
 	private Targeter m_targeter;
 
@@ -42,11 +43,12 @@ public class AimHeightCommand extends Command {
 
 	/** Creates a new AimCommand. */
 	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation,
-			SimpleVisionSubsystem simpleVisionSubsystem) {
+			PoseEstimationSubsystem poseEstimationSubsystem) {
 		m_operation = operation;
 		m_aimerSubsystem = subsystem;
 		m_targeter = targeter;
-		m_distanceMeters = simpleVisionSubsystem.getDistance();
+		// m_distanceMeters = poseEstimationSubsystem.distanceTo();
+		m_distanceToSpeaker = poseEstimationSubsystem.distanceToSpeaker();
 		addRequirements(m_aimerSubsystem);
 	}
 
@@ -55,7 +57,7 @@ public class AimHeightCommand extends Command {
 	public void initialize() {
 		switch (m_operation) {
 			case CALC_AND_SET:
-				double actuatorHeightSetpoint = m_targeter.calcAimerHeightFromDistance(m_distanceMeters);
+				double actuatorHeightSetpoint = m_targeter.calcAimerHeightFromDistance(m_distanceToSpeaker);
 				m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
 				break;
 			case SET_PRESET_DEFAULT:
