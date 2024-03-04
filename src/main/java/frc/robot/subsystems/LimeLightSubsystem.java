@@ -261,6 +261,7 @@ public class LimeLightSubsystem extends SubsystemBase {
 				return distanceTo(new Translation2d(-7.87, 1.45));
 			return distanceTo(new Translation2d(7.87, 1.45));
 		}
+		System.out.println(0 / 0);
 		return null;
 	}
 

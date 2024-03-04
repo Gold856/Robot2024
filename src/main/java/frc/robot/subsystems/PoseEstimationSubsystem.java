@@ -408,6 +408,7 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 				SmartDashboard.putNumber("pose estimation: distance to " + alliance + " speaker (meters)",
 						distanceToSpeaker());
 			} catch (Exception e) {
+
 			}
 		}
 	}

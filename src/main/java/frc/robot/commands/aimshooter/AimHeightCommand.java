@@ -6,6 +6,7 @@ package frc.robot.commands.aimshooter;
 
 import static frc.robot.Constants.AimerConstants.*;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter;
 import frc.robot.subsystems.AimerSubsystem;
@@ -14,9 +15,10 @@ import frc.robot.subsystems.PoseEstimationSubsystem;
 public class AimHeightCommand extends Command {
 	private AimHeightOperation m_operation;
 	// private double m_distanceMeters;
-	private double m_distanceToSpeaker;
+	private Double m_distanceToSpeaker;
 	private AimerSubsystem m_aimerSubsystem;
 	private Targeter m_targeter;
+	private PoseEstimationSubsystem m_poseEstimationSubsystem;
 
 	public enum AimHeightOperation {
 		CALC_AND_SET, // Calculate Angle at current position (changes)
@@ -47,17 +49,20 @@ public class AimHeightCommand extends Command {
 		m_operation = operation;
 		m_aimerSubsystem = subsystem;
 		m_targeter = targeter;
+		m_poseEstimationSubsystem = poseEstimationSubsystem;
 		// m_distanceMeters = poseEstimationSubsystem.distanceTo();
-		m_distanceToSpeaker = poseEstimationSubsystem.distanceToSpeaker();
 		addRequirements(m_aimerSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
+		m_distanceToSpeaker = m_poseEstimationSubsystem.distanceToSpeaker();
+		SmartDashboard.putNumber("distance to speaker", m_distanceToSpeaker);
 		switch (m_operation) {
 			case CALC_AND_SET:
-				double actuatorHeightSetpoint = m_targeter.calcAimerHeightFromDistance(m_distanceToSpeaker);
+				double actuatorHeightSetpoint = m_targeter.getAngle(m_distanceToSpeaker);
+				SmartDashboard.putNumber("Caluclated Height in Command", actuatorHeightSetpoint);
 				m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
 				break;
 			case SET_PRESET_DEFAULT:
