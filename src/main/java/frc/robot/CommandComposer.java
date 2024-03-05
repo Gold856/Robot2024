@@ -53,8 +53,7 @@ public class CommandComposer {
 			LimeLightSubsystem limelightSubsystem) {
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limelightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limelightSubsystem),
 				new BangBangDriveDistanceCommand(driveSubsystem, -2, 0.01),
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -84,14 +83,14 @@ public class CommandComposer {
 		// }
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, targeter, limeLightSubsystem, simpleVisionSubsystem),
+						indexerSubsystem, targeter, limeLightSubsystem),
 
 				parallel(
 						new PolarDriveCommand(driveSubsystem, 1, 90, 0.01),
 						pneumaticsSubsystem.downIntakeCommand()),
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, targeter, limeLightSubsystem, simpleVisionSubsystem),
+						indexerSubsystem, targeter, limeLightSubsystem),
 
 				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -122,8 +121,7 @@ public class CommandComposer {
 		// }
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				new PolarDriveCommand(driveSubsystem, 0.75, 180, 0.01),
 				parallel(
@@ -133,8 +131,7 @@ public class CommandComposer {
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				new PolarDriveCommand(driveSubsystem, 0.2, -180, 0.01),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -165,8 +162,7 @@ public class CommandComposer {
 		// }
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				parallel(
 						new PolarDriveCommand(driveSubsystem, 1.4, 240, 0.01),
@@ -175,8 +171,7 @@ public class CommandComposer {
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				new PolarDriveCommand(driveSubsystem, 0.2, -180, 0.01),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -208,8 +203,7 @@ public class CommandComposer {
 		// }
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 				parallel(
 						new PolarDriveCommand(driveSubsystem, 1.2, -240, 0.01),
 						pneumaticsSubsystem.downIntakeCommand()),
@@ -217,8 +211,7 @@ public class CommandComposer {
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				new PolarDriveCommand(driveSubsystem, 0.4, 180, 0.01),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -243,8 +236,7 @@ public class CommandComposer {
 			PneumaticsSubsystem pneumaticsSubsystem, LimeLightSubsystem limeLightSubsystem) {
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 				parallel(
 						new PolarDriveCommand(driveSubsystem, 0.75, -180, 0.01),
 						pneumaticsSubsystem.downIntakeCommand()),
@@ -253,8 +245,7 @@ public class CommandComposer {
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				new PolarDriveCommand(driveSubsystem, 0.2, 180, 0.01),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
@@ -294,8 +285,7 @@ public class CommandComposer {
 				new PolarDriveCommand(driveSubsystem, 1.25, 180, 0.01),
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, .25, StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -332,8 +322,7 @@ public class CommandComposer {
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				// alignCommand,
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 				new TimedLEDCommand(arduinoSubsystem, .25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
@@ -368,7 +357,7 @@ public class CommandComposer {
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				// alignCommand,
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, targeter, limeLightSubsystem, simpleVisionSubsystem),
+						indexerSubsystem, targeter, limeLightSubsystem),
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
@@ -403,8 +392,7 @@ public class CommandComposer {
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				// alignCommand,
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
@@ -446,8 +434,7 @@ public class CommandComposer {
 				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
 				new PolarDriveCommand(driveSubsystem, .5, 180, 0.01),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -493,8 +480,7 @@ public class CommandComposer {
 						intakeSubsystem.forwardIntakeCommand()),
 				// alignCommand,
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
@@ -537,8 +523,7 @@ public class CommandComposer {
 						new PolarDriveCommand(driveSubsystem, -0.2, 180), // -180
 						intakeSubsystem.forwardIntakeCommand()),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -581,8 +566,7 @@ public class CommandComposer {
 				new PolarDriveCommand(driveSubsystem, .35, 180, 0.01), // -180
 				intakeSubsystem.forwardIntakeCommand(),
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limeLightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limeLightSubsystem),
 
 				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
@@ -666,8 +650,7 @@ public class CommandComposer {
 			SimpleVisionSubsystem simpleVisionSubsystem, LimeLightSubsystem limelightSubsystem) {
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limelightSubsystem,
-						simpleVisionSubsystem),
+						indexerSubsystem, regressionTargeter, limelightSubsystem),
 
 				// strafe towards speaker, shoot
 				new PolarDriveCommand(driveSubsystem, 1.4, -240, 0.01),
@@ -741,8 +724,7 @@ public class CommandComposer {
 	public static Command getAimAndShootCommand(DriveSubsystem driveSubsystem,
 			SimpleVisionSubsystem simpleVisionSubsystem, FlywheelSubsystem flywheelSubsystem,
 			AimerSubsystem aimerSubsystem, IndexerSubsystem indexerSubsystem, Targeter regressionTargeter,
-			LimeLightSubsystem limelightSubsystem,
-			SimpleVisionSubsystem visionSubsystem) {
+			LimeLightSubsystem limelightSubsystem) {
 		return sequence(
 				new AimHeightCommand(aimerSubsystem, regressionTargeter, AimHeightOperation.SET_PRESET_DEFAULT),
 				parallel(
@@ -751,7 +733,7 @@ public class CommandComposer {
 								new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SETTLE, 0, 0)),
 						new AimHeightCommand(aimerSubsystem, regressionTargeter,
 								AimHeightOperation.CALC_AND_SET, limelightSubsystem),
-						// new SimpleVisionAlignCommand(driveSubsystem, visionSubsystem)),
+						// new SimpleVisionAlignCommand(driveSubsystem, simpleVisionSubsystem)),
 						getTurnToClosestSpeakerCommand(driveSubsystem, limelightSubsystem)));
 		// new IndexerShootCommand(indexerSubsystem),
 		// flywheelSubsystem.stopFlywheel());
@@ -760,12 +742,10 @@ public class CommandComposer {
 	public static Command getAimAndShootAutoCommand(DriveSubsystem driveSubsystem,
 			SimpleVisionSubsystem simpleVisionSubsystem, FlywheelSubsystem flywheelSubsystem,
 			AimerSubsystem aimerSubsystem, IndexerSubsystem indexerSubsystem, Targeter regressionTargeter,
-			LimeLightSubsystem limelightSubsystem,
-			SimpleVisionSubsystem visionSubsystem) {
+			LimeLightSubsystem limelightSubsystem) {
 		return sequence(
 				getAimAndShootCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limelightSubsystem,
-						visionSubsystem),
+						indexerSubsystem, regressionTargeter, limelightSubsystem),
 				new IndexerShootCommand(indexerSubsystem),
 				flywheelSubsystem.stopFlywheel());
 	}

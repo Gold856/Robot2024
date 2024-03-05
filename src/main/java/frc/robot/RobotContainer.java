@@ -283,7 +283,7 @@ public class RobotContainer {
 		// TODO testing da cool thing
 		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand(m_driveSubsystem,
 				m_visionSubsystem, m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem,
-				m_targeter, m_limeLightSubsystem, m_visionSubsystem))
+				m_targeter, m_limeLightSubsystem))
 				.onFalse(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_LOW)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE))
 						.alongWith(m_flywheelSubsystem.stopFlywheel())
