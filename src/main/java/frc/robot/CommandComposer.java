@@ -836,4 +836,63 @@ public class CommandComposer {
 		};
 		return new DriveCommand(driveSubsystem, s1, 0.1, 5).andThen(new DriveCommand(driveSubsystem, s2, 0.1, 5));
 	}
+
+	public static Command getFiveScoreBlueAutoCommand(DriveSubsystem driveSubsystem,
+			LimeLightSubsystem limeLightSubsystem) {
+		return
+		// DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
+		// limeLightSubsystem)
+		// 2nd note
+		DriveCommand.alignTo(kBlueNoteThreePose, 0.1, 5, driveSubsystem,
+				limeLightSubsystem)
+				.andThen( // 3rd note
+						DriveCommand.alignTo(kBlueNoteTwoPose, 0.1, 5, driveSubsystem,
+								limeLightSubsystem))
+				.andThen( // 4th note
+						DriveCommand.alignTo(kBlueNoteOnePose, 0.1, 5, driveSubsystem,
+								limeLightSubsystem))
+				.andThen(
+						DriveCommand.alignTo(
+								kBlueCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), 0.2, 10, driveSubsystem,
+								limeLightSubsystem))
+				.andThen(// 5th note
+						DriveCommand.alignTo(kBlueCenterNoteOnePose, 0.1, 5, driveSubsystem,
+								limeLightSubsystem))
+				.andThen(
+						DriveCommand.alignTo(kBlueNoteOnePose, 0.1, 5, driveSubsystem,
+								limeLightSubsystem))
+		// .andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
+		// limeLightSubsystem))
+		;
+	}
+
+	public static Command getFourScoreRedAutoCommand(DriveSubsystem driveSubsystem,
+			LimeLightSubsystem limeLightSubsystem) {
+		return
+		// DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
+		// limeLightSubsystem)
+		// 2nd note
+		DriveCommand.alignTo(kRedNoteThreePose, 0.1, 5, driveSubsystem,
+				limeLightSubsystem)
+				.andThen( // 3rd note
+						DriveCommand.alignTo(kRedNoteTwoPose, 0.1, 5, driveSubsystem,
+								limeLightSubsystem))
+				.andThen( // 4th note
+						DriveCommand.alignTo(kRedNoteOnePose, 0.1, 5, driveSubsystem,
+								limeLightSubsystem))
+		// .andThen(
+		// DriveCommand.alignTo(
+		// kBlueCenterNoteOnePose.add(new Pose(-0.5, 0, 0)), 0.2, 10, driveSubsystem,
+		// limeLightSubsystem))
+		// .andThen(// 5th note
+		// DriveCommand.alignTo(kBlueCenterNoteOnePose, 0.1, 5, driveSubsystem,
+		// limeLightSubsystem))
+		// .andThen(
+		// DriveCommand.alignTo(kBlueNoteOnePose, 0.1, 5, driveSubsystem,
+		// limeLightSubsystem))
+		// .andThen(DriveCommand.turnTo(kBlueSpeakerPosition, 0.1, 5, driveSubsystem,
+		// limeLightSubsystem))
+		;
+	}
+
 }

@@ -138,6 +138,8 @@ public class RobotContainer {
 				CommandComposer.getFourScoreLeftAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+		m_autoSelector.addOption("Left Four Score Blue",
+				CommandComposer.getFiveScoreBlueAutoCommand(m_driveSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Get Blocks Auto",
 				CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
 		m_autoSelector.addOption("Get Amp Auto Red",
