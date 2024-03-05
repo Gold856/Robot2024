@@ -242,9 +242,9 @@ public final class Constants {
 		public static final Pose kBlueCenterNoteFourPose = new Pose(-0.2 + 0.25, -1.7 - 0.15, 225);
 		public static final Pose kBlueCenterNoteFivePose = new Pose(-0.2, -3.2, 180);
 
-		public static final Pose kRedNoteOnePose = new Pose(6.0 - 0.25, 2.82 - 0.25, 25);
+		public static final Pose kRedNoteOnePose = new Pose(6.0 - 0.25, 2.82 - 0.25, 205); // TODO: BACKWARDs
 		public static final Pose kRedNoteTwoPose = new Pose(6.0, 1.45, 0);
-		public static final Pose kRedNoteThreePose = new Pose(6.0 - 0.25, 0.0 + 0.25, 205);
+		public static final Pose kRedNoteThreePose = new Pose(6.0 - 0.25, 0.0 + 0.25, 185); // TODO: BACKWARDs
 
 		public static final Translation2d kRedSpeakerPosition = new Translation2d(7.87, 1.45);
 		public static final Pose kRedAmpPose = new Pose(6.44, 3.75, 90);
