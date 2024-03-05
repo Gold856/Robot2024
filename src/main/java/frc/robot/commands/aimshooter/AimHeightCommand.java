@@ -6,11 +6,11 @@ package frc.robot.commands.aimshooter;
 
 import static frc.robot.Constants.AimerConstants.*;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter;
 import frc.robot.subsystems.AimerSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem;
+import frc.robot.subsystems.PoseEstimationSubsystem;
 
 public class AimHeightCommand extends Command {
 	private AimHeightOperation m_operation;
@@ -19,6 +19,7 @@ public class AimHeightCommand extends Command {
 	private AimerSubsystem m_aimerSubsystem;
 	private Targeter m_targeter;
 	private LimeLightSubsystem m_limelightSubsystem;
+	private PoseEstimationSubsystem m_poseEstimationSubsystem;
 
 	public enum AimHeightOperation {
 		CALC_AND_SET, // Calculate Angle at current position (changes)
@@ -45,28 +46,20 @@ public class AimHeightCommand extends Command {
 
 	/** Creates a new AimCommand. */
 	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation,
-			LimeLightSubsystem limelightSubsystem) {
+			LimeLightSubsystem limelightSubsystem, PoseEstimationSubsystem poseEstimationSubsystem) {
 		m_operation = operation;
 		m_aimerSubsystem = subsystem;
 		m_targeter = targeter;
 		m_limelightSubsystem = limelightSubsystem;
-		// m_distanceMeters = poseEstimationSubsystem.distanceTo();
+		m_poseEstimationSubsystem = poseEstimationSubsystem;
 		addRequirements(m_aimerSubsystem);
 	}
 
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		var distance = m_limelightSubsystem.distanceToClosestSpeaker();
-		// if the distance cannot be figured out, use 3m as the default distance
-		m_distanceToSpeaker = distance == null ? 3 : distance;
-		SmartDashboard.putNumber("distance to speaker", m_distanceToSpeaker);
 		switch (m_operation) {
-			case CALC_AND_SET:
-				double actuatorHeightSetpoint = m_targeter.getAngle(m_distanceToSpeaker);
-				SmartDashboard.putNumber("Caluclated Height in Command", actuatorHeightSetpoint);
-				m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
-				break;
+
 			case SET_PRESET_DEFAULT:
 				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
 				break;
@@ -88,6 +81,22 @@ public class AimHeightCommand extends Command {
 				break;
 			case STOP:
 				m_aimerSubsystem.setAimerHeight(m_aimerSubsystem.getAimerHeight());
+				break;
+			case CALC_AND_SET:
+				// if the distance cannot be figured out, use 3m as the default distance
+				try {
+					m_distanceToSpeaker = m_limelightSubsystem.distanceToClosestSpeaker();
+					double actuatorHeightSetpoint = m_targeter.getAngle(m_distanceToSpeaker);
+					m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
+				} catch (Exception NullPointerException) {
+					if (m_poseEstimationSubsystem.distanceToClosestSpeaker() != null) {
+						m_distanceToSpeaker = m_poseEstimationSubsystem.distanceToClosestSpeaker();
+					}
+					double actuatorHeightSetpoint = m_targeter.getAngle(m_distanceToSpeaker);
+					m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
+				}
+				// SmartDashboard.putNumber("Caluclated Height in Command",
+				// actuatorHeightSetpoint);
 				break;
 			default:
 				break;
@@ -111,8 +120,6 @@ public class AimHeightCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		if (m_operation == AimHeightOperation.STOP) {
-			m_aimerSubsystem.stopMotor();
-		}
+		m_aimerSubsystem.stopMotor();
 	}
 }
