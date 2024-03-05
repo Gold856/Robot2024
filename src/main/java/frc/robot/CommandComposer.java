@@ -778,7 +778,7 @@ public class CommandComposer {
 			LimeLightSubsystem limelightSubsystem, PoseEstimationSubsystem poseEstimationSubsystem,
 			SimpleVisionSubsystem visionSubsystem) {
 		return sequence(
-				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
+				getAimAndShootCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, regressionTargeter, limelightSubsystem, poseEstimationSubsystem,
 						visionSubsystem),
 				new IndexerShootCommand(indexerSubsystem),
