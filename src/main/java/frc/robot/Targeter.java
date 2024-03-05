@@ -2,8 +2,6 @@ package frc.robot;
 
 import static frc.robot.Constants.AimerConstants.*;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 public interface Targeter {
 
 	// aka small delta x and big delta y
@@ -19,8 +17,7 @@ public interface Targeter {
 		public double getAngle(double distanceMeters) {
 			// Calculated using regression from experimentally determined constants
 			// Determined with spreadsheet ____
-			double angle = 1.82 * Math.pow(Math.E, -0.708 * (distanceMeters - 0.1));
-			SmartDashboard.putNumber("Calculated Angle", angle);
+			double angle = 1.82 * Math.pow(Math.E, -0.708 * (distanceMeters - 0.2));
 			return angle;
 		}
 

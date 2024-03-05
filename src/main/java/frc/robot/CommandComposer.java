@@ -7,7 +7,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.PoseConstants;
 import frc.robot.commands.TimedLEDCommand;
 import frc.robot.commands.aimshooter.AimHeightCommand;
 import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
@@ -746,8 +745,7 @@ public class CommandComposer {
 						new AimHeightCommand(aimerSubsystem, regressionTargeter,
 								AimHeightOperation.CALC_AND_SET, limelightSubsystem),
 						// new SimpleVisionAlignCommand(driveSubsystem, poseEstimationSubsystem))
-						DriveCommand.turnTo(PoseConstants.kRedSpeakerPosition, 0.01, 1, driveSubsystem,
-								limelightSubsystem)));
+						getTurnToClosestSpeakerCommand(driveSubsystem, limelightSubsystem)));
 		// new IndexerShootCommand(indexerSubsystem),
 		// flywheelSubsystem.stopFlywheel());
 	}
