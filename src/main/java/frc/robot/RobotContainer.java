@@ -272,7 +272,7 @@ public class RobotContainer {
 		m_operatorController.button(Button.kOptions).onTrue(m_flywheelSubsystem.stopFlywheel());
 
 		// TODO testing da cool thing
-		m_driverController.button(Button.kRightBumper).onTrue(CommandComposer.getAimAndShootCommand(m_driveSubsystem,
+		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand(m_driveSubsystem,
 				m_visionSubsystem, m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem,
 				m_targeter, m_limeLightSubsystem));
 		// m_driverController.button(Button.kRightBumper)
