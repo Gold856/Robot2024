@@ -17,7 +17,6 @@ import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Targeter.RegressionTargeter;
-import frc.robot.commands.SimpleVisionAlignCommand;
 import frc.robot.commands.aimshooter.AimHeightCommand;
 import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
 import frc.robot.commands.aimshooter.AimerDriveCommand;
@@ -273,15 +272,11 @@ public class RobotContainer {
 		m_operatorController.button(Button.kOptions).onTrue(m_flywheelSubsystem.stopFlywheel());
 
 		// TODO testing da cool thing
-		/*
-		 * m_driverController.button(Button.kRightBumper).onTrue(CommandComposer.
-		 * getAimAndShootCommand(m_driveSubsystem,
-		 * m_visionSubsystem, m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem,
-		 * m_targeter,
-		 * m_poseEstimationSubsystem, m_limeLightSubsystem));
-		 */
-		m_driverController.button(Button.kRightBumper)
-				.onTrue(new SimpleVisionAlignCommand(m_driveSubsystem, m_visionSubsystem));
+		m_driverController.button(Button.kRightBumper).onTrue(CommandComposer.getAimAndShootCommand(m_driveSubsystem,
+				m_visionSubsystem, m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem,
+				m_targeter, m_limeLightSubsystem));
+		// m_driverController.button(Button.kRightBumper)
+		// .onTrue(new SimpleVisionAlignCommand(m_driveSubsystem, m_visionSubsystem));
 	}
 
 	public Command getAutonomousCommand() {

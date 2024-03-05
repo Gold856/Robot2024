@@ -379,7 +379,7 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 			m_botpose = v.getDoubleArray();
 			if (m_botpose != null) {
 				var pose = new Pose2d(m_botpose[0], m_botpose[1], Rotation2d.fromDegrees(m_botpose[5]));
-				if (pose.getX() != 0 || pose.getY() != 0 || pose.getRotation().getDegrees() != 0)
+				if (Math.abs(pose.getX()) > 0.1 || Math.abs(pose.getY()) > 0.1) // if botpose seems reasonable
 					m_poseEstimator.update(pose);
 			}
 			return m_botpose;
@@ -412,7 +412,7 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 				SmartDashboard.putNumber("pose estimation: distance to the closest speaker (meters)",
 						distanceToClosestSpeaker());
 			} catch (Exception e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 	}

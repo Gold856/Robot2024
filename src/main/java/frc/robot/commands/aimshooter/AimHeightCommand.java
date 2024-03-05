@@ -57,7 +57,9 @@ public class AimHeightCommand extends Command {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-		m_distanceToSpeaker = m_limelightSubsystem.distanceToSpeaker();
+		var distance = m_limelightSubsystem.distanceToClosestSpeaker();
+		// if the distance cannot be figured out, use 3m as the default distance
+		m_distanceToSpeaker = distance == null ? 3 : distance;
 		SmartDashboard.putNumber("distance to speaker", m_distanceToSpeaker);
 		switch (m_operation) {
 			case CALC_AND_SET:
