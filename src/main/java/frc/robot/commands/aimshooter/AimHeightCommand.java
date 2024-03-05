@@ -10,16 +10,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter;
 import frc.robot.subsystems.AimerSubsystem;
 import frc.robot.subsystems.LimeLightSubsystem;
-import frc.robot.subsystems.PoseEstimationSubsystem;
 
 public class AimHeightCommand extends Command {
 	private AimHeightOperation m_operation;
 	// private double m_distanceMeters;
-	private Double m_distanceToSpeaker;
+	private double m_distanceToSpeaker;
 	private AimerSubsystem m_aimerSubsystem;
 	private Targeter m_targeter;
 	private LimeLightSubsystem m_limelightSubsystem;
-	private PoseEstimationSubsystem m_poseEstimationSubsystem;
 
 	public enum AimHeightOperation {
 		CALC_AND_SET, // Calculate Angle at current position (changes)
@@ -46,12 +44,11 @@ public class AimHeightCommand extends Command {
 
 	/** Creates a new AimCommand. */
 	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation,
-			LimeLightSubsystem limelightSubsystem, PoseEstimationSubsystem poseEstimationSubsystem) {
+			LimeLightSubsystem limelightSubsystem) {
 		m_operation = operation;
 		m_aimerSubsystem = subsystem;
 		m_targeter = targeter;
 		m_limelightSubsystem = limelightSubsystem;
-		m_poseEstimationSubsystem = poseEstimationSubsystem;
 		addRequirements(m_aimerSubsystem);
 	}
 
@@ -86,15 +83,11 @@ public class AimHeightCommand extends Command {
 				// if the distance cannot be figured out, use 3m as the default distance
 				try {
 					m_distanceToSpeaker = m_limelightSubsystem.distanceToClosestSpeaker();
-					double actuatorHeightSetpoint = m_targeter.getAngle(m_distanceToSpeaker);
-					m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
 				} catch (Exception NullPointerException) {
-					if (m_poseEstimationSubsystem.distanceToClosestSpeaker() != null) {
-						m_distanceToSpeaker = m_poseEstimationSubsystem.distanceToClosestSpeaker();
-					}
-					double actuatorHeightSetpoint = m_targeter.getAngle(m_distanceToSpeaker);
-					m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
+					m_distanceToSpeaker = 3.0;
 				}
+				double actuatorHeightSetpoint = m_targeter.getAngle(m_distanceToSpeaker);
+				m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
 				// SmartDashboard.putNumber("Caluclated Height in Command",
 				// actuatorHeightSetpoint);
 				break;

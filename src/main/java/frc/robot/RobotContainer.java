@@ -69,7 +69,6 @@ public class RobotContainer {
 	private final SimpleVisionSubsystem m_visionSubsystem = new SimpleVisionSubsystem();
 	private final FlywheelSubsystem m_flywheelSubsystem = new FlywheelSubsystem();
 	private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-	private final PoseEstimationSubsystem m_poseEstimationSubsystem = new PoseEstimationSubsystem();
 	final LimeLightSubsystem m_limeLightSubsystem = new PoseEstimationSubsystem() {
 		{
 			addPoseSupplier("BotPose@Odometry", () -> m_driveSubsystem.getPose());
@@ -88,56 +87,55 @@ public class RobotContainer {
 		m_autoSelector.addOption("Polar Drive Two Meters", new PolarDriveCommand(m_driveSubsystem, 2, 180));
 		m_autoSelector.addOption("Shoot and Leave Auto",
 				CommandComposer.getShootAndLeaveAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
-						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_limeLightSubsystem,
-						m_poseEstimationSubsystem));
+						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Right Two Score Blue",
 				CommandComposer.getTwoScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Right Two Score Red",
 				CommandComposer.getTwoScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Left Two Score Blue",
 				CommandComposer.getTwoScoreLeftAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Left Two Score Red",
 				CommandComposer.getTwoScoreLeftAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Right Three Score Blue",
 				CommandComposer.getThreeScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Right Three Score Red",
 				CommandComposer.getThreeScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Left Three Score Blue",
 				CommandComposer.getThreeScoreLeftAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Left Three Score Red",
 				CommandComposer.getThreeScoreLeftAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Right Four Score Blue",
 				CommandComposer.getFourScoreRightAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Right Four Score Red",
 				CommandComposer.getFourScoreRightAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Left Four Score Blue",
 				CommandComposer.getFourScoreLeftAutoBlue(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Left Four Score Red",
 				CommandComposer.getFourScoreLeftAutoRed(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
-						m_pneumaticsSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Four Score Red Auto test",
 				CommandComposer.getFourScoreRedAutoCommand(m_driveSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Get Blocks Auto",
@@ -151,7 +149,7 @@ public class RobotContainer {
 		m_autoSelector.addOption("Get Shoot and Amp Auto",
 				CommandComposer.getShootAndAmp(m_driveSubsystem, m_arduinoSubsystem, m_indexerSubsystem,
 						m_pneumaticsSubsystem, m_aimerSubsystem, m_targeter, m_flywheelSubsystem, m_intakeSubsystem,
-						m_visionSubsystem, m_limeLightSubsystem, m_poseEstimationSubsystem));
+						m_visionSubsystem, m_limeLightSubsystem));
 		m_autoSelector.addOption("Absolute to Zero", new TurnToAngleCommand(m_driveSubsystem, 0, 0.5, false));
 		m_autoSelector.addOption("Intake With Sensor",
 				CommandComposer.getIntakeWithSensorCommand(m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
@@ -285,7 +283,7 @@ public class RobotContainer {
 		// TODO testing da cool thing
 		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand(m_driveSubsystem,
 				m_visionSubsystem, m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem,
-				m_targeter, m_limeLightSubsystem, m_poseEstimationSubsystem, m_visionSubsystem))
+				m_targeter, m_limeLightSubsystem, m_visionSubsystem))
 				.onFalse(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_LOW)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE))
 						.alongWith(m_flywheelSubsystem.stopFlywheel())
