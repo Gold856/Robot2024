@@ -374,18 +374,22 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 	 */
 	@Override
 	protected double[] changedBotPose(NetworkTableEvent event) {
+		boolean validSample = false;
 		try {
 			var v = event.valueData.value;
 			m_botpose = v.getDoubleArray();
 			if (m_botpose != null) {
 				var pose = new Pose2d(m_botpose[0], m_botpose[1], Rotation2d.fromDegrees(m_botpose[5]));
 				if (Math.abs(pose.getX()) > 0.1 || Math.abs(pose.getY()) > 0.1) // if botpose seems reasonable
-					m_poseEstimator.update(pose);
+					if (m_poseEstimator.update(pose))
+						validSample = true;
 			}
 			return m_botpose;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		} finally {
+			m_confidence = 0.96 * m_confidence + (validSample ? 0.04 : 0);
 		}
 	}
 
@@ -399,11 +403,12 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 		if (DriverStation.getAlliance().isPresent()) {
 			Alliance alliance = DriverStation.getAlliance().get();
 			try {
+				SmartDashboard.putNumber("pose estimation: confidence",
+						confidence());
 				var pose = estimatedPose();
 				if (pose != null)
 					SmartDashboard.putNumberArray("pose estimation: pose estimated",
-							new double[] { pose.getX() + 8.27, pose.getY() + 4.05,
-									pose.getRotation().getRadians() });
+							new double[] { pose.getX() + 8.27, pose.getY() + 4.05, pose.getRotation().getRadians() });
 				SmartDashboard.putNumber("pose estimation: rotation angle to " + alliance + " speaker (degrees)",
 						angleToSpeaker());
 				SmartDashboard.putNumber("pose estimation: distance to " + alliance + " speaker (meters)",
@@ -417,4 +422,5 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 			}
 		}
 	}
+
 }

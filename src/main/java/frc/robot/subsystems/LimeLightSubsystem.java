@@ -109,6 +109,11 @@ public class LimeLightSubsystem extends SubsystemBase {
 	protected double[] m_botpose;
 
 	/**
+	 * This {@code LimeLightSubsystem}'s confidence about its estimated pose.
+	 */
+	protected double m_confidence = 0;
+
+	/**
 	 * Constructs a {@code LimeLightSubsystem}.
 	 */
 	public LimeLightSubsystem() {
@@ -127,6 +132,16 @@ public class LimeLightSubsystem extends SubsystemBase {
 			return null;
 		var pose = new Pose(m_botpose[0], m_botpose[1], m_botpose[5]);
 		return pose.equals(DEFAULT_POSE) ? null : pose;
+	}
+
+	/**
+	 * Returns this {@code LimeLightSubsystem}'s confidence about its estimated
+	 * pose.
+	 * 
+	 * @return a value between 0 (no confidence at all) and 1 (absolute confidence)
+	 */
+	public double confidence() {
+		return m_confidence;
 	}
 
 	/**
@@ -157,12 +172,17 @@ public class LimeLightSubsystem extends SubsystemBase {
 	 *         table
 	 */
 	protected double[] changedBotPose(NetworkTableEvent event) {
+		boolean validSample = false;
 		try {
 			var v = event.valueData.value;
 			m_botpose = v.getDoubleArray();
+			if (Math.abs(m_botpose[0]) > 0.1 || Math.abs(m_botpose[1]) > 0.1)
+				validSample = true;
 		} catch (Exception e) {
 			m_botpose = null;
 			// e.printStackTrace();
+		} finally {
+			m_confidence = 0.96 * m_confidence + (validSample ? 0.04 : 0);
 		}
 		return m_botpose;
 	}
