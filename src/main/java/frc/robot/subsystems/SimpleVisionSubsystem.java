@@ -10,7 +10,6 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 	private final DoubleSubscriber m_angleSubscription;
 	// private final DoubleSubscriber m_distanceSubscription;
 	private double m_angle;
-	private double m_distance;
 
 	public SimpleVisionSubsystem() {
 		// Setup subscription

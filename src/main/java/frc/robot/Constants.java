@@ -201,7 +201,6 @@ public final class Constants {
 		public static final int kLeftIntakeReverseChannel = 1;
 		public static final int kRightIntakeForwardChannel = 2;
 		public static final int kRightIntakeReverseChannel = 3;
-		// TODO direction/starting state?
 		/** Alias for the solenoid value that makes the intake go down. */
 		public static final Value kIntakeDown = Value.kForward;
 		/** Alias for the solenoid value that makes the intake go up. */
@@ -217,9 +216,8 @@ public final class Constants {
 		public static final double kPeakCurrentLimit = 35; // 100 (NO MORE THAN 40 A)
 		public static final int kPeakCurrentDurationMillis = 100;
 		public static final double kGearRatio = 3;
-		public static final double kSpeakerHeight = 2.032145; // TODO change to this height - robot height
-		public static final double kAimerLength = .25; // TODO change to deltaX between edge of robot and aimer axis
-														// on robot
+		public static final double kSpeakerHeight = 2.032145;
+		public static final double kAimerLength = .25;
 		public static final double kDefaultActuatorHeight = 0.973; // percent
 		public static final double kSubwooferActuatorHeight = 0.973;
 		public static final double kAmpActuatorHeight = 0.964720;

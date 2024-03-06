@@ -31,7 +31,7 @@ public class AimerDriveCommand extends Command {
 	// Called every time the scheduler runs while the command is scheduled.
 	@Override
 	public void execute() {
-		double speed = MathUtil.applyDeadband(m_speed.get(), ControllerConstants.kDeadzone) * -1; // TODO: Constant
+		double speed = MathUtil.applyDeadband(m_speed.get(), ControllerConstants.kDeadzone) * -1;
 		if (speed != 0) {
 			m_aimerSubsystem.setManual(true); // Joystick control
 			// Prevent lead screw from going out of bounds

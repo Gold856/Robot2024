@@ -20,9 +20,9 @@ public class ArduinoSubsystem extends SubsystemBase {
 		RAINBOW_PARTY_FUN_TIME((byte) 1),
 		SOLID_ORANGE((byte) 2),
 		SOLID_BLUE((byte) 3),
-		BLINKING_YELLOW((byte) 4),
-		BLINKING_PURPLE((byte) 5),
-		BLINKING_RED((byte) 6),
+		BLINKING_YELLOW((byte) 5),
+		BLINKING_PURPLE((byte) 6),
+		BLINKING_RED((byte) 7),
 		DEFAULT((byte) 20);
 
 		public byte code;
