@@ -400,26 +400,26 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 	public void periodic() {
 		super.periodic();
 		m_poseEstimator.update(m_poseCalculators.values());
-		if (DriverStation.getAlliance().isPresent()) {
-			Alliance alliance = DriverStation.getAlliance().get();
-			try {
-				SmartDashboard.putNumber("pose estimation: confidence",
-						confidence());
-				var pose = estimatedPose();
-				if (pose != null)
-					SmartDashboard.putNumberArray("pose estimation: pose estimated",
-							new double[] { pose.getX() + 8.27, pose.getY() + 4.05, pose.getRotation().getRadians() });
+		try {
+			SmartDashboard.putNumber("pose estimation: confidence",
+					confidence());
+			var pose = estimatedPose();
+			if (pose != null) // pose data that can be used by AdvantageScope
+				SmartDashboard.putNumberArray("pose estimation: pose estimated",
+						new double[] { pose.getX() + 8.27, pose.getY() + 4.05, pose.getRotation().getRadians() });
+			SmartDashboard.putNumber("pose estimation: rotation angle to the closest speaker (degrees)",
+					angleToClosestSpeaker());
+			SmartDashboard.putNumber("pose estimation: distance to the closest speaker (meters)",
+					distanceToClosestSpeaker());
+			if (DriverStation.getAlliance().isPresent()) {
+				Alliance alliance = DriverStation.getAlliance().get();
 				SmartDashboard.putNumber("pose estimation: rotation angle to " + alliance + " speaker (degrees)",
 						angleToSpeaker());
 				SmartDashboard.putNumber("pose estimation: distance to " + alliance + " speaker (meters)",
 						distanceToSpeaker());
-				SmartDashboard.putNumber("pose estimation: rotation angle to the closest speaker (degrees)",
-						angleToClosestSpeaker());
-				SmartDashboard.putNumber("pose estimation: distance to the closest speaker (meters)",
-						distanceToClosestSpeaker());
-			} catch (Exception e) {
-				// e.printStackTrace();
 			}
+		} catch (Exception e) {
+			// e.printStackTrace();
 		}
 	}
 
