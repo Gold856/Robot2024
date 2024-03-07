@@ -833,7 +833,8 @@ public class CommandComposer {
 			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
 			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return DriveCommand
-				.alignTo(targetPose.plus(new Transform2d(0.3, 0, Rotation2d.fromDegrees(0))), 0.1, 5, driveSubsystem,
+				// TODO: originally .3
+				.alignTo(targetPose.plus(new Transform2d(0.6, 0, Rotation2d.fromDegrees(0))), 0.1, 5, driveSubsystem,
 						limeLightSubsystem)
 				.andThen(parallel(
 						DriveCommand.alignTo(targetPose, 0.1, 5, driveSubsystem,
