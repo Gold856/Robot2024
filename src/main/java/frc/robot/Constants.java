@@ -124,7 +124,7 @@ public final class Constants {
 		public static final int kSteerPeakCurrentLimit = 35;
 
 		// The amount of time to go from 0 to full power in seconds
-		public static final double kRampRate = .1; // .1
+		public static final double kRampRate = .3; // .1
 
 	}
 
@@ -142,7 +142,7 @@ public final class Constants {
 		public static final double kIz = 0.0;
 		public static final double kFF = .000_1050;
 		public static final double kMaxOutput = 1;
-		public static final double kMinOutput = 0;
+		public static final double kMinOutput = -1;
 		public static final double kGearRatio = 2;
 		public static final double kAllowedError = 50;
 	}

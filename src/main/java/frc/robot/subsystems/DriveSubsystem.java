@@ -180,6 +180,13 @@ public class DriveSubsystem extends SubsystemBase {
 		setModuleStates(calculateModuleStates(new ChassisSpeeds(0, 0, 0), true));
 	}
 
+	public void setRampRate(double rampRate) {
+		m_backLeft.setRampRate(rampRate);
+		m_backRight.setRampRate(rampRate);
+		m_frontLeft.setRampRate(rampRate);
+		m_frontRight.setRampRate(rampRate);
+	}
+
 	/**
 	 * Gets the module positions for each swerve module.
 	 * 
@@ -294,6 +301,11 @@ public class DriveSubsystem extends SubsystemBase {
 					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			strSpeed = Math.signum(strSpeed) * Math.pow(strSpeed, 2);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+			if (fwdSpeed > 0.2 || rotSpeed > 0.2 || strSpeed > 0.2) {
+				setRampRate(.3); // TODO 0.3
+			} else {
+				setRampRate(0.1);
+			}
 		});
 	}
 

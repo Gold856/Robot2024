@@ -113,8 +113,8 @@ public class FlywheelSubsystem extends SubsystemBase {
 	 */
 	public Command stopFlywheel() {
 		return runOnce(() -> {
-			m_neoFlywheelBottom.set(0);
-			m_neoFlywheelTop.set(0);
+			setBottomVelocity(500);
+			setTopVelocity(500);
 		});
 	}
 

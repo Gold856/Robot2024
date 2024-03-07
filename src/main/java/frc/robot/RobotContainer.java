@@ -271,21 +271,32 @@ public class RobotContainer {
 						.andThen(m_intakeSubsystem.reverseIntakeCommand()).andThen(new WaitCommand(1.4))
 						.andThen(m_intakeSubsystem.stopIntakeCommand())
 						.andThen(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
+
 		m_operatorController.button(Button.kLeftTrigger)
 				.onTrue(CommandComposer.getTeleopIntakeCommand(m_intakeSubsystem, m_pneumaticsSubsystem,
 						m_indexerSubsystem, m_arduinoSubsystem));
+		m_operatorController.button(Button.kLeftBumper)
+				.and(m_operatorController.button(Button.kLeftTrigger))
+				.whileTrue(m_pneumaticsSubsystem.downIntakeCommand().andThen(m_intakeSubsystem.forwardIntakeCommand()))
+				.onFalse(m_intakeSubsystem.forwardIntakeCommand()
+						.andThen(new WaitCommand(0.5).alongWith(m_pneumaticsSubsystem.upIntakeCommand()).alongWith(
+								IndexerCommand.getFowardCommand(m_indexerSubsystem).withTimeout(0.25)))
+						.andThen(m_intakeSubsystem.stopIntakeCommand())
+						.andThen(new IndexerStopCommand(m_indexerSubsystem)));
 		m_operatorController.button(Button.kLeftTrigger).and(m_operatorController.button(Button.kLeftBumper))
 				.onTrue(m_pneumaticsSubsystem.downIntakeCommand());
 		m_operatorController.povUp().and(m_operatorController.button(Button.kLeftBumper))
 				.onTrue(m_intakeSubsystem.stopIntakeCommand());
 		// sorry about this one
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper)).onTrue(m_intakeSubsystem
-				.reverseIntakeCommand().alongWith(IndexerCommand.getReverseCommand(m_indexerSubsystem)));
-		// TODO test this
+				.reverseIntakeCommand().alongWith(IndexerCommand.getReverseCommand(m_indexerSubsystem))
+				.alongWith(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, -4000, -4000)));
 		m_operatorController
 				.povRight().and(m_operatorController.button(Button.kLeftBumper)).onTrue(CommandComposer
-						.getSourcePickUpCommand(m_aimerSubsystem, m_targeter, m_flywheelSubsystem, m_indexerSubsystem))
-				.onFalse(CommandComposer.getStopFlywheelAndIndexer(m_flywheelSubsystem, m_indexerSubsystem));
+						.getSourcePickUpCommand(m_aimerSubsystem, m_targeter, m_flywheelSubsystem, m_indexerSubsystem,
+								m_intakeSubsystem))
+				.onFalse(CommandComposer.getStopFlywheelAndIndexer(m_flywheelSubsystem, m_indexerSubsystem,
+						m_intakeSubsystem));
 
 		// -------------------Climber Commands---------------------------------
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
@@ -308,15 +319,13 @@ public class RobotContainer {
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_SUBWOOFER)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)
 								.alongWith(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY,
-										4000, 4000))))
-				.onFalse(m_flywheelSubsystem.stopFlywheel());
+										4000, 4000))));
 		m_operatorController.button(Button.kX).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_AMP)
 						.andThen(
 								new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE).alongWith(
 										new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 500,
-												1800))))
-				.onFalse(m_flywheelSubsystem.stopFlywheel());
+												2000)))); // 1800 old, 2000 new
 		m_operatorController.button(Button.kTriangle).onTrue(m_flywheelSubsystem.stopFlywheel());
 
 		// ------------------Amp Bar Controls -------------------

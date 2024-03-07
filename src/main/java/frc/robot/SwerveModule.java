@@ -38,6 +38,7 @@ public class SwerveModule {
 		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
 		m_driveMotor.setOpenLoopRampRate(kRampRate);
+		m_driveMotor.setClosedLoopRampRate(kRampRate);
 	}
 
 	/**
@@ -160,4 +161,10 @@ public class SwerveModule {
 		m_driveMotor.setIdleMode(mode);
 		m_steerMotor.setIdleMode(mode);
 	}
+
+	public void setRampRate(double rampRate) {
+		m_driveMotor.setOpenLoopRampRate(rampRate);
+		m_driveMotor.setClosedLoopRampRate(rampRate);
+	}
+
 }
