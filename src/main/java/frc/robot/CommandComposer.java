@@ -1020,4 +1020,80 @@ public class CommandComposer {
 
 		);
 	}
+
+	public static Command getThreeMiddleFourScoreBlueCommand(DriveSubsystem driveSubsystem,
+			SimpleVisionSubsystem visionSubsystem, FlywheelSubsystem flywheelSubsystem, AimerSubsystem aimerSubsystem,
+			IndexerSubsystem indexerSubsystem, Targeter targeter,
+			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
+			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				pneumaticsSubsystem.downIntakeCommand(),
+				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
+						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(-6, -2), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(-6, -2), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getShootToClosestSpeakerAtCommand(new Pose(-6, -0.5, 155), driveSubsystem, visionSubsystem,
+						flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
+						arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(-6, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				DriveCommand.moveToward(new Translation2d(-2, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(-6, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				DriveCommand.moveToward(new Translation2d(-1, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kBlueCenterNoteThreePose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(-1, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				DriveCommand.moveToward(new Translation2d(-6, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getShootToClosestSpeakerAtCommand(new Pose(-6, -0.5, 25), driveSubsystem, visionSubsystem,
+						flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
+						arduinoSubsystem)
+
+		);
+	}
+
+	public static Command getThreeMiddleFourScoreRedCommand(DriveSubsystem driveSubsystem,
+			SimpleVisionSubsystem visionSubsystem, FlywheelSubsystem flywheelSubsystem, AimerSubsystem aimerSubsystem,
+			IndexerSubsystem indexerSubsystem, Targeter targeter,
+			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
+			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				pneumaticsSubsystem.downIntakeCommand(),
+				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
+						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(6, -2), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kRedCenterNoteFivePose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(6, -2), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getShootToClosestSpeakerAtCommand(new Pose(6, -0.5, 25), driveSubsystem, visionSubsystem,
+						flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
+						arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(6, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				DriveCommand.moveToward(new Translation2d(2, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kRedCenterNoteFourPose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(6, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getShootToClosestSpeakerAtCommand(new Pose(6, -0.5, 25), driveSubsystem, visionSubsystem,
+						flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
+						arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(6, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				DriveCommand.moveToward(new Translation2d(1, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kRedCenterNoteThreePose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.moveToward(new Translation2d(1, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				DriveCommand.moveToward(new Translation2d(6, -3), 0, 0.5, 360, driveSubsystem, limeLightSubsystem),
+				getShootToClosestSpeakerAtCommand(new Pose(6, -0.5, 25), driveSubsystem, visionSubsystem,
+						flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
+						arduinoSubsystem)
+
+		);
+	}
 }
