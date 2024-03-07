@@ -170,6 +170,11 @@ public class RobotContainer {
 						m_flywheelSubsystem,
 						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Four Score w/ Two From Middle Blue Auto (Start on Right)",
+				CommandComposer.getTwoMiddleFourScoreBlueCommand(m_driveSubsystem, m_visionSubsystem,
+						m_flywheelSubsystem,
+						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
+						m_pneumaticsSubsystem, m_arduinoSubsystem));
 		// m_autoSelector.addOption("Get Blocks Auto",
 		// CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
 		// m_autoSelector.addOption("Get Amp Auto Red",
