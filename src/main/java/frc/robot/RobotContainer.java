@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.wpilibj2.command.Commands.*;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -185,6 +187,10 @@ public class RobotContainer {
 						m_flywheelSubsystem,
 						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Three Score w/ Two from middle right Auto",
+				CommandComposer.getThreeScoreTwoMiddleBottomBlueAuto(m_driveSubsystem, m_visionSubsystem,
+						m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem,
+						m_intakeSubsystem, m_pneumaticsSubsystem, m_arduinoSubsystem));
 		// m_autoSelector.addOption("Get Blocks Auto",
 		// CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
 		// m_autoSelector.addOption("Get Amp Auto Red",
@@ -244,12 +250,14 @@ public class RobotContainer {
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 
 		// --------------------Drive Controls---------------------------------
+		// D - Drive
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
 				() -> m_driverController.getRawAxis(Axis.kLeftX),
 				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
+		// D RIGHT BUMPER - Aim and Shoot
 		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand(m_driveSubsystem,
 				m_visionSubsystem, m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem,
 				m_targeter, m_limeLightSubsystem, m_arduinoSubsystem))
@@ -259,22 +267,26 @@ public class RobotContainer {
 						.alongWith(new IndexerStopCommand(m_indexerSubsystem)));
 
 		// -------------------Indexer Controls---------------------------------
+		// D CIRCLE - Indexer shoot + stop flywheel
 		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem)
 				.andThen(m_flywheelSubsystem.stopFlywheel()));
+		// OP RIGHT BUMPER - Indexer shoot + stop flywheel
 		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(m_indexerSubsystem)
 				.andThen(m_flywheelSubsystem.stopFlywheel())
 				.andThen(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
 
 		// ------------------Intake Controls-----------------------------------
+
+		// OP RIGHT TRIGGER - Up intake, reverse intake, wait, stop intake
 		m_operatorController.button(Button.kRightTrigger)
 				.onTrue(m_pneumaticsSubsystem.upIntakeCommand()
-						.andThen(m_intakeSubsystem.reverseIntakeCommand()).andThen(new WaitCommand(1.4))
-						.andThen(m_intakeSubsystem.stopIntakeCommand())
 						.andThen(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
-
+		// OP LEFT TRIGGER - Teleop Intake
 		m_operatorController.button(Button.kLeftTrigger)
 				.onTrue(CommandComposer.getTeleopIntakeCommand(m_intakeSubsystem, m_pneumaticsSubsystem,
 						m_indexerSubsystem, m_arduinoSubsystem));
+		// OP LEFT BUMPER + LEFT TRIGGER - Down intake, forward intake, wait, up intake,
+		// forward index, stop intake, and then stop index
 		m_operatorController.button(Button.kLeftBumper)
 				.and(m_operatorController.button(Button.kLeftTrigger))
 				.whileTrue(m_pneumaticsSubsystem.downIntakeCommand().andThen(m_intakeSubsystem.forwardIntakeCommand()))
@@ -283,20 +295,26 @@ public class RobotContainer {
 								IndexerCommand.getFowardCommand(m_indexerSubsystem).withTimeout(0.25)))
 						.andThen(m_intakeSubsystem.stopIntakeCommand())
 						.andThen(new IndexerStopCommand(m_indexerSubsystem)));
+		// OP LEFT TRIGGER + LEFT BUMPER - Down Intake
 		m_operatorController.button(Button.kLeftTrigger).and(m_operatorController.button(Button.kLeftBumper))
 				.onTrue(m_pneumaticsSubsystem.downIntakeCommand());
+		// OP LEFT BUMPER + POV UP - Stop Intake
 		m_operatorController.povUp().and(m_operatorController.button(Button.kLeftBumper))
 				.onTrue(m_intakeSubsystem.stopIntakeCommand());
 		// sorry about this one
+		// OP LEFT BUMPER + POV LEFT - Reverse Intake and Indexer w/ flywheel
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper)).onTrue(m_intakeSubsystem
 				.reverseIntakeCommand().alongWith(IndexerCommand.getReverseCommand(m_indexerSubsystem))
 				.alongWith(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, -4000, -4000)));
+		// OP LEFTBUMPER + POV RIGHT source intake
 		m_operatorController
-				.povRight().and(m_operatorController.button(Button.kLeftBumper)).onTrue(CommandComposer
-						.getSourcePickUpCommand(m_aimerSubsystem, m_targeter, m_flywheelSubsystem, m_indexerSubsystem,
-								m_intakeSubsystem))
-				.onFalse(CommandComposer.getStopFlywheelAndIndexer(m_flywheelSubsystem, m_indexerSubsystem,
-						m_intakeSubsystem));
+				.povRight().and(m_operatorController.button(Button.kLeftBumper))
+				.whileTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, -2000, -2000)
+						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SOURCE)))
+				.onFalse(sequence(m_flywheelSubsystem.stopFlywheel(),
+						IndexerCommand.getReverseCommand(m_indexerSubsystem),
+						new WaitCommand(0.1),
+						new IndexerStopCommand(m_indexerSubsystem)));
 
 		// -------------------Climber Commands---------------------------------
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,
@@ -312,20 +330,25 @@ public class RobotContainer {
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
 		// -------------------Aimer Commands-----------------------------------
+
+		// OP CIRCLE - Default Aim
 		m_operatorController.button(Button.kCircle).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)));
+		// OP SQUARE - Subwoofer Preset + everything
 		m_operatorController.button(Button.kSquare).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_SUBWOOFER)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE)
 								.alongWith(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY,
-										4000, 4000))));
+										8000, 8000))));
+		// OP X - Amp Preset
 		m_operatorController.button(Button.kX).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_AMP)
 						.andThen(
 								new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE).alongWith(
 										new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 500,
 												2000)))); // 1800 old, 2000 new
+		// OP TRIANGLE - Stop Flywheel
 		m_operatorController.button(Button.kTriangle).onTrue(m_flywheelSubsystem.stopFlywheel());
 
 		// ------------------Amp Bar Controls -------------------

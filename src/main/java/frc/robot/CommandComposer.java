@@ -37,7 +37,6 @@ import frc.robot.subsystems.LimeLightSubsystem.Pose;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
 
-// TODO TEST ALL OF THIS AND SEE IF DRIVE CAN WORK IN PARALLEL
 // TODO UPDATE DOCUMENTATION
 // TODO All the autos (update so it is not using the AimAndShoot teleop one)
 
@@ -60,6 +59,44 @@ public class CommandComposer {
 				new BangBangDriveDistanceCommand(driveSubsystem, -2, 0.01),
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
+
+	// public static Command getBlueShootAndLeaveAuto(DriveSubsystem driveSubsystem,
+	// ArduinoSubsystem arduinoSubsystem,
+	// SimpleVisionSubsystem simpleVisionSubsystem,
+	// AimerSubsystem aimerSubsystem, RegressionTargeter regressionTargeter,
+	// IndexerSubsystem indexerSubsystem, FlywheelSubsystem flywheelSubsystem,
+	// LimeLightSubsystem limelightSubsystem) {
+	// return sequence(
+	// getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem,
+	// flywheelSubsystem, aimerSubsystem,
+	// indexerSubsystem, regressionTargeter, limelightSubsystem, arduinoSubsystem),
+	// getPickUpNoteAtCommand(new Pose(-6.0 - 3.0, 0.0 + 0.45, 180 - 25),
+	// driveSubsystem, visionSubsystem, flywheelSubsystem,
+	// aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
+	// intakeSubsystem,
+	// pneumaticsSubsystem, arduinoSubsystem),
+	// new TimedLEDCommand(arduinoSubsystem, 0.25,
+	// StatusCode.RAINBOW_PARTY_FUN_TIME));
+	// }
+
+	// public static Command getRedShootAndLeaveAuto(DriveSubsystem driveSubsystem,
+	// ArduinoSubsystem arduinoSubsystem,
+	// SimpleVisionSubsystem simpleVisionSubsystem,
+	// AimerSubsystem aimerSubsystem, RegressionTargeter regressionTargeter,
+	// IndexerSubsystem indexerSubsystem, FlywheelSubsystem flywheelSubsystem,
+	// LimeLightSubsystem limelightSubsystem) {
+	// return sequence(
+	// getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem,
+	// flywheelSubsystem, aimerSubsystem,
+	// indexerSubsystem, regressionTargeter, limelightSubsystem, arduinoSubsystem),
+	// getPickUpNoteAtCommand(new Pose(6.0 - 0.55, 2.82 - 0.25, -25),
+	// driveSubsystem, visionSubsystem, flywheelSubsystem,
+	// aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
+	// intakeSubsystem,
+	// pneumaticsSubsystem, arduinoSubsystem),
+	// new TimedLEDCommand(arduinoSubsystem, 0.25,
+	// StatusCode.RAINBOW_PARTY_FUN_TIME));
+	// }
 
 	/**
 	 * Returns a command for a two-score autonomous routine at SPEAKER middle.
@@ -85,17 +122,17 @@ public class CommandComposer {
 		// simpleVisionSubsystem));
 		// }
 		return sequence(
-				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
-
 				parallel(
-						new PolarDriveCommand(driveSubsystem, 1, 90, 0.01),
-						pneumaticsSubsystem.downIntakeCommand()),
-				getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
-				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
+						pneumaticsSubsystem.downIntakeCommand(),
+						getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem,
+								aimerSubsystem,
+								indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem)),
+				race(
+						getIntakeWithSensorCommand(intakeSubsystem, indexerSubsystem, arduinoSubsystem),
+						new PolarDriveCommand(driveSubsystem, 1, 180, 0.07)),
+				getAimAndShootAutoCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem,
+						aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
-
-				// alignCommand,
 				new TimedLEDCommand(arduinoSubsystem, 0.25, StatusCode.RAINBOW_PARTY_FUN_TIME));
 	}
 
@@ -767,9 +804,10 @@ public class CommandComposer {
 			FlywheelSubsystem flywheelSubsystem, IndexerSubsystem indexerSubsystem, IntakeSubsystem intakeSubsystem) {
 		return parallel(
 				new AimHeightCommand(aimerSubsystem, targeter, AimHeightOperation.SOURCE),
-				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, -2000, -2000),
-				IndexerCommand.getReverseCommand(indexerSubsystem),
-				intakeSubsystem.reverseIntakeCommand());
+				new FlywheelCommand(flywheelSubsystem, FlywheelOperation.SET_VELOCITY, -2000, -2000));
+		// IndexerCommand.getReverseCommand(indexerSubsystem),
+		// intakeSubsystem.reverseIntakeCommand()
+
 	}
 
 	public static Command getStopFlywheelAndIndexer(FlywheelSubsystem flywheelSubsystem,
@@ -1104,5 +1142,61 @@ public class CommandComposer {
 						arduinoSubsystem)
 
 		);
+	}
+
+	public static Command getThreeScoreTwoMiddleBottomBlueAuto(DriveSubsystem driveSubsystem,
+			SimpleVisionSubsystem visionSubsystem, FlywheelSubsystem flywheelSubsystem, AimerSubsystem aimerSubsystem,
+			IndexerSubsystem indexerSubsystem, Targeter targeter,
+			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
+			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				pneumaticsSubsystem.downIntakeCommand(),
+				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
+						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
+				DriveCommand.alignTo(new Pose(-5, -4, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(-6.25, 1, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
+						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
+				DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(-6.25, 1, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+
+				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
+						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem));
+	}
+
+	public static Command getThreeScoreTwoMiddleBottomRedAuto(DriveSubsystem driveSubsystem,
+			SimpleVisionSubsystem visionSubsystem, FlywheelSubsystem flywheelSubsystem, AimerSubsystem aimerSubsystem,
+			IndexerSubsystem indexerSubsystem, Targeter targeter,
+			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
+			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
+		return sequence(
+				pneumaticsSubsystem.downIntakeCommand(),
+				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
+						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
+				DriveCommand.alignTo(new Pose(5, -4, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kRedCenterNoteFourPose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.alignTo(new Pose(5.5, -3, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(6.25, 1, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
+						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
+				DriveCommand.alignTo(new Pose(5.5, -3, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				getPickUpNoteAtCommand(kRedCenterNoteFivePose, driveSubsystem, visionSubsystem, flywheelSubsystem,
+						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
+						pneumaticsSubsystem, arduinoSubsystem),
+				DriveCommand.alignTo(new Pose(5.5, -3, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(6.25, 1, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+
+				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
+						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem));
 	}
 }

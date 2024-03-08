@@ -306,7 +306,7 @@ public class DriveSubsystem extends SubsystemBase {
 			} else {
 				setRampRate(0.1);
 			}
-		});
+		}).withName("DefaultDriveCommand");
 	}
 
 	/**
