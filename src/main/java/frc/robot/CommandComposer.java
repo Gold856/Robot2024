@@ -1205,8 +1205,9 @@ public class CommandComposer {
 			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return pneumaticsSubsystem.downIntakeCommand()
 				.andThen(
-						getShootToClosestSpeakerAtCommand(kBlueNoteOnePose.add(new Pose(-0.6, 0, 0)), 3, driveSubsystem,
-								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
+						getShootToClosestSpeakerAtCommand(kBlueNoteOnePose.add(new Pose(-0.4, -0.4, 0)), 3,
+								driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem,
+								targeter,
 								limeLightSubsystem,
 								arduinoSubsystem))
 				// 2nd note
@@ -1228,8 +1229,8 @@ public class CommandComposer {
 			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
 			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return pneumaticsSubsystem.downIntakeCommand()
-				.andThen(getShootToClosestSpeakerAtCommand(kRedNoteOnePose.add(new Pose(0.6, 0, 0)), 3, driveSubsystem,
-						visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
+				.andThen(getShootToClosestSpeakerAtCommand(kRedNoteOnePose.add(new Pose(0.4, -0.4, 0)), 3,
+						driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 						limeLightSubsystem,
 						arduinoSubsystem))
 				// 2nd note
