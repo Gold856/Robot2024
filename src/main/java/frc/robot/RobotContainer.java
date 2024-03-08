@@ -87,6 +87,10 @@ public class RobotContainer {
 		m_autoSelector.addOption("Shoot and Leave Auto",
 				CommandComposer.getShootAndLeaveAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
 						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_limeLightSubsystem));
+		m_autoSelector.addOption("Middle Two Score",
+				CommandComposer.getTwoScoreMiddleAuto(m_driveSubsystem, m_arduinoSubsystem, m_visionSubsystem,
+						m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem, m_intakeSubsystem,
+						m_pneumaticsSubsystem, m_limeLightSubsystem));
 		// m_autoSelector.addOption("Right Two Score Blue",
 		// CommandComposer.getTwoScoreRightAutoBlue(m_driveSubsystem,
 		// m_arduinoSubsystem, m_visionSubsystem,
