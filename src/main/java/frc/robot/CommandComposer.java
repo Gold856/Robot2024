@@ -1178,7 +1178,7 @@ public class CommandComposer {
 				// 3rd note
 				.andThen(getPickUpNoteAtCommand(kBlueCenterNoteOnePose, driveSubsystem, visionSubsystem,
 						flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
-						intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem).withTimeout(3))
+						intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem).withTimeout(5))
 				.andThen(getShootToClosestSpeakerAtCommand(kBlueNoteOnePose, driveSubsystem,
 						visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 						limeLightSubsystem, arduinoSubsystem));
@@ -1202,7 +1202,7 @@ public class CommandComposer {
 				// 3rd note
 				.andThen(getPickUpNoteAtCommand(kRedCenterNoteOnePose, driveSubsystem, visionSubsystem,
 						flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
-						intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem).withTimeout(3))
+						intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem).withTimeout(5))
 				.andThen(getShootToClosestSpeakerAtCommand(kRedNoteOnePose, driveSubsystem,
 						visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 						limeLightSubsystem, arduinoSubsystem));
