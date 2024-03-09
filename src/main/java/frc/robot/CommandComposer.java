@@ -1125,10 +1125,10 @@ public class CommandComposer {
 			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
 			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
-				// TODO: add timeouts auto will not work
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
 				DriveCommand.alignTo(new Pose(-5, -4, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				pneumaticsSubsystem.downIntakeCommand(),
 				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, driveSubsystem, visionSubsystem, flywheelSubsystem,
 						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
 						pneumaticsSubsystem, arduinoSubsystem).withTimeout(4),
@@ -1142,7 +1142,6 @@ public class CommandComposer {
 						pneumaticsSubsystem, arduinoSubsystem).withTimeout(4),
 				DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
 				DriveCommand.alignTo(new Pose(-6.25, 1, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
-
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem));
 	}
@@ -1156,6 +1155,7 @@ public class CommandComposer {
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
 				DriveCommand.alignTo(new Pose(5, -4, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				pneumaticsSubsystem.downIntakeCommand(),
 				getPickUpNoteAtCommand(kRedCenterNoteFourPose, driveSubsystem, visionSubsystem, flywheelSubsystem,
 						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
 						pneumaticsSubsystem, arduinoSubsystem).withTimeout(4),
