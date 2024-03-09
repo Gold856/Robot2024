@@ -1133,7 +1133,7 @@ public class CommandComposer {
 						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
 						pneumaticsSubsystem, arduinoSubsystem).withTimeout(4),
 				DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
-				DriveCommand.alignTo(new Pose(-6.25, 1, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(-6.25, 0.4, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
 				DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
@@ -1141,7 +1141,7 @@ public class CommandComposer {
 						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
 						pneumaticsSubsystem, arduinoSubsystem).withTimeout(4),
 				DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
-				DriveCommand.alignTo(new Pose(-6.25, 1, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(-6.25, 0.4, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem));
 	}
@@ -1160,7 +1160,7 @@ public class CommandComposer {
 						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
 						pneumaticsSubsystem, arduinoSubsystem).withTimeout(4),
 				DriveCommand.alignTo(new Pose(5.5, -3, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
-				DriveCommand.alignTo(new Pose(6.25, 1, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(6.25, 0.4, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
 				DriveCommand.alignTo(new Pose(5.5, -3, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
@@ -1168,8 +1168,7 @@ public class CommandComposer {
 						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
 						pneumaticsSubsystem, arduinoSubsystem).withTimeout(4),
 				DriveCommand.alignTo(new Pose(5.5, -3, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
-				DriveCommand.alignTo(new Pose(6.25, 1, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
-
+				DriveCommand.alignTo(new Pose(6.25, 0.4, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem));
 	}
