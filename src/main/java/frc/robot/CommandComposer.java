@@ -871,7 +871,7 @@ public class CommandComposer {
 			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return DriveCommand
 				// TODO: originally .3
-				.alignTo(targetPose.plus(new Transform2d(0.6, 0, Rotation2d.fromDegrees(0))), 0.1, 5, driveSubsystem,
+				.alignTo(targetPose.plus(new Transform2d(0.6, 0, Rotation2d.fromDegrees(0))), 0.2, 5, driveSubsystem,
 						limeLightSubsystem)
 				.andThen(parallel(
 						DriveCommand.alignTo(targetPose, 0.1, 5, driveSubsystem,
@@ -907,7 +907,7 @@ public class CommandComposer {
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, arduinoSubsystem))
 				.andThen( // 2nd note
-						getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 1.5, driveSubsystem,
+						getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 2.5, driveSubsystem,
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem))
 				.andThen( // 3rd note
@@ -933,7 +933,7 @@ public class CommandComposer {
 								limeLightSubsystem,
 								arduinoSubsystem))
 				.andThen( // 2nd note
-						getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 1.5, driveSubsystem,
+						getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 2.5, driveSubsystem,
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem))
 				.andThen( // 3rd note
