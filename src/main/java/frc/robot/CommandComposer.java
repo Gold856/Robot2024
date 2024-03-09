@@ -911,11 +911,11 @@ public class CommandComposer {
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem))
 				.andThen( // 3rd note
-						getPickUpNoteAndShootAtCommand(kBlueNoteTwoPose, 1.5, driveSubsystem,
+						getPickUpNoteAndShootAtCommand(kBlueNoteTwoPose, 2.5, driveSubsystem,
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem))
 				.andThen( // 4th note
-						getPickUpNoteAndShootAtCommand(kBlueNoteOnePose, 1.5, driveSubsystem,
+						getPickUpNoteAndShootAtCommand(kBlueNoteOnePose, 2.5, driveSubsystem,
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem));
 	}
@@ -937,11 +937,11 @@ public class CommandComposer {
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem))
 				.andThen( // 3rd note
-						getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 1.5, driveSubsystem,
+						getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 2.5, driveSubsystem,
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem))
 				.andThen( // 4th note
-						getPickUpNoteAndShootAtCommand(kRedNoteOnePose, 1.5, driveSubsystem,
+						getPickUpNoteAndShootAtCommand(kRedNoteOnePose, 2.5, driveSubsystem,
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem));
 	}
@@ -955,8 +955,8 @@ public class CommandComposer {
 				indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem)
 						.andThen(getPickUpNoteAtCommand(kBlueCenterNoteOnePose, driveSubsystem, visionSubsystem,
 								flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
-								intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem).withTimeout(3))
-						.andThen(getShootToClosestSpeakerAtCommand(kBlueNoteOnePose, 5, driveSubsystem,
+								intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem).withTimeout(4))
+						.andThen(getShootToClosestSpeakerAtCommand(kBlueNoteOnePose, 4, driveSubsystem,
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, arduinoSubsystem));
 	}
@@ -970,8 +970,8 @@ public class CommandComposer {
 				indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem)
 						.andThen(getPickUpNoteAtCommand(kRedCenterNoteOnePose, driveSubsystem, visionSubsystem,
 								flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem,
-								intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem).withTimeout(3))
-						.andThen(getShootToClosestSpeakerAtCommand(kRedNoteOnePose, 5, driveSubsystem,
+								intakeSubsystem, pneumaticsSubsystem, arduinoSubsystem).withTimeout(4))
+						.andThen(getShootToClosestSpeakerAtCommand(kRedNoteOnePose, 4, driveSubsystem,
 								visionSubsystem, flywheelSubsystem, aimerSubsystem, indexerSubsystem, targeter,
 								limeLightSubsystem, arduinoSubsystem));
 	}
