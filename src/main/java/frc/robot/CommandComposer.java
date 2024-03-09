@@ -1127,7 +1127,7 @@ public class CommandComposer {
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
-				DriveCommand.alignTo(new Pose(-5, -4, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(-5, -3, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),
 				pneumaticsSubsystem.downIntakeCommand(),
 				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, driveSubsystem, visionSubsystem, flywheelSubsystem,
 						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
@@ -1154,7 +1154,7 @@ public class CommandComposer {
 		return sequence(
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
-				DriveCommand.alignTo(new Pose(5, -4, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
+				DriveCommand.alignTo(new Pose(5, -3, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
 				pneumaticsSubsystem.downIntakeCommand(),
 				getPickUpNoteAtCommand(kRedCenterNoteFourPose, driveSubsystem, visionSubsystem, flywheelSubsystem,
 						aimerSubsystem, indexerSubsystem, targeter, limeLightSubsystem, intakeSubsystem,
