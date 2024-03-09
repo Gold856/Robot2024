@@ -310,6 +310,35 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
+	 * Creates a command to drive the robot with joystick input in robot oriented
+	 * controls.
+	 * 
+	 * @return A command to drive the robot.
+	 */
+	public Command robotOrientedDriveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
+			Supplier<Double> rotationRight, Supplier<Double> rotationLeft) {
+		return run(() -> {
+			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
+			// input so slight movements don't move the robot
+			double rotSpeed = kTeleopMaxTurnSpeed * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
+					ControllerConstants.kDeadzone);
+			rotSpeed = Math.signum(rotSpeed) * Math.pow(rotSpeed, 2);
+			double fwdSpeed = kTeleopMaxSpeed
+					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+			fwdSpeed = Math.signum(fwdSpeed) * Math.pow(fwdSpeed, 2);
+			double strSpeed = kTeleopMaxSpeed
+					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+			strSpeed = Math.signum(strSpeed) * Math.pow(strSpeed, 2);
+			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), false));
+			if (fwdSpeed > 0.2 || rotSpeed > 0.2 || strSpeed > 0.2) {
+				setRampRate(.3);
+			} else {
+				setRampRate(0.1);
+			}
+		}).withName("RobotOrientedDriveCommand");
+	}
+
+	/**
 	 * Creates a command to reset the gyro heading to zero.
 	 * 
 	 * @return A command to reset the gyro heading.

@@ -1125,6 +1125,7 @@ public class CommandComposer {
 			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
 			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
+				// TODO: add timeouts auto will not work
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
 				DriveCommand.alignTo(new Pose(-5, -4, 180 + 25), 0.3, 10, driveSubsystem, limeLightSubsystem),

@@ -163,38 +163,47 @@ public class RobotContainer {
 		// m_aimerSubsystem, m_targeter, m_indexerSubsystem, m_flywheelSubsystem,
 		// m_intakeSubsystem,
 		// m_pneumaticsSubsystem, m_limeLightSubsystem));
-		m_autoSelector.addOption("Five Score Red Auto (Start on Left)",
+		m_autoSelector.addOption("Five Score RED Auto (Start on Left)",
 				CommandComposer.getFiveScoreRedAutoCommand(m_driveSubsystem, m_visionSubsystem, m_flywheelSubsystem,
 						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_arduinoSubsystem));
-		m_autoSelector.addOption("Five Score Blue Auto (Start on Right)",
+		m_autoSelector.addOption("Five Score BLUE Auto (Start on Right)",
 				CommandComposer.getFiveScoreBlueAutoCommand(m_driveSubsystem, m_visionSubsystem, m_flywheelSubsystem,
 						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_arduinoSubsystem));
-		m_autoSelector.addOption("Four Score w/ Two From Middle Red Auto (Start on Left)",
+		m_autoSelector.addOption("Four Score @red 3, middle 5, and middle 4 RED Auto (Start on Left)",
 				CommandComposer.getTwoMiddleFourScoreRedCommand(m_driveSubsystem, m_visionSubsystem,
 						m_flywheelSubsystem,
 						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_arduinoSubsystem));
-		m_autoSelector.addOption("Four Score w/ Two From Middle Blue Auto (Start on Right)",
+		m_autoSelector.addOption("Four Score @blue 3, middle 5, and middle 4 BLUE Auto (Start on Right)",
 				CommandComposer.getTwoMiddleFourScoreBlueCommand(m_driveSubsystem, m_visionSubsystem,
 						m_flywheelSubsystem,
 						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_arduinoSubsystem));
-		m_autoSelector.addOption("Four Score w/ Three From Middle Red Auto (Start on Left)",
+		m_autoSelector.addOption("Four Score @middle 3, middle 4, and middle 5 RED Auto (Start on Left)",
 				CommandComposer.getThreeMiddleFourScoreRedCommand(m_driveSubsystem, m_visionSubsystem,
 						m_flywheelSubsystem,
 						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_arduinoSubsystem));
-		m_autoSelector.addOption("Four Score w/ Three From Middle Blue Auto (Start on Right)",
+		m_autoSelector.addOption("Four Score @middle 3, middle 4, and middle 5 BLUE Auto (Start on Right)",
 				CommandComposer.getThreeMiddleFourScoreBlueCommand(m_driveSubsystem, m_visionSubsystem,
 						m_flywheelSubsystem,
 						m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem, m_intakeSubsystem,
 						m_pneumaticsSubsystem, m_arduinoSubsystem));
-		m_autoSelector.addOption("Three Score w/ Two from middle right Auto",
+		m_autoSelector.addOption("Three Score @middle 4 and middle 5 BLUE Auto (Start on Right)",
 				CommandComposer.getThreeScoreTwoMiddleBottomBlueAuto(m_driveSubsystem, m_visionSubsystem,
 						m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem,
 						m_intakeSubsystem, m_pneumaticsSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Four Score @blue1, middle 1, and middle 2 BLUE Auto (Start on Left)",
+				CommandComposer.getFourScoreTwoMiddleTopBlueAuto(m_driveSubsystem, m_visionSubsystem,
+						m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem,
+						m_intakeSubsystem, m_pneumaticsSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Four Score @red 1, middle 1, and middle 2 RED Auto (Start on Right)",
+				CommandComposer.getFourScoreTwoMiddleTopRedAuto(m_driveSubsystem, m_visionSubsystem,
+						m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem,
+						m_intakeSubsystem, m_pneumaticsSubsystem, m_arduinoSubsystem));
+
 		// m_autoSelector.addOption("Get Blocks Auto",
 		// CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
 		// m_autoSelector.addOption("Get Amp Auto Red",
@@ -269,6 +278,11 @@ public class RobotContainer {
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE))
 						.alongWith(m_flywheelSubsystem.stopFlywheel())
 						.alongWith(new IndexerStopCommand(m_indexerSubsystem)));
+		m_driverController.button(Button.kSquare)
+				.whileTrue(m_driveSubsystem.robotOrientedDriveCommand(() -> m_driverController.getRawAxis(Axis.kLeftY),
+						() -> m_driverController.getRawAxis(Axis.kLeftX),
+						() -> m_driverController.getRawAxis(Axis.kRightTrigger),
+						() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 
 		// -------------------Indexer Controls---------------------------------
 		// D CIRCLE - Indexer shoot + stop flywheel
