@@ -793,7 +793,7 @@ public class CommandComposer {
 			LimeLightSubsystem limelightSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
 				getAimAndShootCommand(driveSubsystem, simpleVisionSubsystem, flywheelSubsystem, aimerSubsystem,
-						indexerSubsystem, regressionTargeter, limelightSubsystem, arduinoSubsystem).withTimeout(3),
+						indexerSubsystem, regressionTargeter, limelightSubsystem, arduinoSubsystem).withTimeout(2),
 				new IndexerShootCommand(indexerSubsystem),
 				flywheelSubsystem.stopFlywheel());
 	}
