@@ -25,6 +25,7 @@ import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Tracer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -288,24 +289,35 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
 			Supplier<Double> rotationRight, Supplier<Double> rotationLeft) {
+		var tracer = new Tracer();
 		return run(() -> {
+			tracer.clearEpochs();
 			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
 			// input so slight movements don't move the robot
 			double rotSpeed = kTeleopMaxTurnSpeed * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
 					ControllerConstants.kDeadzone);
+			tracer.addEpoch("Calculate rotSpeed");
 			rotSpeed = Math.signum(rotSpeed) * (rotSpeed * rotSpeed);
+			tracer.addEpoch("Scale rotSpeed");
 			double fwdSpeed = kTeleopMaxSpeed
 					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+			tracer.addEpoch("Calculate fwdSpeed");
 			fwdSpeed = Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed);
+			tracer.addEpoch("Scale fwdSpeed");
 			double strSpeed = kTeleopMaxSpeed
 					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+			tracer.addEpoch("Calculate strSpeed");
 			strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
+			tracer.addEpoch("Scale strSpeed");
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+			tracer.addEpoch("Set module state");
 			if (fwdSpeed > 0.2 || rotSpeed > 0.2 || strSpeed > 0.2) {
 				setRampRate(.3); // TODO 0.3
 			} else {
 				setRampRate(0.1);
 			}
+			tracer.addEpoch("Set ramp rate");
+			tracer.printEpochs();
 		}).withName("DefaultDriveCommand");
 	}
 
