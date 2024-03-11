@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 public class Robot extends TimedRobot {
 	private Command m_autonomousCommand;
 	private RobotContainer m_robotContainer;
-	private Thread m_visionThread;
 
 	/**
 	 * This function is run when the robot is first started up and should be used
@@ -33,14 +32,10 @@ public class Robot extends TimedRobot {
 		DataLogManager.logNetworkTables(true);
 		m_robotContainer = new RobotContainer();
 
-		m_visionThread = new Thread(() -> {
-			// Get the UsbCamera from CameraServer
-			UsbCamera camera = CameraServer.startAutomaticCapture();
-			// Set the resolution
-			camera.setResolution(160, 120);
-		});
-		// m_visionThread.setDaemon(true);
-		m_visionThread.start();
+		// Get the UsbCamera from CameraServer
+		UsbCamera camera = CameraServer.startAutomaticCapture();
+		// Set the resolution
+		camera.setResolution(160, 120);
 	}
 
 	/**
