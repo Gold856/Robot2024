@@ -24,6 +24,7 @@ import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
 import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
+import frc.robot.commands.drive.PolarDriveCommand;
 import frc.robot.commands.flywheel.FlywheelCommand;
 import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
 import frc.robot.commands.indexer.IndexerCommand;
@@ -195,6 +196,10 @@ public class RobotContainer {
 				CommandComposer.getThreeScoreTwoMiddleBottomBlueAuto(m_driveSubsystem, m_visionSubsystem,
 						m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem,
 						m_intakeSubsystem, m_pneumaticsSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Three Score @middle 4 and middle 5 RED Auto (Start on Right)",
+				CommandComposer.getThreeScoreTwoMiddleBottomRedAuto(m_driveSubsystem, m_visionSubsystem,
+						m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem,
+						m_intakeSubsystem, m_pneumaticsSubsystem, m_arduinoSubsystem));
 		m_autoSelector.addOption("Four Score @blue1, middle 1, and middle 2 BLUE Auto (Start on Left)",
 				CommandComposer.getFourScoreTwoMiddleTopBlueAuto(m_driveSubsystem, m_visionSubsystem,
 						m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem,
@@ -203,6 +208,7 @@ public class RobotContainer {
 				CommandComposer.getFourScoreTwoMiddleTopRedAuto(m_driveSubsystem, m_visionSubsystem,
 						m_flywheelSubsystem, m_aimerSubsystem, m_indexerSubsystem, m_targeter, m_limeLightSubsystem,
 						m_intakeSubsystem, m_pneumaticsSubsystem, m_arduinoSubsystem));
+		m_autoSelector.addOption("Just leave", new PolarDriveCommand(m_driveSubsystem, 3, 180));
 
 		// m_autoSelector.addOption("Get Blocks Auto",
 		// CommandComposer.getBlocksAuto(m_driveSubsystem, m_arduinoSubsystem));
@@ -294,10 +300,11 @@ public class RobotContainer {
 				.andThen(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
 
 		// ------------------Intake Controls-----------------------------------
-
+		// OP break pad
+		m_operatorController.button(Button.kTrackpad).onTrue(IndexerCommand.getFowardCommand(m_indexerSubsystem));
 		// OP RIGHT TRIGGER - Up intake, reverse intake, wait, stop intake
 		m_operatorController.button(Button.kRightTrigger)
-				.onTrue(m_pneumaticsSubsystem.upIntakeCommand()
+				.onTrue(m_pneumaticsSubsystem.upIntakeCommand().andThen(m_intakeSubsystem.stopIntakeCommand())
 						.andThen(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
 		// OP LEFT TRIGGER - Teleop Intake
 		m_operatorController.button(Button.kLeftTrigger)
@@ -324,15 +331,18 @@ public class RobotContainer {
 		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper)).onTrue(m_intakeSubsystem
 				.reverseIntakeCommand().alongWith(IndexerCommand.getReverseCommand(m_indexerSubsystem))
 				.alongWith(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, -4000, -4000)));
-		// OP LEFTBUMPER + POV RIGHT source intake
+		// OP LEFTBUMPER + POV RIGHT intake
 		m_operatorController
 				.povRight().and(m_operatorController.button(Button.kLeftBumper))
 				.whileTrue(new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, -2000, -2000)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SOURCE)))
-				.onFalse(sequence(m_flywheelSubsystem.stopFlywheel(),
+				.onFalse(sequence(
 						IndexerCommand.getReverseCommand(m_indexerSubsystem),
-						new WaitCommand(0.1),
-						new IndexerStopCommand(m_indexerSubsystem)));
+						new WaitCommand(0.2),
+						new IndexerStopCommand(m_indexerSubsystem), m_flywheelSubsystem.stopFlywheel()));
+
+		m_operatorController.button(Button.kPS).onTrue(
+				CommandComposer.getIntakeWithSensorCommand(m_intakeSubsystem, m_indexerSubsystem, m_arduinoSubsystem));
 
 		// -------------------Climber Commands---------------------------------
 		m_climberSubsystem.setDefaultCommand(new ClimberDriveCommand(m_climberSubsystem,

@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelper;
 
@@ -28,8 +27,8 @@ public class SimpleVisionSubsystem extends SubsystemBase {
 		// get the data from limelight
 		m_angle = m_angleSubscription.get();
 		// m_distance = m_distanceSubscription.get() - 0.5;
-		SmartDashboard.putNumber("limelight angle to turn", m_angle);
-		SmartDashboard.putNumber("limelight distance from tag", m_angle);
+		// SmartDashboard.putNumber("limelight angle to turn", m_angle);
+		// SmartDashboard.putNumber("limelight distance from tag", m_angle);
 	}
 
 	/**

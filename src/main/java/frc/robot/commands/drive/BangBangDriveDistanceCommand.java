@@ -2,7 +2,6 @@ package frc.robot.commands.drive;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -69,7 +68,7 @@ public class BangBangDriveDistanceCommand extends Command {
 	public boolean isFinished() {
 		// Determine whether the target distance has been reached
 		double diff = getDiff();
-		SmartDashboard.putNumber("diff", diff);
+		// SmartDashboard.putNumber("diff", diff);
 		return diff < m_tolerance;
 	}
 

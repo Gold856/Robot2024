@@ -1,7 +1,6 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ClampedController;
 import frc.robot.subsystems.DriveSubsystem;
@@ -37,7 +36,7 @@ public class NinjaStarCommand extends Command {
 		m_yController.setTolerance(yTolerance);
 		m_rotController.setTolerance(rotTolerance);
 		m_rotController.enableContinuousInput(0, 360);
-		SmartDashboard.putString("ninja star command", "constructed");
+		// SmartDashboard.putString("ninja star command", "constructed");
 		addRequirements(subsystem);
 	}
 
@@ -55,7 +54,7 @@ public class NinjaStarCommand extends Command {
 
 	@Override
 	public void initialize() {
-		SmartDashboard.putString("ninja star command", "initialized");
+		// SmartDashboard.putString("ninja star command", "initialized");
 		m_startPose = m_driveSubsystem.getPose();
 		m_xTarget = m_startPose.getX() + m_xAmount;
 		m_yTarget = m_startPose.getY() + m_yAmount;
@@ -63,7 +62,7 @@ public class NinjaStarCommand extends Command {
 		m_xController.setSetpoint(-m_xTarget);
 		m_yController.setSetpoint(-m_yTarget);
 		m_rotController.setSetpoint(m_targetAngle);
-		SmartDashboard.putNumber("target angle", m_targetAngle);
+		// SmartDashboard.putNumber("target angle", m_targetAngle);
 	}
 
 	@Override
@@ -80,7 +79,7 @@ public class NinjaStarCommand extends Command {
 		if (m_rotController.atSetpoint()) {
 			rotSpeed = 0;
 		}
-		SmartDashboard.putNumber("rot error", m_rotController.getPositionError());
+		// SmartDashboard.putNumber("rot error", m_rotController.getPositionError());
 		m_driveSubsystem.setModuleStates(xSpeed, ySpeed, rotSpeed, true);
 	}
 

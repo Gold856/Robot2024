@@ -118,7 +118,7 @@ public final class Constants {
 		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381); // ++
 		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381); // -+
 
-		public static final int kDriveSmartCurrentLimit = 55;
+		// public static final int kDriveSmartCurrentLimit = 55;
 		public static final int kDrivePeakCurrentLimit = 65;
 		public static final int kSteerSmartCurrentLimit = 30;
 		public static final int kSteerPeakCurrentLimit = 35;
@@ -167,8 +167,9 @@ public final class Constants {
 	public static final class IntakeConstants {
 		public static final int kIntakePort = 46;
 		public static final boolean kInvert = true;
-		public static final int kSmartCurrentLimit = 60;
+		public static final int kSmartCurrentLimit = 40;
 		public static final int kPeakCurrentLimit = 60;
+		public static final int kPeakCurrentRotations = 5;
 		public static final boolean kFollowerOppose = false;
 		public static final double kIntakeGearRatio = 1.0 / 10.0;
 		public static final double kIntakeSpeed = 0.75;

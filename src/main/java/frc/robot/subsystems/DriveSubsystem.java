@@ -293,13 +293,13 @@ public class DriveSubsystem extends SubsystemBase {
 			// input so slight movements don't move the robot
 			double rotSpeed = kTeleopMaxTurnSpeed * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
 					ControllerConstants.kDeadzone);
-			rotSpeed = Math.signum(rotSpeed) * Math.pow(rotSpeed, 2);
+			rotSpeed = Math.signum(rotSpeed) * (rotSpeed * rotSpeed);
 			double fwdSpeed = kTeleopMaxSpeed
 					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-			fwdSpeed = Math.signum(fwdSpeed) * Math.pow(fwdSpeed, 2);
+			fwdSpeed = Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed);
 			double strSpeed = kTeleopMaxSpeed
 					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			strSpeed = Math.signum(strSpeed) * Math.pow(strSpeed, 2);
+			strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
 			if (fwdSpeed > 0.2 || rotSpeed > 0.2 || strSpeed > 0.2) {
 				setRampRate(.3); // TODO 0.3
@@ -322,13 +322,13 @@ public class DriveSubsystem extends SubsystemBase {
 			// input so slight movements don't move the robot
 			double rotSpeed = kTeleopMaxTurnSpeed * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
 					ControllerConstants.kDeadzone);
-			rotSpeed = Math.signum(rotSpeed) * Math.pow(rotSpeed, 2);
+			rotSpeed = Math.signum(rotSpeed) * (rotSpeed * rotSpeed);
 			double fwdSpeed = kTeleopMaxSpeed
 					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-			fwdSpeed = Math.signum(fwdSpeed) * Math.pow(fwdSpeed, 2);
+			fwdSpeed = Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed);
 			double strSpeed = kTeleopMaxSpeed
 					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			strSpeed = Math.signum(strSpeed) * Math.pow(strSpeed, 2);
+			strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), false));
 			if (fwdSpeed > 0.2 || rotSpeed > 0.2 || strSpeed > 0.2) {
 				setRampRate(.3);

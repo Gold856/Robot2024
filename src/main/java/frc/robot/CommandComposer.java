@@ -1119,6 +1119,7 @@ public class CommandComposer {
 		);
 	}
 
+	// TODO: things may go very very wrong...
 	public static Command getThreeScoreTwoMiddleBottomBlueAuto(DriveSubsystem driveSubsystem,
 			SimpleVisionSubsystem visionSubsystem, FlywheelSubsystem flywheelSubsystem, AimerSubsystem aimerSubsystem,
 			IndexerSubsystem indexerSubsystem, Targeter targeter,
@@ -1146,12 +1147,14 @@ public class CommandComposer {
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem));
 	}
 
+	// TODO: things may go very very wrong...
 	public static Command getThreeScoreTwoMiddleBottomRedAuto(DriveSubsystem driveSubsystem,
 			SimpleVisionSubsystem visionSubsystem, FlywheelSubsystem flywheelSubsystem, AimerSubsystem aimerSubsystem,
 			IndexerSubsystem indexerSubsystem, Targeter targeter,
 			LimeLightSubsystem limeLightSubsystem, IntakeSubsystem intakeSubsystem,
 			PneumaticsSubsystem pneumaticsSubsystem, ArduinoSubsystem arduinoSubsystem) {
 		return sequence(
+				pneumaticsSubsystem.downIntakeCommand(),
 				getAimAndShootAutoCommand(driveSubsystem, visionSubsystem, flywheelSubsystem, aimerSubsystem,
 						indexerSubsystem, targeter, limeLightSubsystem, arduinoSubsystem),
 				DriveCommand.alignTo(new Pose(5, -3, -25), 0.3, 10, driveSubsystem, limeLightSubsystem),
