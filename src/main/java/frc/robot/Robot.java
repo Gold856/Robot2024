@@ -8,6 +8,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.util.PixelFormat;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,6 +33,7 @@ public class Robot extends TimedRobot {
 	public void robotInit() {
 		DataLogManager.start();
 		DataLogManager.logNetworkTables(true);
+		DriverStation.startDataLog(DataLogManager.getLog());
 		m_robotContainer = new RobotContainer();
 		if (RobotBase.isReal()) {
 			UsbCamera camera = CameraServer.startAutomaticCapture();
