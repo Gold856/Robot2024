@@ -283,7 +283,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/**
 	 * Creates a command to drive the robot with joystick input.
-	 * 
+	 *
 	 * @return A command to drive the robot.
 	 */
 	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
@@ -325,11 +325,6 @@ public class DriveSubsystem extends SubsystemBase {
 					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
 			setModuleStates(calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), false));
-			if (fwdSpeed > 0.2 || rotSpeed > 0.2 || strSpeed > 0.2) {
-				setRampRate(.3);
-			} else {
-				setRampRate(0.1);
-			}
 		}).withName("RobotOrientedDriveCommand");
 	}
 

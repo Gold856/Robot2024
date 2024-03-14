@@ -16,7 +16,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * Contains all the hardware and controllers for a swerve module.
@@ -34,8 +34,8 @@ public class SwerveModule {
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
 		m_PIDController.setIZone(kIz);
 		m_driveEncoder = m_driveMotor.getEncoder();
-		configMotorController(m_driveMotor, kDrivePeakCurrentLimit);
-		configMotorSteerController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
+		configMotorController(m_driveMotor, kDrivePeakCurrentLimit, kDriveSmartCurrentLimit);
+		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
 		m_driveMotor.setOpenLoopRampRate(kRampRate);
 		m_driveMotor.setClosedLoopRampRate(kRampRate);
@@ -46,20 +46,7 @@ public class SwerveModule {
 	 * 
 	 * @param motorController The CANSparkMax to configure
 	 */
-	private void configMotorController(CANSparkMax motorController, int peakCurrentLimit) {
-		motorController.restoreFactoryDefaults();
-		motorController.setIdleMode(IdleMode.kBrake);
-		motorController.enableVoltageCompensation(12);
-		// motorController.setSmartCurrentLimit(smartCurrentLimit);
-		motorController.setSecondaryCurrentLimit(peakCurrentLimit);
-	}
-
-	/**
-	 * Configures our motors with the exact same settings
-	 * 
-	 * @param motorController The CANSparkMax to configure
-	 */
-	private void configMotorSteerController(CANSparkMax motorController, int smartCurrentLimit, int peakCurrentLimit) {
+	private void configMotorController(CANSparkMax motorController, int peakCurrentLimit, int smartCurrentLimit) {
 		motorController.restoreFactoryDefaults();
 		motorController.setIdleMode(IdleMode.kBrake);
 		motorController.enableVoltageCompensation(12);
@@ -151,8 +138,18 @@ public class SwerveModule {
 	 * @param state The module state
 	 */
 	public void setModuleState(SwerveModuleState state) {
-		m_driveMotor.set(state.speedMetersPerSecond);
-		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
+		double power = state.speedMetersPerSecond;
+		double currVoltage = RobotController.getBatteryVoltage();
+		if (currVoltage < 8) {
+			power *= 0.2;
+		} else if (currVoltage < 9) {
+			power *= 0.4;
+		} else if (currVoltage < 10) {
+			power *= 0.8;
+		}
+		m_driveMotor.set(power);
+		double turnPower = m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees());
+		m_steerMotor.set(turnPower);
 	}
 
 	/**
@@ -161,8 +158,7 @@ public class SwerveModule {
 	 * @param angle
 	 */
 	public void setAngle(double angle) {
-		var out = m_PIDController.calculate(getModuleAngle(), angle);
-		SmartDashboard.putNumber("PID out" + m_driveMotor.getDeviceId(), out);
+		double out = m_PIDController.calculate(getModuleAngle(), angle);
 		m_steerMotor.set(out);
 	}
 

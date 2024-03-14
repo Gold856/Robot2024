@@ -79,7 +79,7 @@ public final class Constants {
 		public static final int kBackRightCANCoderPort = 22;
 		public static final int kBackLeftCANCoderPort = 32;
 		// Swerve PID values
-		public static final double kP = 0.005;
+		public static final double kP = 0.01;
 		public static final double kI = 0.045;
 		public static final double kD = 0;
 		public static final double kIz = 5;
@@ -118,13 +118,13 @@ public final class Constants {
 		public static final Translation2d kBackLeftLocation = new Translation2d(-0.381, 0.381); // ++
 		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381); // -+
 
-		// public static final int kDriveSmartCurrentLimit = 55;
-		public static final int kDrivePeakCurrentLimit = 65;
-		public static final int kSteerSmartCurrentLimit = 30;
-		public static final int kSteerPeakCurrentLimit = 35;
+		public static final int kDriveSmartCurrentLimit = 45;
+		public static final int kDrivePeakCurrentLimit = kDriveSmartCurrentLimit + 10;
+		public static final int kSteerSmartCurrentLimit = 60;
+		public static final int kSteerPeakCurrentLimit = kSteerSmartCurrentLimit + 15;
 
 		// The amount of time to go from 0 to full power in seconds
-		public static final double kRampRate = .3; // .1
+		public static final double kRampRate = .1; // .1
 
 	}
 
