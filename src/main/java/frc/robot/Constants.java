@@ -79,16 +79,16 @@ public final class Constants {
 		public static final int kBackRightCANCoderPort = 22;
 		public static final int kBackLeftCANCoderPort = 32;
 		// Swerve PID values
-		public static final double kP = 0.01;
+		public static final double kP = 0.0075;
 		public static final double kI = 0.045;
 		public static final double kD = 0;
 		public static final double kIz = 5;
 
-		public static final double kDriveP = 0.4; // up to 1.0?
+		public static final double kDriveP = 0.7; // up to 1.0?
 		public static final double kDriveI = 0;
 		public static final double kDriveD = 0;
-		public static final double kDriveMaxVelocity = 4; // up to 5?
-		public static final double kDriveMaxAcceleration = 4; // up to 10?
+		public static final double kDriveMaxVelocity = 7; // up to 5?
+		public static final double kDriveMaxAcceleration = 7; // up to 10?
 
 		public static final double kTurnP = 0.02; // was 0.005 upto 0.2?
 		public static final double kTurnI = 0; // was 0.003
@@ -185,7 +185,7 @@ public final class Constants {
 		public static final double kIndexerMinSpeed = 0.1;
 
 		// Shoot Command Constants
-		public static final double kKickTime = 2;
+		public static final double kKickTime = .75;
 		public static final double kKickSpeed = 0.3;
 		public static final double kIndexerGearRatio = 1.0 / 4.0;
 		public static final double kIntakeSpeed = 0.2;
@@ -222,6 +222,7 @@ public final class Constants {
 		public static final double kDefaultActuatorHeight = 0.973; // percent
 		public static final double kSubwooferActuatorHeight = 0.973;
 		public static final double kAmpActuatorHeight = 0.964720;
+		public static final double kPassActuatorHeight = 0.65;
 		public static final double kAimerTolerance = 0.001; // previously 0.01
 		public static final double kAdjustAmount = 0.05; // Adjust with testing
 		public static final double kP = 5;
@@ -234,8 +235,8 @@ public final class Constants {
 		public static final Pose kBlueAmpPose = new Pose(-6.44, 3.75, 90);
 		// TODO: Originally 0.25 and 0.15
 		public static final Pose kBlueNoteOnePose = new Pose(-6.0 + 0.55, 2.82 - 0.25 + 0.4, 180 + 25);
-		public static final Pose kBlueNoteTwoPose = new Pose(-6.0 + 0.45 + 0.2, 1.45, 180);
-		public static final Pose kBlueNoteThreePose = new Pose(-6.0 + 0.55, 0.0 + 0.45 - 0.4, 180 - 25);
+		public static final Pose kBlueNoteTwoPose = new Pose(-6.0 + 0.55 + 0.2, 1.45, 180);
+		public static final Pose kBlueNoteThreePose = new Pose(-6.0 + 0.45, 0.0 + 0.45 - 0.4, 180 - 25);
 		// TODO: adjust
 		public static final Pose kBlueCenterNoteOnePose = new Pose(-0.2 + 0.4, 3.4, 180);
 		public static final Pose kBlueCenterNoteTwoPose = new Pose(-0.2 + 0.25 + 0.4, 1.7 + 0.25, 180 - 45);

@@ -27,6 +27,7 @@ public class AimHeightCommand extends Command {
 		PRESET_AMP,
 		SET_LOW,
 		PRESET_SUBWOOFER,
+		PRESET_PASS,
 		HOLD,
 		DOWN_ADJUST, // Fine tune down
 		UP_ADJUST, // Fine tune up
@@ -78,6 +79,10 @@ public class AimHeightCommand extends Command {
 				// TODO add source constant
 				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
 				break;
+			case PRESET_PASS:
+				m_aimerSubsystem.setAimerHeight(kPassActuatorHeight);
+				break;
+			// System.out.println(m_targeter.calcAimerHeightFromDistance(8));
 			case SET_LOW:
 				m_aimerSubsystem.setAimerHeight(0.2);
 				break;

@@ -85,10 +85,10 @@ public class RobotContainer {
 		// TurnToAngleCommand(m_driveSubsystem, 90.0, 0.5, true));
 		// m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 		// new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
-		// m_autoSelector.addOption("Polar Drive Two Meters", new
-		// PolarDriveCommand(m_driveSubsystem, 2, 180));
+		m_autoSelector.addOption("Polar Drive Two Meters", new PolarDriveCommand(m_driveSubsystem, 2, 180));
 		m_autoSelector.addOption("Shoot and Leave Auto", CommandComposer.getShootAndLeaveAuto());
 		m_autoSelector.addOption("Middle Two Score", CommandComposer.getTwoScoreMiddleAuto());
+		m_autoSelector.addOption("Amp and Leave", CommandComposer.getAmpAndLeave());
 		// m_autoSelector.addOption("Right Two Score Blue",
 		// CommandComposer.getTwoScoreRightAutoBlue());
 		// m_autoSelector.addOption("Right Two Score Red",
@@ -115,8 +115,8 @@ public class RobotContainer {
 		// CommandComposer.getFourScoreLeftAutoRed());
 		// m_autoSelector.addOption("Five Score RED Auto (Start on Left)",
 		// CommandComposer.getFiveScoreRedAutoCommand());
-		// m_autoSelector.addOption("Five Score BLUE Auto (Start on Right)",
-		// CommandComposer.getFiveScoreBlueAutoCommand());
+		m_autoSelector.addOption("Five Score BLUE Auto (Start on Right)",
+				CommandComposer.getFiveScoreBlue321C1());
 		m_autoSelector.addOption("Four Score @red 3, middle 5, and middle 4 RED Auto (Start on Left)",
 				CommandComposer.getTwoMiddleFourScoreRedCommand());
 		m_autoSelector.addOption("Four Score @blue 3, middle 5, and middle 4 BLUE Auto (Start on Right)",
@@ -285,7 +285,13 @@ public class RobotContainer {
 										new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 500,
 												2000)))); // 1800 old, 2000 new
 		// OP TRIANGLE - Stop Flywheel
-		m_operatorController.button(Button.kTriangle).onTrue(m_flywheelSubsystem.stopFlywheel());
+		// m_operatorController.button(Button.kTriangle).onTrue(m_flywheelSubsystem.stopFlywheel());
+		m_operatorController.button(Button.kTriangle).onTrue(
+				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_PASS)
+						.andThen(
+								new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE).alongWith(
+										new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 4850,
+												4800))));
 
 		// ------------------Amp Bar Controls -------------------
 		// m_operatorController.button(Button.kX)

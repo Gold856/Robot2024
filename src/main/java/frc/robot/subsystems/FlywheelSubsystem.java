@@ -44,7 +44,6 @@ public class FlywheelSubsystem extends SubsystemBase {
 		m_neoFlywheelTop.setSmartCurrentLimit(kSmartCurrentLimit);
 		m_neoFlywheelTop.setSecondaryCurrentLimit(kPeakCurrentLimit,
 				kPeakCurrentDurationMillis);
-		// m_neoFlywheeltop.follow(m_neoFlywheelBottom, ktopOppose);
 
 		m_neoEncoderBottom.setVelocityConversionFactor(kGearRatio);
 		m_neoControllerBottom.setP(kP);

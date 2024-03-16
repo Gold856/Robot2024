@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Targeter.RegressionTargeter;
 import frc.robot.commands.TimedLEDCommand;
 import frc.robot.commands.aimshooter.AimHeightCommand;
@@ -526,7 +527,7 @@ public class CommandComposer {
 	 */
 	public static Command getAmpTwoAutoRed() {
 		return sequence(
-				// strafe towards speaker, shoot
+				// strafe towards Amp, shoot
 				new PolarDriveCommand(m_driveSubsystem, 0.22, 90),
 				new PolarDriveCommand(m_driveSubsystem, 0.4, 0),
 				getAmpCommand(),
@@ -568,6 +569,24 @@ public class CommandComposer {
 				m_flywheelSubsystem.stopFlywheel());
 	}
 
+	public static Command getAmpAndLeave() {
+		return sequence(
+				getAmpCommand(),
+				new PolarDriveCommand(m_driveSubsystem, 0.55, 90 + 180),
+				new PolarDriveCommand(m_driveSubsystem, 0.7, 0).withTimeout(1),
+				new PolarDriveCommand(m_driveSubsystem, 0.01, 0).withTimeout(1),
+				new WaitCommand(1),
+				new IndexerShootCommand(m_indexerSubsystem),
+				waitSeconds(1.5),
+				m_flywheelSubsystem.stopFlywheel(),
+				// new TimedLEDCommand(m_arduinoSubsystem, 0.25,
+				// StatusCode.RAINBOW_PARTY_FUN_TIME),
+				new PolarDriveCommand(m_driveSubsystem, 1, 90 + 180),
+				new PolarDriveCommand(m_driveSubsystem, 0.4, 180));
+		// new TimedLEDCommand(m_arduinoSubsystem, 0.4,
+		// StatusCode.RAINBOW_PARTY_FUN_TIME));
+	}
+
 	/**
 	 * Returns a command to drive back and forth various amounts.
 	 * 
@@ -596,8 +615,8 @@ public class CommandComposer {
 
 	public static Command getAmpCommand() {
 		return sequence(
-				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT),
-				new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 1500, 1500)); // 1300 1650
+				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_AMP),
+				new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY, 500, 2000)); // 1300 1650
 
 	}
 
@@ -923,7 +942,7 @@ public class CommandComposer {
 				// 2nd note
 				getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 0.6, kBlueSpeakerPosition, 2.5, 3),
 				// 3rd note
-				getPickUpNoteAndShootAtCommand(kBlueNoteTwoPose, 0.6, kBlueSpeakerPosition, 2.5, 3),
+				getPickUpNoteAndShootAtCommand(kBlueNoteTwoPose, 0.9, kBlueSpeakerPosition, 2.5, 3),
 				// 4th note
 				getPickUpNoteAndShootAtCommand(kBlueNoteOnePose, 0.6, kBlueSpeakerPosition, 2.5, 3));
 	}
@@ -961,9 +980,9 @@ public class CommandComposer {
 			driveCommand = addDriveCommand(command, intermediate, intermediateTolerance, driveCommand);
 		var readyPose = pickUpPose.plus(new Transform2d(pickUpDistance, 0, Rotation2d.fromDegrees(0)));
 		driveCommand = addDriveCommand(command, readyPose, intermediateTolerance, driveCommand);
-		command.addCommands(parallel(
-				DriveCommand.alignTo(pickUpPose, 0.1, 5, driveCommand, m_driveSubsystem, m_limeLightSubsystem),
-				getIntakeWithSensorCommand()));
+		command.addCommands(deadline(
+				getIntakeWithSensorCommand(),
+				DriveCommand.alignTo(pickUpPose, 0.1, 5, driveCommand, m_driveSubsystem, m_limeLightSubsystem)));
 		return command.withTimeout(timeout);
 	}
 
@@ -981,10 +1000,10 @@ public class CommandComposer {
 		Translation2d diff = targetPosition.minus(pickUpPose.getTranslation());
 		pickUpPose = new Pose2d(pickUpPose.getTranslation(), diff.getAngle());
 		return sequence(
-				parallel(
-						getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
-								intermediatePoses),
-						getAimCommand(() -> diff.getNorm())),
+
+				getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
+						intermediatePoses),
+				getAimCommand(() -> diff.getNorm()).withTimeout(1),
 				new IndexerShootCommand(m_indexerSubsystem),
 				m_flywheelSubsystem.stopFlywheel());
 	}
