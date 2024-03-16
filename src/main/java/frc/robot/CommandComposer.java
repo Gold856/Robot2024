@@ -1006,7 +1006,8 @@ public class CommandComposer {
 		DriveCommand driveCommand = null;
 		for (Pose2d intermediate : intermediatePoses)
 			driveCommand = addDriveCommand(command, intermediate, intermediateTolerance, driveCommand);
-		command.addCommands(parallel(getAimCommand(() -> transformToTarget.get().getTranslation().getNorm()),
+		command.addCommands(parallel(getAimCommand(() -> m_limeLightSubsystem.distanceToClosestSpeaker()
+				- transformToTarget.get().getTranslation().getNorm()),
 				new DriveCommand(driveCommand, m_driveSubsystem,
 						() -> m_driveSubsystem.getPose().plus(transformToTarget.get()), 0.1, 5)));
 		return command;
