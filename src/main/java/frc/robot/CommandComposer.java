@@ -661,7 +661,8 @@ public class CommandComposer {
 			var t = m_limeLightSubsystem.transformationToward(target);
 			return m_driveSubsystem.getPose().plus(t);
 		};
-		return new DriveCommand(m_driveSubsystem, s, 0.1, 5);
+		var driveCommand = new DriveCommand(m_driveSubsystem, s, 0.1, 5);
+		return driveCommand.andThen(new DriveCommand(driveCommand, m_driveSubsystem, s, 0.1, 5));
 	}
 
 	public static Command getMoveTowardClosestSpeakerCommand(double distanceToTarget) {
