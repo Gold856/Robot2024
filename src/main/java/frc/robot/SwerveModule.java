@@ -140,7 +140,9 @@ public class SwerveModule {
 	public void setModuleState(SwerveModuleState state) {
 		double power = state.speedMetersPerSecond;
 		double currVoltage = RobotController.getBatteryVoltage();
-		if (currVoltage < 8) {
+		if (currVoltage < 7) {
+			power *= 0.1;
+		} else if (currVoltage < 8) {
 			power *= 0.2;
 		} else if (currVoltage < 9) {
 			power *= 0.4;
