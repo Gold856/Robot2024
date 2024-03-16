@@ -6,6 +6,8 @@ package frc.robot.commands.aimshooter;
 
 import static frc.robot.Constants.AimerConstants.*;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter;
 import frc.robot.subsystems.AimerSubsystem;
@@ -17,7 +19,7 @@ public class AimHeightCommand extends Command {
 	private double m_distanceToSpeaker;
 	private AimerSubsystem m_aimerSubsystem;
 	private Targeter m_targeter;
-	private LimeLightSubsystem m_limelightSubsystem;
+	private Supplier<Double> m_distanceSupplier;
 
 	public enum AimHeightOperation {
 		CALC_AND_SET, // Calculate Angle at current position (changes)
@@ -45,10 +47,16 @@ public class AimHeightCommand extends Command {
 	/** Creates a new AimCommand. */
 	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation,
 			LimeLightSubsystem limelightSubsystem) {
+		this(subsystem, targeter, operation, () -> limelightSubsystem.distanceToClosestSpeaker());
+	}
+
+	/** Creates a new AimCommand. */
+	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation,
+			Supplier<Double> distanceSupplier) {
 		m_operation = operation;
 		m_aimerSubsystem = subsystem;
 		m_targeter = targeter;
-		m_limelightSubsystem = limelightSubsystem;
+		m_distanceSupplier = distanceSupplier;
 		addRequirements(m_aimerSubsystem);
 	}
 
@@ -82,7 +90,7 @@ public class AimHeightCommand extends Command {
 			case CALC_AND_SET:
 				// if the distance cannot be figured out, use 3m as the default distance
 				try {
-					m_distanceToSpeaker = m_limelightSubsystem.distanceToClosestSpeaker();
+					m_distanceToSpeaker = m_distanceSupplier.get();
 				} catch (Exception NullPointerException) {
 					m_distanceToSpeaker = 3.0;
 				}
