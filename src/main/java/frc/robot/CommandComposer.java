@@ -1000,10 +1000,10 @@ public class CommandComposer {
 		Translation2d diff = targetPosition.minus(pickUpPose.getTranslation());
 		pickUpPose = new Pose2d(pickUpPose.getTranslation(), diff.getAngle());
 		return sequence(
-
-				getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
-						intermediatePoses),
-				getAimCommand(() -> diff.getNorm()).withTimeout(1),
+				parallel(
+					getAimCommand(() -> diff.getNorm()),
+					getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
+						intermediatePoses)),
 				new IndexerShootCommand(m_indexerSubsystem),
 				m_flywheelSubsystem.stopFlywheel());
 	}
