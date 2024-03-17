@@ -921,19 +921,23 @@ public class CommandComposer {
 	public static Command getThreeScoreBlueC4C5() {
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 0.6, 6, 7, new Pose(-4.3, -2.3, 180)),
-				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(-4.1, -2.2, 180 - 30)),
-				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 0.6, 6, 7, new Pose(-4.1, -2.2, 180 + 0)),
-				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(-4.1, -2.2, 180 - 30)));
+				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 0.6, 6, 7, new Pose(-4.3, -3.2, 180),
+						new Pose(-1, -3.2, 180)),
+				getAimWhileMovingAndShootCommand(3, 4, 7,
+						new Pose(-1, -3.2, 180), new Pose(-4.1, -3.2, 180 - 30)),
+				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 0.6, 6, 7, new Pose(-4.1, -2.5, 180 + 0)),
+				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(-4.1, -2.5, 180 - 30)));
 	}
 
 	public static Command getThreeScoreRedC4C5() {
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 0.6, 6, 7, new Pose(4.3, -2.3, 0)),
-				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(4.1, -2.2, 0 + 30)),
-				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 0.6, 6, 7, new Pose(4.1, -2.2, 0 + 0)),
-				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(4.1, -2.2, 0 + 30)));
+				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 0.6, 7, 9, new Pose(4.3, -3.2, 0),
+						new Pose(1, -3.2, 0)),
+				getAimWhileMovingAndShootCommand(4, 4, 9,
+						new Pose(1, -3.2, 0), new Pose(4.1, -3.2, 0 + 30)),
+				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 0.6, 7, 9, new Pose(4.1, -2.5, 0 + 0)),
+				getAimWhileMovingAndShootCommand(3, 4, 9, new Pose(4.1, -2.5, 0 + 30)));
 	}
 
 	public static Command getFourScoreBlue321() {
@@ -953,7 +957,7 @@ public class CommandComposer {
 				// 2nd note
 				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.6, kRedSpeakerPosition, 2.5, 3),
 				// 3rd note
-				getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 0.6, kRedSpeakerPosition, 2.5, 3),
+				getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 0.9, kRedSpeakerPosition, 2.5, 3),
 				// 4th note
 				getPickUpNoteAndShootAtCommand(kRedNoteOnePose, 0.6, kRedSpeakerPosition, 2.5, 3));
 	}
@@ -1000,10 +1004,13 @@ public class CommandComposer {
 		Translation2d diff = targetPosition.minus(pickUpPose.getTranslation());
 		pickUpPose = new Pose2d(pickUpPose.getTranslation(), diff.getAngle());
 		return sequence(
-				parallel(
-					getAimCommand(() -> diff.getNorm()),
-					getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
-						intermediatePoses)),
+				// TODO: parallelize the following two
+				getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
+						intermediatePoses),
+				getAimCommand(() -> diff.getNorm()),
+				// parallel(
+
+				// ),
 				new IndexerShootCommand(m_indexerSubsystem),
 				m_flywheelSubsystem.stopFlywheel());
 	}

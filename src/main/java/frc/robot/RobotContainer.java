@@ -117,6 +117,8 @@ public class RobotContainer {
 		// CommandComposer.getFiveScoreRedAutoCommand());
 		m_autoSelector.addOption("Five Score BLUE Auto (Start on Right)",
 				CommandComposer.getFiveScoreBlue321C1());
+		m_autoSelector.addOption("Five Score RED Auto (Start on Left)",
+				CommandComposer.getFiveScoreRed321C1());
 		m_autoSelector.addOption("Four Score @red 3, middle 5, and middle 4 RED Auto (Start on Left)",
 				CommandComposer.getTwoMiddleFourScoreRedCommand());
 		m_autoSelector.addOption("Four Score @blue 3, middle 5, and middle 4 BLUE Auto (Start on Right)",
@@ -125,6 +127,10 @@ public class RobotContainer {
 				CommandComposer.getThreeMiddleFourScoreRedCommand());
 		m_autoSelector.addOption("Four Score @middle 3, middle 4, and middle 5 BLUE Auto (Start on Right)",
 				CommandComposer.getThreeMiddleFourScoreBlueCommand());
+		m_autoSelector.addOption("Three Score @middle 4 and middle 5 BLUE Auto (Start on Right, New)",
+				CommandComposer.getThreeScoreBlueC4C5());
+		m_autoSelector.addOption("Three Score @middle 4 and middle 5 RED Auto (Start on Right, New)",
+				CommandComposer.getThreeScoreRedC4C5());
 		m_autoSelector.addOption("Three Score @middle 4 and middle 5 BLUE Auto (Start on Right)",
 				CommandComposer.getThreeScoreTwoMiddleBottomBlueAuto());
 		m_autoSelector.addOption("Three Score @middle 4 and middle 5 RED Auto (Start on Right)",
