@@ -921,19 +921,19 @@ public class CommandComposer {
 	public static Command getThreeScoreBlueC4C5() {
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 0.6, 6, 7, new Pose(-4.3, -2.3, 180)),
-				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(-4.1, -2.2, 180 - 30)),
-				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 0.6, 6, 7, new Pose(-4.1, -2.2, 180 + 0)),
-				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(-4.1, -2.2, 180 - 30)));
+				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 0.6, 6, 7, new Pose(-4.3, -2.5, 180)),
+				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(-4.1, -2.5, 180 - 30)),
+				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 0.6, 6, 7, new Pose(-4.1, -2.5, 180 + 0)),
+				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(-4.1, -2.5, 180 - 30)));
 	}
 
 	public static Command getThreeScoreRedC4C5() {
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 0.6, 6, 7, new Pose(4.3, -2.3, 0)),
-				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(4.1, -2.2, 0 + 30)),
-				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 0.6, 6, 7, new Pose(4.1, -2.2, 0 + 0)),
-				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(4.1, -2.2, 0 + 30)));
+				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 0.6, 6, 7, new Pose(4.3, -2.5, 0)),
+				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(4.1, -2.5, 0 + 30)),
+				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 0.6, 6, 7, new Pose(4.1, -2.5, 0 + 0)),
+				getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(4.1, -2.5, 0 + 30)));
 	}
 
 	public static Command getFourScoreBlue321() {
