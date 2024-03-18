@@ -967,30 +967,45 @@ public class CommandComposer {
 
 	public static Command getThreeScoreBlueC4C5() {
 		return sequence(
+				// TODO: test if it helps
+				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
+				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 1.3, 6, 10, new Pose(-4.3,
+				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 1.3, 6, 10, new Pose(-3,
 						-3.2, 180)),
 				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						new Pose(-4, -2.2, 180)),
 				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 1.2, 6, 10),
+				// TODO: test if it helps
+				// getAimWhileMovingAndShootCommand(3.5, 4, 20,
+				// kBlueCenterNoteFivePose.add(new Pose(-3.3, 0, -20))));
 				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						kBlueCenterNoteFivePose.add(new Pose(-2.5, 0, -20))));
 	}
 
 	public static Command getThreeScoreRedC4C5() {
 		return sequence(
+				// TODO: test if it helps
+				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
+				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
 				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 1.3, 6, 10, new Pose(3, -3.2,
 						0)),
 				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						new Pose(4, -2.2, 0)),
 				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 1.2, 6, 10),
+				// TODO: test if it helps
+				// getAimWhileMovingAndShootCommand(3.5, 4, 20,
+				// kRedCenterNoteFivePose.add(new Pose(3.3, 0, 20))));
 				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						kRedCenterNoteFivePose.add(new Pose(2.5, 0, 20))));
 	}
 
 	public static Command getFourScoreBlue321() {
 		return sequence(
+				// TODO: test if it helps
+				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
+				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
 				// 2nd note
 				getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 0.6, kBlueSpeakerPosition, 3, 3),
@@ -1002,6 +1017,9 @@ public class CommandComposer {
 
 	public static Command getFourScoreRed321() {
 		return sequence(
+				// TODO: test if it helps
+				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
+				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
 				// 2nd note
 				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.6, kRedSpeakerPosition, 3, 3),

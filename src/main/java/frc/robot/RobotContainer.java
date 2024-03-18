@@ -194,10 +194,18 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
 		// D RIGHT BUMPER - Aim and Shoot
+		// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand())
+
+		// TODO: test if it helps
+		// m_driverController.button(Button.kRightBumper)
+		// .whileTrue(new DriveWhileAimingCommand(() ->
+		// m_driverController.getRawAxis(Axis.kLeftY),
+		// () -> m_driverController.getRawAxis(Axis.kLeftX), 5, 0.2, m_driveSubsystem,
+		// m_aimerSubsystem,
+		// m_targeter, m_flywheelSubsystem, m_arduinoSubsystem, m_limeLightSubsystem))
 		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getDriveWhileAimingCommand(
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
 				() -> m_driverController.getRawAxis(Axis.kLeftX), 5))
-				// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand())
 				.onFalse(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_LOW)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE))
 						.alongWith(m_flywheelSubsystem.stopFlywheel())
