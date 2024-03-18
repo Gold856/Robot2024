@@ -7,11 +7,14 @@ import static frc.robot.Constants.PoseConstants.*;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -617,6 +620,15 @@ public class CommandComposer {
 				m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
 	}
 
+	// TODO: review
+	public static Command getIntakeWithSensorNoLEDCommand() {
+		return sequence(
+				parallel(
+						new IndexWithSensorCommand(m_indexerSubsystem, 0.5),
+						m_intakeSubsystem.forwardIntakeCommand()),
+				m_intakeSubsystem.stopIntakeCommand());
+	}
+
 	public static Command getAmpCommand() {
 		return sequence(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.PRESET_AMP),
@@ -638,7 +650,7 @@ public class CommandComposer {
 				IndexerCommand.getFowardCommand(m_indexerSubsystem));
 	}
 
-	public static Command getAimAndShootCommand() {
+	public static Command getAimCommand() {
 		return sequence(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT),
 				parallel(
@@ -650,15 +662,18 @@ public class CommandComposer {
 										.andThen(m_arduinoSubsystem.writeStatus(StatusCode.SOLID_BLUE)),
 						// new SimpleVisionAlignCommand(m_driveSubsystem, m_simpleVisionSubsystem)),
 						getTurnToClosestSpeakerCommand()));
-		// new IndexerShootCommand(m_indexerSubsystem),
-		// m_flywheelSubsystem.stopFlywheel());
 	}
 
 	public static Command getAimAndShootAuto() {
+		return getAimAndShootAuto(2);
+	}
+
+	public static Command getAimAndShootAuto(double timeout) {
 		return sequence(
-				getAimAndShootCommand()
-						.withTimeout(2),
+				getAimCommand()
+						.withTimeout(timeout),
 				new IndexerShootCommand(m_indexerSubsystem),
+				m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT),
 				m_flywheelSubsystem.stopFlywheel());
 	}
 
@@ -927,31 +942,116 @@ public class CommandComposer {
 				getShootToClosestSpeakerAtCommand(kRedNoteOnePose, 4));
 	}
 
+	// TODO: review
 	public static Command getDriveWhileAimingCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
 			double angleThreshold) {
-		return run(() -> {
-			double fwdSpeed = kTeleopMaxSpeed
-					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-			fwdSpeed = Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed);
-			double strSpeed = kTeleopMaxSpeed
-					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
-			double rotSpeed = 0;
-			try {
-				var closest = m_limeLightSubsystem.closest(kBlueSpeakerPosition, kRedSpeakerPosition);
-				double angle = m_limeLightSubsystem.angleTo(closest);
-				if (Math.abs(angle) > angleThreshold)
-					rotSpeed = Math.toRadians(45) * Math.signum(angle);
-				double distance = m_limeLightSubsystem.distanceTo(closest);
-				double actuatorHeightSetpoint = m_targeter.getAngle(distance);
-				m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
-			} catch (Exception e) {
+		return new Command() {
+
+			Long timestamp = null;
+
+			private ProfiledPIDController m_controllerYaw;
+
+			{
+				m_controllerYaw = new ProfiledPIDController(kTurnP * 1.5, kTurnI, kTurnD,
+						new TrapezoidProfile.Constraints(kTurnMaxVelocity, kTurnMaxAcceleration * 1.5));
+				m_controllerYaw.enableContinuousInput(-180, 180);
+				addRequirements(m_driveSubsystem, m_aimerSubsystem, m_arduinoSubsystem);
 			}
-			// NEGATION if positive turnSpeed: clockwise rotation
-			rotSpeed = -rotSpeed;
-			m_driveSubsystem.setModuleStates(
-					m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
-		}, m_driveSubsystem, m_aimerSubsystem).withName("DriveWhileAimingCommand");
+
+			@Override
+			public void initialize() {
+				m_controllerYaw.reset(0);
+			}
+
+			@Override
+			public void execute() {
+				double fwdSpeed = kTeleopMaxSpeed
+						* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+				fwdSpeed = Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed);
+				double strSpeed = kTeleopMaxSpeed
+						* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+				strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
+				double rotSpeed = 0;
+				try {
+					var closest = m_limeLightSubsystem.closest(kBlueSpeakerPosition, kRedSpeakerPosition);
+					double angle = m_limeLightSubsystem.angleTo(closest);
+					// NEGATION if positive turnSpeed: clockwise rotation
+					rotSpeed = -m_controllerYaw.calculate(angle);
+					double distance = m_limeLightSubsystem.distanceTo(closest);
+					double actuatorHeightSetpoint = m_targeter.getAngle(distance);
+					m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
+					if (timestamp == null || timestamp < System.currentTimeMillis()) {
+						double readiness = m_limeLightSubsystem.confidence()
+								+ (m_aimerSubsystem.atAimerSetpoint() ? 0 : -1);
+						SmartDashboard.putNumber(
+								"pose estimation: drive while aiming ", readiness);
+						if (readiness > 0.5) {
+							timestamp = System.currentTimeMillis() + 500;
+							m_arduinoSubsystem.setCode(StatusCode.SOLID_BLUE);
+							// TODO: signal readiness!
+						}
+					}
+					m_flywheelSubsystem.setBottomVelocity(8000);
+					m_flywheelSubsystem.setTopVelocity(8000);
+
+				} catch (Exception e) {
+				}
+				// NEGATION if positive turnSpeed: clockwise rotation
+				rotSpeed = -rotSpeed;
+				m_driveSubsystem.setModuleStates(
+						m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+			}
+
+			@Override
+			public void end(boolean interrupted) {
+				m_flywheelSubsystem.stopFlywheel();
+			}
+
+		};
+		// Runnable action = new Runnable() {
+
+		// Long timestamp = null;
+
+		// @Override
+		// public void run() {
+		// double fwdSpeed = kTeleopMaxSpeed
+		// * MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
+		// fwdSpeed = Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed);
+		// double strSpeed = kTeleopMaxSpeed
+		// * MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
+		// strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
+		// double rotSpeed = 0;
+		// try {
+		// var closest = m_limeLightSubsystem.closest(kBlueSpeakerPosition,
+		// kRedSpeakerPosition);
+		// double angle = m_limeLightSubsystem.angleTo(closest);
+		// if (Math.abs(angle) > angleThreshold)
+		// rotSpeed = Math.toRadians(45) * Math.signum(angle);
+		// double distance = m_limeLightSubsystem.distanceTo(closest);
+		// double actuatorHeightSetpoint = m_targeter.getAngle(distance);
+		// m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
+		// if (timestamp == null || timestamp < System.currentTimeMillis()) {
+		// double readiness = m_limeLightSubsystem.confidence()
+		// + (m_aimerSubsystem.atAimerSetpoint() ? 0 : -1);
+		// SmartDashboard.putNumber(
+		// "pose estimation: drive while aiming ", readiness);
+		// if (readiness > 0.5) {
+		// timestamp = System.currentTimeMillis() + 500;
+		// // TODO: signal readiness!
+		// }
+		// }
+		// } catch (Exception e) {
+		// }
+		// // NEGATION if positive turnSpeed: clockwise rotation
+		// rotSpeed = -rotSpeed;
+		// m_driveSubsystem.setModuleStates(
+		// m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed,
+		// rotSpeed), true));
+		// }
+
+		// };
+		// return run(action, m_driveSubsystem,
+		// m_aimerSubsystem).withName("DriveWhileAimingCommand");
 	}
 
 	public static Command getAimWileMovingAndShootCommand(double maxDistanceToTarget, double timeout) {
@@ -959,89 +1059,63 @@ public class CommandComposer {
 	}
 
 	public static Command getThreeScoreBlueC4C5() {
-		// TODO: check if the following change works and reduces time.
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 1.3, 6, 20),
-				getAimWhileMovingAndShootCommand(3.5, 4, 30,
+				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 1.3, 6, 10, new Pose(-4.3,
+						-3.2, 180)),
+				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						new Pose(-4, -2.2, 180)),
-				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 1.2, 6, 30),
-				getAimWhileMovingAndShootCommand(3.5, 4, 20,
+				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 1.2, 6, 10),
+				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						kBlueCenterNoteFivePose.add(new Pose(-2.5, 0, -20))));
-		// return sequence(
-		// parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-		// getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 0.6, 6, 7, new Pose(-4.3,
-		// -3.2, 180),
-		// new Pose(-1, -3.2, 180)),
-		// getAimWhileMovingAndShootCommand(3, 4, 7,
-		// new Pose(-1, -3.2, 180), new Pose(-4.1, -3.2, 180 - 30)),
-		// getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 0.6, 6, 7, new Pose(-4.1,
-		// -2.5, 180 + 0)),
-		// getAimWhileMovingAndShootCommand(3, 4, 7, new Pose(-4.1, -2.5, 180 - 30)));
-	}
+\	}
 
 	public static Command getThreeScoreRedC4C5() {
-		// TODO: check if the following change works and reduces time.
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 1.3, 6, 20),
-				getAimWhileMovingAndShootCommand(3.5, 4, 30,
+				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 1.3, 6, 10, new Pose(3, -3.2,
+						0)),
+				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						new Pose(4, -2.2, 0)),
-				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 1.2, 6, 30),
-				getAimWhileMovingAndShootCommand(3.5, 4, 20,
+				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 1.2, 6, 10),
+				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						kRedCenterNoteFivePose.add(new Pose(2.5, 0, 20))));
-		// return sequence(
-		// parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
-		// getPickUpNoteAtCommand(kRedCenterNoteFourPose, 0.6, 7, 9, new Pose(4.3, -3.2,
-		// 0),
-		// new Pose(1, -3.2, 0)),
-		// getAimWhileMovingAndShootCommand(4, 4, 9,
-		// new Pose(1, -3.2, 0), new Pose(4.1, -3.2, 0 + 30)),
-		// getPickUpNoteAtCommand(kRedCenterNoteFivePose, 0.6, 7, 9, new Pose(4.1, -2.5,
-		// 0 + 0)),
-		// getAimWhileMovingAndShootCommand(3, 4, 9, new Pose(4.1, -2.5, 0 + 30)));
 	}
 
 	public static Command getFourScoreBlue321() {
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
 				// 2nd note
-				getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 0.6, kBlueSpeakerPosition, 2.5, 3),
+				getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 0.6, kBlueSpeakerPosition, 3, 3),
 				// 3rd note
-				getPickUpNoteAndShootAtCommand(kBlueNoteTwoPose, 0.9, kBlueSpeakerPosition, 2.5, 3),
+				getPickUpNoteAndShootAtCommand(kBlueNoteTwoPose, 0.9, kBlueSpeakerPosition, 3, 3),
 				// 4th note
-				getPickUpNoteAndShootAtCommand(kBlueNoteOnePose, 0.6, kBlueSpeakerPosition, 2.5, 3));
+				getPickUpNoteAndShootAtCommand(kBlueNoteOnePose, 0.6, kBlueSpeakerPosition, 3, 3));
 	}
 
 	public static Command getFourScoreRed321() {
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
 				// 2nd note
-				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.6, kRedSpeakerPosition, 2.5, 3),
+				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.6, kRedSpeakerPosition, 3, 3),
 				// 3rd note
-				getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 0.9, kRedSpeakerPosition, 2.5, 3),
+				getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 0.9, kRedSpeakerPosition, 3, 3),
 				// 4th note
-				getPickUpNoteAndShootAtCommand(kRedNoteOnePose, 0.6, kRedSpeakerPosition, 2.5, 3));
+				getPickUpNoteAndShootAtCommand(kRedNoteOnePose, 0.6, kRedSpeakerPosition, 3, 3));
 	}
 
 	public static Command getFiveScoreBlue321C1() {
 		return sequence(
 				getFourScoreBlue321(),
 				getPickUpNoteAtCommand(kBlueCenterNoteOnePose, 0.6, 4, 5),
-				// TODO: check if the following change works and reduces time.
 				getAimWhileMovingAndShootCommand(3, 4, 30, kBlueNoteOnePose));
-		// getAimWhileMovingAndShootCommand(3, 4, 15, kBlueCenterNoteOnePose.add(new
-		// Pose(-3, 0, 0))));
 	}
 
 	public static Command getFiveScoreRed321C1() {
 		return sequence(
 				getFourScoreRed321(),
 				getPickUpNoteAtCommand(kRedCenterNoteOnePose, 0.6, 4, 5),
-				// TODO: check if the following change works and reduces time.
 				getAimWhileMovingAndShootCommand(3, 4, 30, kRedNoteOnePose));
-		// getAimWhileMovingAndShootCommand(3, 4, 15, kRedCenterNoteOnePose.add(new
-		// Pose(3, 0, 0))));
 	}
 
 	public static Command getPickUpNoteAtCommand(Pose2d pickUpPose, double pickUpDistance, double timeout,
@@ -1058,15 +1132,17 @@ public class CommandComposer {
 		return command.withTimeout(timeout);
 	}
 
+	// TODO: review
 	public static Command getAimWhileMovingAndShootCommand(double maxDistanceToTarget, double timeout,
 			double intermediateTolerance, Pose2d... intermediatePoses) {
 		Command command = getAimWhileMovingCommand(maxDistanceToTarget, intermediateTolerance, intermediatePoses);
-		return sequence(
-				command.withTimeout(timeout),
-				new IndexerShootCommand(m_indexerSubsystem),
-				m_flywheelSubsystem.stopFlywheel());
+		return sequence(command.withTimeout(timeout),
+				// deadline(command.withTimeout(timeout),
+				// CommandComposer.getIntakeWithSensorNoLEDCommand()),
+				getShootCommand(0.25));
 	}
 
+	// TODO: review
 	public static Command getPickUpNoteAndShootAtCommand(Pose2d pickUpPose, double pickUpDistance,
 			Translation2d targetPosition, double timeout, double intermediateTolerance, Pose2d... intermediatePoses) {
 		Translation2d diff = targetPosition.minus(pickUpPose.getTranslation());
@@ -1077,8 +1153,8 @@ public class CommandComposer {
 						getAimCommand(() -> diff.getNorm()),
 						getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
 								intermediatePoses)),
-				new IndexerShootCommand(m_indexerSubsystem),
-				m_flywheelSubsystem.stopFlywheel());
+				// getIntakeWithSensorCommand().withTimeout(0.5),
+				getShootCommand(0.25));
 		// return sequence(
 		// getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout,
 		// intermediateTolerance,
@@ -1134,6 +1210,10 @@ public class CommandComposer {
 						m_limeLightSubsystem);
 		g.addCommands(driveCommand);
 		return driveCommand;
+	}
+
+	public static Command getShootCommand(double duration) {
+		return new IndexerShootCommand(duration, m_indexerSubsystem).andThen(m_flywheelSubsystem.stopFlywheel());
 	}
 
 }

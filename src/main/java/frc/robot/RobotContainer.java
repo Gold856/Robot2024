@@ -194,9 +194,10 @@ public class RobotContainer {
 				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
 		// D RIGHT BUMPER - Aim and Shoot
-		// TODO: getAimAndShootCommand() vs. getAimAndShootAuto() vs.
-		// getMoveWhileAimingAndShootCommand(2, 2)
-		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand())
+		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getDriveWhileAimingCommand(
+				() -> m_driverController.getRawAxis(Axis.kLeftY),
+				() -> m_driverController.getRawAxis(Axis.kLeftX), 5))
+				// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand())
 				.onFalse(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_LOW)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE))
 						.alongWith(m_flywheelSubsystem.stopFlywheel())
@@ -210,7 +211,8 @@ public class RobotContainer {
 		// -------------------Indexer Controls---------------------------------
 		// D CIRCLE - Indexer shoot + stop flywheel
 		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem)
-				.andThen(m_flywheelSubsystem.stopFlywheel()));
+				.andThen(m_flywheelSubsystem.stopFlywheel())
+				.andThen(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
 		// OP RIGHT BUMPER - Indexer shoot + stop flywheel
 		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(m_indexerSubsystem)
 				.andThen(m_flywheelSubsystem.stopFlywheel())

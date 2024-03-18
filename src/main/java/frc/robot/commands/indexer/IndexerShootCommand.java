@@ -12,10 +12,16 @@ import frc.robot.subsystems.IndexerSubsystem;
 public class IndexerShootCommand extends Command {
 	private IndexerSubsystem m_indexerSubsystem;
 	private Timer m_timer;
+	private double m_duration;
 
 	/** Creates a new IndexerShootCommand. */
 	public IndexerShootCommand(IndexerSubsystem indexerSubsystem) {
+		this(Constants.IndexerConstants.kKickTime, indexerSubsystem);
+	}
+
+	public IndexerShootCommand(double duration, IndexerSubsystem indexerSubsystem) {
 		m_timer = new Timer();
+		m_duration = duration;
 		m_indexerSubsystem = indexerSubsystem;
 		addRequirements(indexerSubsystem);
 	}
@@ -37,6 +43,6 @@ public class IndexerShootCommand extends Command {
 	// Returns true when the command should end.
 	@Override
 	public boolean isFinished() {
-		return m_timer.hasElapsed(Constants.IndexerConstants.kKickTime);
+		return m_timer.hasElapsed(m_duration);
 	}
 }

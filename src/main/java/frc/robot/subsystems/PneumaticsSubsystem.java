@@ -28,7 +28,6 @@ public class PneumaticsSubsystem extends SubsystemBase {
 
 	/** Creates a new PneumaticsSubsystem. */
 	public PneumaticsSubsystem() {
-		m_hub.disableCompressor();
 	}
 
 	/**
