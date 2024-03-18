@@ -14,20 +14,26 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class FlywheelSubsystem extends SubsystemBase {
-	private final CANSparkMax m_neoFlywheelBottom = new CANSparkMax(kBottomPort, MotorType.kBrushless);
-	private final CANSparkMax m_neoFlywheelTop = new CANSparkMax(kTopPort, MotorType.kBrushless);
-	private final SparkPIDController m_neoControllerBottom = m_neoFlywheelBottom.getPIDController();
-	private final SparkPIDController m_neoControllerTop = m_neoFlywheelTop.getPIDController();
+	private final CANSparkMax m_neoFlywheelBottom;
+	private final CANSparkMax m_neoFlywheelTop;
+	private final SparkPIDController m_neoControllerBottom;
+	private final SparkPIDController m_neoControllerTop;
 
-	private final RelativeEncoder m_neoEncoderBottom = m_neoFlywheelBottom.getEncoder();
-	private final RelativeEncoder m_neoEncoderTop = m_neoFlywheelTop.getEncoder();
-
+	private final RelativeEncoder m_neoEncoderBottom;
+	private final RelativeEncoder m_neoEncoderTop;
 	private double m_setVelocity;
 
 	/**
 	 * Initializes a new instance of the {@link FlywheelSubsystem} class.
 	 */
 	public FlywheelSubsystem() {
+		m_neoFlywheelBottom = new CANSparkMax(kBottomPort, MotorType.kBrushless);
+		m_neoFlywheelTop = new CANSparkMax(kTopPort, MotorType.kBrushless);
+		m_neoControllerBottom = m_neoFlywheelBottom.getPIDController();
+		m_neoControllerTop = m_neoFlywheelTop.getPIDController();
+		m_neoEncoderBottom = m_neoFlywheelBottom.getEncoder();
+		m_neoEncoderTop = m_neoFlywheelTop.getEncoder();
+
 		// Initialize Motors
 		m_neoFlywheelBottom.restoreFactoryDefaults();
 		m_neoFlywheelBottom.setInverted(kBottomInvert);

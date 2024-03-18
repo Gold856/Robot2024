@@ -206,10 +206,10 @@ public class RobotContainer {
 		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getDriveWhileAimingCommand(
 				() -> m_driverController.getRawAxis(Axis.kLeftY),
 				() -> m_driverController.getRawAxis(Axis.kLeftX), 5))
-				.onFalse(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_LOW)
+				.onFalse(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE))
 						.alongWith(m_flywheelSubsystem.stopFlywheel())
-						.alongWith(new IndexerStopCommand(m_indexerSubsystem)));
+						.alongWith(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
 		m_driverController.button(Button.kSquare)
 				.whileTrue(m_driveSubsystem.robotOrientedDriveCommand(() -> m_driverController.getRawAxis(Axis.kLeftY),
 						() -> m_driverController.getRawAxis(Axis.kLeftX),
@@ -217,14 +217,18 @@ public class RobotContainer {
 						() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 
 		// -------------------Indexer Controls---------------------------------
+		// CIRCLE AND RIGHT BUMPER - Shoot without turning off flywheel
+		m_driverController.button(Button.kCircle).and(
+				m_driverController.button(Button.kRightBumper)).onTrue(new IndexerShootCommand(m_indexerSubsystem));
+
 		// D CIRCLE - Indexer shoot + stop flywheel
-		m_driverController.button(Button.kCircle).onTrue(new IndexerShootCommand(m_indexerSubsystem)
-				.andThen(m_flywheelSubsystem.stopFlywheel())
-				.andThen(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
+		m_driverController.button(Button.kCircle).and(m_driverController.button(Button.kRightBumper).negate())
+				.onTrue(new IndexerShootCommand(m_indexerSubsystem)
+						.andThen(m_flywheelSubsystem.stopFlywheel()));
+
 		// OP RIGHT BUMPER - Indexer shoot + stop flywheel
 		m_operatorController.button(Button.kRightBumper).onTrue(new IndexerShootCommand(m_indexerSubsystem)
-				.andThen(m_flywheelSubsystem.stopFlywheel())
-				.andThen(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
+				.andThen(m_flywheelSubsystem.stopFlywheel()));
 
 		// ------------------Intake Controls-----------------------------------
 		// OP break pad

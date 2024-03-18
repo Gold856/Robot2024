@@ -1022,7 +1022,7 @@ public class CommandComposer {
 				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
 				// 2nd note
-				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.6, kRedSpeakerPosition, 3, 3),
+				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.8, kRedSpeakerPosition, 3, 3),
 				// 3rd note
 				getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 0.9, kRedSpeakerPosition, 3, 3),
 				// 4th note
@@ -1052,10 +1052,11 @@ public class CommandComposer {
 			driveCommand = addDriveCommand(command, intermediate, intermediateTolerance, driveCommand);
 		var readyPose = pickUpPose.plus(new Transform2d(pickUpDistance, 0, Rotation2d.fromDegrees(0)));
 		driveCommand = addDriveCommand(command, readyPose, intermediateTolerance, driveCommand);
-		command.addCommands(parallel(
-				// deadline(
-				getIntakeWithSensorCommand(),
-				DriveCommand.alignTo(pickUpPose, 0.1, 5, driveCommand, m_driveSubsystem, m_limeLightSubsystem)));
+		command.addCommands(
+				deadline(
+						DriveCommand.alignTo(pickUpPose, 0.1, 5, driveCommand, m_driveSubsystem,
+								m_limeLightSubsystem),
+						getIntakeWithSensorCommand()));
 		return command.withTimeout(timeout);
 	}
 
@@ -1063,9 +1064,9 @@ public class CommandComposer {
 	public static Command getAimWhileMovingAndShootCommand(double maxDistanceToTarget, double timeout,
 			double intermediateTolerance, Pose2d... intermediatePoses) {
 		Command command = getAimWhileMovingCommand(maxDistanceToTarget, intermediateTolerance, intermediatePoses);
-		return sequence(command.withTimeout(timeout),
-				// deadline(command.withTimeout(timeout),
-				// CommandComposer.getIntakeWithSensorNoLEDCommand()),
+		return sequence(
+				deadline(command.withTimeout(timeout),
+						CommandComposer.getIntakeWithSensorNoLEDCommand()),
 				getShootCommand(0.25));
 	}
 
@@ -1080,7 +1081,7 @@ public class CommandComposer {
 						getAimCommand(() -> diff.getNorm()),
 						getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
 								intermediatePoses)),
-				// getIntakeWithSensorCommand().withTimeout(0.5),
+				getIntakeWithSensorCommand().withTimeout(0.5),
 				getShootCommand(0.25));
 		// return sequence(
 		// getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout,
