@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -863,51 +862,6 @@ public class CommandComposer {
 		);
 	}
 
-	// public static Command getThreeScoreTwoMiddleBottomBlueAuto() {
-	// return sequence(
-	// getAimAndShootAuto(),
-	// DriveCommand.alignTo(new Pose(-5, -3, 180 + 25), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// m_pneumaticsSubsystem.downIntakeCommand(),
-	// getPickUpNoteAtCommand(kBlueCenterNoteFourPose).withTimeout(4),
-	// DriveCommand.alignTo(new Pose(-5.5, -2.3, 180 + 0), 0.3, 10,
-	// m_driveSubsystem, m_limeLightSubsystem),
-	// DriveCommand.alignTo(new Pose(-6.25, 0.4, 180 + 0), 0.3, 10,
-	// m_driveSubsystem, m_limeLightSubsystem),
-	// getAimAndShootAuto(),
-	// DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 0), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// getPickUpNoteAtCommand(kBlueCenterNoteFivePose).withTimeout(4),
-	// DriveCommand.alignTo(new Pose(-5.5, -3, 180 + 0), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// DriveCommand.alignTo(new Pose(-6.25, 0.4, 180 + 0), 0.3, 10,
-	// m_driveSubsystem, m_limeLightSubsystem),
-	// getAimAndShootAuto());
-	// }
-
-	// public static Command getThreeScoreTwoMiddleBottomRedAuto() {
-	// return sequence(
-	// m_pneumaticsSubsystem.downIntakeCommand(),
-	// getAimAndShootAuto(),
-	// DriveCommand.alignTo(new Pose(5, -3, -25), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// m_pneumaticsSubsystem.downIntakeCommand(),
-	// getPickUpNoteAtCommand(kRedCenterNoteFourPose).withTimeout(4),
-	// DriveCommand.alignTo(new Pose(5.5, -2.3, 0), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// DriveCommand.alignTo(new Pose(6.25, 0.4, 0), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// getAimAndShootAuto(),
-	// DriveCommand.alignTo(new Pose(5.5, -3, 0), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// getPickUpNoteAtCommand(kRedCenterNoteFivePose).withTimeout(4),
-	// DriveCommand.alignTo(new Pose(5.5, -3, 0), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// DriveCommand.alignTo(new Pose(6.25, 0.4, 0), 0.3, 10, m_driveSubsystem,
-	// m_limeLightSubsystem),
-	// getAimAndShootAuto());
-	// }
-
 	public static Command getThreeScoreOneMiddleTopBlueAuto() {
 		return sequence(m_pneumaticsSubsystem.downIntakeCommand(),
 				getShootToClosestSpeakerAtCommand(kBlueNoteOnePose.add(new Pose(-0.4, -0.4, 0)), 1.5),
@@ -955,7 +909,7 @@ public class CommandComposer {
 				m_controllerYaw = new ProfiledPIDController(kTurnP * 1.5, kTurnI, kTurnD,
 						new TrapezoidProfile.Constraints(kTurnMaxVelocity, kTurnMaxAcceleration * 1.5));
 				m_controllerYaw.enableContinuousInput(-180, 180);
-				addRequirements(m_driveSubsystem, m_aimerSubsystem, m_arduinoSubsystem);
+				addRequirements(m_driveSubsystem, m_aimerSubsystem, m_flywheelSubsystem, m_arduinoSubsystem);
 			}
 
 			@Override
@@ -975,8 +929,7 @@ public class CommandComposer {
 				try {
 					var closest = m_limeLightSubsystem.closest(kBlueSpeakerPosition, kRedSpeakerPosition);
 					double angle = m_limeLightSubsystem.angleTo(closest);
-					// NEGATION if positive turnSpeed: clockwise rotation
-					rotSpeed = -m_controllerYaw.calculate(angle);
+					rotSpeed = m_controllerYaw.calculate(-angle); // to achieve angle error 0
 					double distance = m_limeLightSubsystem.distanceTo(closest);
 					double actuatorHeightSetpoint = m_targeter.getAngle(distance);
 					m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
@@ -988,18 +941,15 @@ public class CommandComposer {
 						if (readiness > 0.5) {
 							timestamp = System.currentTimeMillis() + 500;
 							m_arduinoSubsystem.setCode(StatusCode.SOLID_BLUE);
-							// TODO: signal readiness!
 						}
 					}
 					m_flywheelSubsystem.setBottomVelocity(8000);
 					m_flywheelSubsystem.setTopVelocity(8000);
-
 				} catch (Exception e) {
 				}
 				// NEGATION if positive turnSpeed: clockwise rotation
 				rotSpeed = -rotSpeed;
-				m_driveSubsystem.setModuleStates(
-						m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed, rotSpeed), true));
+				m_driveSubsystem.setModuleStates(fwdSpeed, strSpeed, rotSpeed, true);
 			}
 
 			@Override
@@ -1008,50 +958,7 @@ public class CommandComposer {
 			}
 
 		};
-		// Runnable action = new Runnable() {
 
-		// Long timestamp = null;
-
-		// @Override
-		// public void run() {
-		// double fwdSpeed = kTeleopMaxSpeed
-		// * MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-		// fwdSpeed = Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed);
-		// double strSpeed = kTeleopMaxSpeed
-		// * MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-		// strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
-		// double rotSpeed = 0;
-		// try {
-		// var closest = m_limeLightSubsystem.closest(kBlueSpeakerPosition,
-		// kRedSpeakerPosition);
-		// double angle = m_limeLightSubsystem.angleTo(closest);
-		// if (Math.abs(angle) > angleThreshold)
-		// rotSpeed = Math.toRadians(45) * Math.signum(angle);
-		// double distance = m_limeLightSubsystem.distanceTo(closest);
-		// double actuatorHeightSetpoint = m_targeter.getAngle(distance);
-		// m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
-		// if (timestamp == null || timestamp < System.currentTimeMillis()) {
-		// double readiness = m_limeLightSubsystem.confidence()
-		// + (m_aimerSubsystem.atAimerSetpoint() ? 0 : -1);
-		// SmartDashboard.putNumber(
-		// "pose estimation: drive while aiming ", readiness);
-		// if (readiness > 0.5) {
-		// timestamp = System.currentTimeMillis() + 500;
-		// // TODO: signal readiness!
-		// }
-		// }
-		// } catch (Exception e) {
-		// }
-		// // NEGATION if positive turnSpeed: clockwise rotation
-		// rotSpeed = -rotSpeed;
-		// m_driveSubsystem.setModuleStates(
-		// m_driveSubsystem.calculateModuleStates(new ChassisSpeeds(fwdSpeed, strSpeed,
-		// rotSpeed), true));
-		// }
-
-		// };
-		// return run(action, m_driveSubsystem,
-		// m_aimerSubsystem).withName("DriveWhileAimingCommand");
 	}
 
 	public static Command getAimWileMovingAndShootCommand(double maxDistanceToTarget, double timeout) {
@@ -1068,7 +975,7 @@ public class CommandComposer {
 				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 1.2, 6, 10),
 				getAimWhileMovingAndShootCommand(3.5, 4, 10,
 						kBlueCenterNoteFivePose.add(new Pose(-2.5, 0, -20))));
-\	}
+	}
 
 	public static Command getThreeScoreRedC4C5() {
 		return sequence(
@@ -1118,6 +1025,7 @@ public class CommandComposer {
 				getAimWhileMovingAndShootCommand(3, 4, 30, kRedNoteOnePose));
 	}
 
+	// TODO: review
 	public static Command getPickUpNoteAtCommand(Pose2d pickUpPose, double pickUpDistance, double timeout,
 			double intermediateTolerance, Pose2d... intermediatePoses) {
 		SequentialCommandGroup command = new SequentialCommandGroup();
@@ -1126,7 +1034,8 @@ public class CommandComposer {
 			driveCommand = addDriveCommand(command, intermediate, intermediateTolerance, driveCommand);
 		var readyPose = pickUpPose.plus(new Transform2d(pickUpDistance, 0, Rotation2d.fromDegrees(0)));
 		driveCommand = addDriveCommand(command, readyPose, intermediateTolerance, driveCommand);
-		command.addCommands(deadline(
+		command.addCommands(parallel(
+				// deadline(
 				getIntakeWithSensorCommand(),
 				DriveCommand.alignTo(pickUpPose, 0.1, 5, driveCommand, m_driveSubsystem, m_limeLightSubsystem)));
 		return command.withTimeout(timeout);
@@ -1190,16 +1099,19 @@ public class CommandComposer {
 	}
 
 	public static Command getAimCommand(Supplier<Double> distance) {
-		return new AimHeightCommand(m_aimerSubsystem, m_targeter,
-				AimHeightOperation.SET_PRESET_DEFAULT).andThen(
-						parallel(
-								sequence(
-										new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY,
-												8000, 8000),
-										new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SETTLE, 0, 0)),
-								sequence(new AimHeightCommand(m_aimerSubsystem, m_targeter,
-										AimHeightOperation.CALC_AND_SET,
-										distance))));
+		return parallel(getAimWithoutStartingFlywheelCommand(distance), sequence(
+				new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY,
+						8000, 8000),
+				new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SETTLE, 0, 0)));
+	}
+
+	public static Command getAimWithoutStartingFlywheelCommand(Supplier<Double> distance) {
+		return sequence(
+				new AimHeightCommand(m_aimerSubsystem, m_targeter,
+						AimHeightOperation.SET_PRESET_DEFAULT),
+				new AimHeightCommand(m_aimerSubsystem, m_targeter,
+						AimHeightOperation.CALC_AND_SET,
+						distance));
 	}
 
 	private static DriveCommand addDriveCommand(SequentialCommandGroup g, Pose2d targetPose,
@@ -1214,6 +1126,14 @@ public class CommandComposer {
 
 	public static Command getShootCommand(double duration) {
 		return new IndexerShootCommand(duration, m_indexerSubsystem).andThen(m_flywheelSubsystem.stopFlywheel());
+	}
+
+	public static Command getShootAfterStartingFlywheelCommand(double duration) {
+		return sequence(
+				new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY,
+						8000, 8000),
+				new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SETTLE, 0, 0),
+				getShootCommand(duration));
 	}
 
 }
