@@ -1,23 +1,17 @@
 package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
-import static frc.robot.Constants.DriveConstants.*;
 import static frc.robot.Constants.PoseConstants.*;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants.ControllerConstants;
 import frc.robot.Targeter.RegressionTargeter;
 import frc.robot.commands.TimedLEDCommand;
 import frc.robot.commands.aimshooter.AimHeightCommand;
@@ -619,7 +613,6 @@ public class CommandComposer {
 				m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
 	}
 
-	// TODO: review
 	public static Command getIntakeWithSensorNoLEDCommand() {
 		return sequence(
 				parallel(
@@ -896,71 +889,6 @@ public class CommandComposer {
 				getShootToClosestSpeakerAtCommand(kRedNoteOnePose, 4));
 	}
 
-	// TODO: review
-	public static Command getDriveWhileAimingCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
-			double angleThreshold) {
-		return new Command() {
-
-			Long timestamp = null;
-
-			private ProfiledPIDController m_controllerYaw;
-
-			{
-				m_controllerYaw = new ProfiledPIDController(kTurnP * 1.5, kTurnI, kTurnD,
-						new TrapezoidProfile.Constraints(kTurnMaxVelocity, kTurnMaxAcceleration * 1.5));
-				m_controllerYaw.enableContinuousInput(-180, 180);
-				addRequirements(m_driveSubsystem, m_aimerSubsystem, m_flywheelSubsystem, m_arduinoSubsystem);
-			}
-
-			@Override
-			public void initialize() {
-				m_controllerYaw.reset(0);
-			}
-
-			@Override
-			public void execute() {
-				double fwdSpeed = kTeleopMaxSpeed
-						* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-				fwdSpeed = Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed);
-				double strSpeed = kTeleopMaxSpeed
-						* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-				strSpeed = Math.signum(strSpeed) * (strSpeed * strSpeed);
-				double rotSpeed = 0;
-				try {
-					var closest = m_limeLightSubsystem.closest(kBlueSpeakerPosition, kRedSpeakerPosition);
-					double angle = m_limeLightSubsystem.angleTo(closest);
-					rotSpeed = m_controllerYaw.calculate(-angle); // to achieve angle error 0
-					double distance = m_limeLightSubsystem.distanceTo(closest);
-					double actuatorHeightSetpoint = m_targeter.getAngle(distance);
-					m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
-					if (timestamp == null || timestamp < System.currentTimeMillis()) {
-						double readiness = m_limeLightSubsystem.confidence()
-								+ (m_aimerSubsystem.atAimerSetpoint() ? 0 : -1);
-						SmartDashboard.putNumber(
-								"pose estimation: drive while aiming ", readiness);
-						if (readiness > 0.5) {
-							timestamp = System.currentTimeMillis() + 500;
-							m_arduinoSubsystem.setCode(StatusCode.SOLID_BLUE);
-						}
-					}
-					m_flywheelSubsystem.setBottomVelocity(8000);
-					m_flywheelSubsystem.setTopVelocity(8000);
-				} catch (Exception e) {
-				}
-				// NEGATION if positive turnSpeed: clockwise rotation
-				rotSpeed = -rotSpeed;
-				m_driveSubsystem.setModuleStates(fwdSpeed, strSpeed, rotSpeed, true);
-			}
-
-			@Override
-			public void end(boolean interrupted) {
-				m_flywheelSubsystem.stopFlywheel();
-			}
-
-		};
-
-	}
-
 	public static Command getAimWileMovingAndShootCommand(double maxDistanceToTarget, double timeout) {
 		return getAimWhileMovingAndShootCommand(maxDistanceToTarget, timeout, 0);
 	}
@@ -993,9 +921,6 @@ public class CommandComposer {
 
 	public static Command getFourScoreBlue321() {
 		return sequence(
-				// TODO: test if it helps
-				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
-				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto(.5, 0.25)),
 				// 2nd note
 				getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 0.6, kBlueSpeakerPosition, 5, 3),
@@ -1007,9 +932,6 @@ public class CommandComposer {
 
 	public static Command getFourScoreRed321() {
 		return sequence(
-				// TODO: test if it helps
-				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
-				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto(.5, 0.25)),
 				// 2nd note
 				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.6, kRedSpeakerPosition, 5, 3),
@@ -1035,7 +957,6 @@ public class CommandComposer {
 						kRedCenterNoteOnePose.add(new Pose(3, 0, 0))));
 	}
 
-	// TODO: review
 	public static Command getPickUpNoteAtCommand(Pose2d pickUpPose, double pickUpDistance, double timeout,
 			double intermediateTolerance, Pose2d... intermediatePoses) {
 		SequentialCommandGroup command = new SequentialCommandGroup();
@@ -1055,23 +976,20 @@ public class CommandComposer {
 		return command.withTimeout(timeout);
 	}
 
-	// TODO: review
 	public static Command getAimWhileMovingAndShootCommand(double maxDistanceToTarget, double timeout,
 			double intermediateTolerance, Pose2d... intermediatePoses) {
 		Command command = getAimWhileMovingCommand(maxDistanceToTarget, intermediateTolerance, intermediatePoses);
 		return sequence(
-				// command.withTimeout(timeout),
-				parallel(command.withTimeout(timeout),
+				parallel(
+						command.withTimeout(timeout),
 						CommandComposer.getIntakeWithSensorNoLEDCommand()),
 				getShootCommand(0.25));
 	}
 
-	// TODO: review
 	public static Command getPickUpNoteAndShootAtCommand(Pose2d pickUpPose, double pickUpDistance,
 			Translation2d targetPosition, double timeout, double intermediateTolerance, Pose2d... intermediatePoses) {
 		Translation2d diff = targetPosition.minus(pickUpPose.getTranslation());
 		pickUpPose = new Pose2d(pickUpPose.getTranslation(), diff.getAngle());
-		// TODO: check if the following change works and reduces time.
 		return sequence(
 				parallel(
 						getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
@@ -1079,13 +997,6 @@ public class CommandComposer {
 						getAimCommand(() -> diff.getNorm()).withTimeout(0.5)),
 				getIntakeWithSensorNoLEDCommand().withTimeout(0.725),
 				getShootCommand(0.25));
-		// return sequence(
-		// getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout,
-		// intermediateTolerance,
-		// intermediatePoses),
-		// getAimCommand(() -> diff.getNorm()),
-		// new IndexerShootCommand(m_indexerSubsystem),
-		// m_flywheelSubsystem.stopFlywheel());
 	}
 
 	public static Command getAimWhileMovingCommand(double maxDistanceToTarget, double intermediateTolerance,

@@ -197,7 +197,6 @@ public class DriveCommand extends Command {
 		// m_controllerYaw.atGoal() ? 0 : speedYaw, true);
 		m_driveSubsystem.setModuleStates(speedX, speedY, speedYaw, true);
 
-		// TODO: Hwang check if it is better to apply threshold.
 		// speedX = applyThreshold(speedX, DriveConstants.kMinSpeed);
 		// speedY = applyThreshold(speedY, DriveConstants.kMinSpeed);
 	}

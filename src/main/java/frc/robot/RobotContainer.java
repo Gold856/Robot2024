@@ -197,7 +197,6 @@ public class RobotContainer {
 		// D RIGHT BUMPER - Aim and Shoot
 		// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand())
 
-		// TODO: test if it helps
 		m_driverController.button(Button.kRightBumper)
 				.whileTrue(new DriveWhileAimingCommand(() -> m_driverController.getRawAxis(Axis.kLeftY),
 						() -> m_driverController.getRawAxis(Axis.kLeftX), 5, 0.25, m_driveSubsystem,
