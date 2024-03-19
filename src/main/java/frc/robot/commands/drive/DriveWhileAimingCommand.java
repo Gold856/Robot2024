@@ -90,6 +90,11 @@ public class DriveWhileAimingCommand extends Command {
 	private double m_shootingDelay;
 
 	/**
+	 * The impact of distance changes on aiming (< 1).
+	 */
+	private double m_distanceSensitivity;
+
+	/**
 	 * The position of the robot estimated previously.
 	 */
 	private Translation2d m_previousPosition = null;
@@ -103,34 +108,37 @@ public class DriveWhileAimingCommand extends Command {
 	 * Constructs a new {@code DriveWhileAimingCommand} whose purpose is to move the
 	 * robot to a certain target pose.
 	 * 
-	 * @param forwardSpeed       the supplier that provides the forward speed in
-	 *                           meters
-	 *                           per second
-	 * @param strafeSpeed        the supplier that provides the strafe speed in
-	 *                           meters per second
-	 * @param angleTolerance     the angle error in degrees which is tolerable
-	 * @param shootingDelay      the shooting delay in seconds
-	 * @param driveSubsystem     the {@code DriveSubsystem} used by the
-	 *                           {@code DriveWhileAimingCommand}
-	 * @param aimerSubsystem     the {@code AimerSubsystem} used by the
-	 *                           {@code DriveWhileAimingCommand}
-	 * @param targeter           the {@code Targeter} used by the
-	 *                           {@code DriveWhileAimingCommand}
-	 * @param flywheelSubsystem  the {@code FlywheelSubsystem} used by the
-	 *                           {@code DriveWhileAimingCommand}
-	 * @param arduinoSubsystem   the {@code ArduinoSubsystem} used by the
-	 *                           {@code DriveWhileAimingCommand}
-	 * @param limeLightSubsystem the {@code LimeLightSubsystem} used by the
-	 *                           {@code DriveWhileAimingCommand}
+	 * @param forwardSpeed        the supplier that provides the forward speed in
+	 *                            meters
+	 *                            per second
+	 * @param strafeSpeed         the supplier that provides the strafe speed in
+	 *                            meters per second
+	 * @param angleTolerance      the angle error in degrees which is tolerable
+	 * @param shootingDelay       the shooting delay in seconds
+	 * @param distanceSensitivity the impact of distance changes on aiming (< 1)
+	 * @param driveSubsystem      the {@code DriveSubsystem} used by the
+	 *                            {@code DriveWhileAimingCommand}
+	 * @param aimerSubsystem      the {@code AimerSubsystem} used by the
+	 *                            {@code DriveWhileAimingCommand}
+	 * @param targeter            the {@code Targeter} used by the
+	 *                            {@code DriveWhileAimingCommand}
+	 * @param flywheelSubsystem   the {@code FlywheelSubsystem} used by the
+	 *                            {@code DriveWhileAimingCommand}
+	 * @param arduinoSubsystem    the {@code ArduinoSubsystem} used by the
+	 *                            {@code DriveWhileAimingCommand}
+	 * @param limeLightSubsystem  the {@code LimeLightSubsystem} used by the
+	 *                            {@code DriveWhileAimingCommand}
 	 */
 	public DriveWhileAimingCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
-			double angleTolerance, double shootingDelay, DriveSubsystem driveSubsystem, AimerSubsystem aimerSubsystem,
+			double angleTolerance, double shootingDelay, double distanceSensitivity, DriveSubsystem driveSubsystem,
+			AimerSubsystem aimerSubsystem,
 			Targeter targeter,
 			FlywheelSubsystem flywheelSubsystem, ArduinoSubsystem arduinoSubsystem,
 			LimeLightSubsystem limeLightSubsystem) {
 		m_forwardSpeed = forwardSpeed;
 		m_strafeSpeed = strafeSpeed;
 		m_shootingDelay = shootingDelay;
+		m_distanceSensitivity = distanceSensitivity;
 		m_controllerYaw = new ProfiledPIDController(kTurnP * 1.5, kTurnI, kTurnD,
 				new TrapezoidProfile.Constraints(kTurnMaxVelocity, kTurnMaxAcceleration * 1.5));
 		m_controllerYaw.setTolerance(angleTolerance);
@@ -217,13 +225,18 @@ public class DriveWhileAimingCommand extends Command {
 	 * @return the transformation for shooting to the closest speaker
 	 */
 	private Transform2d transformationToClosestSpeaker() {
-		var closest = m_limeLightSubsystem.closest(kBlueSpeakerPosition, kRedSpeakerPosition);
+		var target = m_limeLightSubsystem.closest(kBlueSpeakerPosition, kRedSpeakerPosition);
 		var pose = m_limeLightSubsystem.estimatedPose();
 		if (m_velocity != null) {
 			var velocity = m_velocity.times(m_shootingDelay / TimedRobot.kDefaultPeriod);
 			pose = new Pose(velocity.getX(), velocity.getY(), 0).add(pose);
+			var distance = LimeLightSubsystem.transformationToward(target, 0,
+					pose).getTranslation().getNorm();
+			velocity = m_velocity.times(m_distanceSensitivity * distance / 10 /
+					TimedRobot.kDefaultPeriod);
+			target = new Translation2d(target.getX() - velocity.getX(), target.getY() - velocity.getY());
 		}
-		return LimeLightSubsystem.transformationToward(closest, 0, pose);
+		return LimeLightSubsystem.transformationToward(target, 0, pose);
 	}
 
 	/**

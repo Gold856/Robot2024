@@ -199,7 +199,7 @@ public class RobotContainer {
 
 		m_driverController.button(Button.kRightBumper)
 				.whileTrue(new DriveWhileAimingCommand(() -> m_driverController.getRawAxis(Axis.kLeftY),
-						() -> m_driverController.getRawAxis(Axis.kLeftX), 5, 0.25, m_driveSubsystem,
+						() -> m_driverController.getRawAxis(Axis.kLeftX), 5, 0.2, 0.1, m_driveSubsystem,
 						m_aimerSubsystem,
 						m_targeter, m_flywheelSubsystem, m_arduinoSubsystem, m_limeLightSubsystem))
 				// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getDriveWhileAimingCommand(
