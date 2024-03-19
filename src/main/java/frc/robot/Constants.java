@@ -251,7 +251,7 @@ public final class Constants {
 		public static final Pose kRedNoteOnePose = new Pose(6.0 - 0.55, 2.82 - 0.25 + 0.4, -25);
 		public static final Pose kRedNoteTwoPose = new Pose(6.0 - 0.55 + 0.2, 1.45, 0);
 		// to avoid collision
-		public static final Pose kRedNoteThreePose = new Pose(6.0 - 0.45 + 0.2, 0.0 + 0.45 - 0.4, 25);
+		public static final Pose kRedNoteThreePose = new Pose(6.0 - 0.45 + 0.2, 0.0 + 0.45 - 0.3, 25);
 
 		public static final Pose kRedCenterNoteOnePose = new Pose(0.2 - 0.4, 3.4, 0);
 		public static final Pose kRedCenterNoteTwoPose = new Pose(0.2 - 0.25 - 0.4, 1.7 + 0.25, 45);

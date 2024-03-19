@@ -24,6 +24,7 @@ import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
 import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
+import frc.robot.commands.drive.DriveWhileAimingCommand;
 import frc.robot.commands.drive.PolarDriveCommand;
 import frc.robot.commands.flywheel.FlywheelCommand;
 import frc.robot.commands.flywheel.FlywheelCommand.FlywheelOperation;
@@ -197,15 +198,14 @@ public class RobotContainer {
 		// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand())
 
 		// TODO: test if it helps
-		// m_driverController.button(Button.kRightBumper)
-		// .whileTrue(new DriveWhileAimingCommand(() ->
-		// m_driverController.getRawAxis(Axis.kLeftY),
-		// () -> m_driverController.getRawAxis(Axis.kLeftX), 5, 0.2, m_driveSubsystem,
-		// m_aimerSubsystem,
-		// m_targeter, m_flywheelSubsystem, m_arduinoSubsystem, m_limeLightSubsystem))
-		m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getDriveWhileAimingCommand(
-				() -> m_driverController.getRawAxis(Axis.kLeftY),
-				() -> m_driverController.getRawAxis(Axis.kLeftX), 5))
+		m_driverController.button(Button.kRightBumper)
+				.whileTrue(new DriveWhileAimingCommand(() -> m_driverController.getRawAxis(Axis.kLeftY),
+						() -> m_driverController.getRawAxis(Axis.kLeftX), 5, 0.2, m_driveSubsystem,
+						m_aimerSubsystem,
+						m_targeter, m_flywheelSubsystem, m_arduinoSubsystem, m_limeLightSubsystem))
+				// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getDriveWhileAimingCommand(
+				// () -> m_driverController.getRawAxis(Axis.kLeftY),
+				// () -> m_driverController.getRawAxis(Axis.kLeftX), 5))
 				.onFalse(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE))
 						.alongWith(m_flywheelSubsystem.stopFlywheel())

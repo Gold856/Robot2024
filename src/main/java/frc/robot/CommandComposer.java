@@ -664,10 +664,10 @@ public class CommandComposer {
 	}
 
 	public static Command getAimAndShootAuto() {
-		return getAimAndShootAuto(2);
+		return getAimAndShootAuto(2, Constants.IndexerConstants.kKickTime);
 	}
 
-	public static Command getAimAndShootAuto(double timeout) {
+	public static Command getAimAndShootAuto(double timeout, double duration) {
 		return sequence(
 				getAimCommand()
 						.withTimeout(timeout),
@@ -988,7 +988,7 @@ public class CommandComposer {
 				// TODO: test if it helps
 				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
 				// getShootAfterStartingFlywheelCommand(0.25)),
-				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
+				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto(.5, 0.25)),
 				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 1.3, 6, 10, new Pose(3, -3.2,
 						0)),
 				getAimWhileMovingAndShootCommand(3.5, 4, 10,
@@ -1022,11 +1022,11 @@ public class CommandComposer {
 				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
 				// 2nd note
-				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.8, kRedSpeakerPosition, 3, 3),
+				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.6, kRedSpeakerPosition, 5, 3),
 				// 3rd note
-				getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 0.9, kRedSpeakerPosition, 3, 3),
+				getPickUpNoteAndShootAtCommand(kRedNoteTwoPose, 0.9, kRedSpeakerPosition, 5, 3),
 				// 4th note
-				getPickUpNoteAndShootAtCommand(kRedNoteOnePose, 0.6, kRedSpeakerPosition, 3, 3));
+				getPickUpNoteAndShootAtCommand(kRedNoteOnePose, 0.6, kRedSpeakerPosition, 5, 3));
 	}
 
 	public static Command getFiveScoreBlue321C1() {
@@ -1039,8 +1039,9 @@ public class CommandComposer {
 	public static Command getFiveScoreRed321C1() {
 		return sequence(
 				getFourScoreRed321(),
-				getPickUpNoteAtCommand(kRedCenterNoteOnePose, 0.6, 4, 5),
-				getAimWhileMovingAndShootCommand(3, 4, 30, kRedNoteOnePose));
+				getPickUpNoteAtCommand(kRedCenterNoteOnePose, 0.6, 5, 5),
+				getAimWhileMovingAndShootCommand(3, 5, 10,
+						kRedCenterNoteOnePose.add(new Pose(2, 0, 0))));
 	}
 
 	// TODO: review
@@ -1053,10 +1054,12 @@ public class CommandComposer {
 		var readyPose = pickUpPose.plus(new Transform2d(pickUpDistance, 0, Rotation2d.fromDegrees(0)));
 		driveCommand = addDriveCommand(command, readyPose, intermediateTolerance, driveCommand);
 		command.addCommands(
-				deadline(
+				// deadline(
+				// sequence(
+				parallel(
 						DriveCommand.alignTo(pickUpPose, 0.1, 5, driveCommand, m_driveSubsystem,
 								m_limeLightSubsystem),
-						getIntakeWithSensorCommand()));
+						getIntakeWithSensorNoLEDCommand()));
 		return command.withTimeout(timeout);
 	}
 
@@ -1065,6 +1068,7 @@ public class CommandComposer {
 			double intermediateTolerance, Pose2d... intermediatePoses) {
 		Command command = getAimWhileMovingCommand(maxDistanceToTarget, intermediateTolerance, intermediatePoses);
 		return sequence(
+				// command.withTimeout(timeout),
 				deadline(command.withTimeout(timeout),
 						CommandComposer.getIntakeWithSensorNoLEDCommand()),
 				getShootCommand(0.25));
@@ -1077,11 +1081,10 @@ public class CommandComposer {
 		pickUpPose = new Pose2d(pickUpPose.getTranslation(), diff.getAngle());
 		// TODO: check if the following change works and reduces time.
 		return sequence(
-				parallel(
-						getAimCommand(() -> diff.getNorm()),
-						getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
-								intermediatePoses)),
-				getIntakeWithSensorCommand().withTimeout(0.5),
+				// parallel(
+				getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
+						intermediatePoses),
+				getAimCommand(() -> diff.getNorm()).withTimeout(1),
 				getShootCommand(0.25));
 		// return sequence(
 		// getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout,
@@ -1118,10 +1121,12 @@ public class CommandComposer {
 	}
 
 	public static Command getAimCommand(Supplier<Double> distance) {
-		return parallel(getAimWithoutStartingFlywheelCommand(distance), sequence(
-				new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY,
-						8000, 8000),
-				new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SETTLE, 0, 0)));
+		return parallel(
+				getAimWithoutStartingFlywheelCommand(distance),
+				sequence(
+						new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SET_VELOCITY,
+								8000, 8000),
+						new FlywheelCommand(m_flywheelSubsystem, FlywheelOperation.SETTLE, 0, 0)));
 	}
 
 	public static Command getAimWithoutStartingFlywheelCommand(Supplier<Double> distance) {
@@ -1144,7 +1149,7 @@ public class CommandComposer {
 	}
 
 	public static Command getShootCommand(double duration) {
-		return new IndexerShootCommand(duration, m_indexerSubsystem).andThen(m_flywheelSubsystem.stopFlywheel());
+		return new IndexerShootCommand(duration, m_indexerSubsystem);// .andThen(m_flywheelSubsystem.stopFlywheel());
 	}
 
 	public static Command getShootAfterStartingFlywheelCommand(double duration) {
