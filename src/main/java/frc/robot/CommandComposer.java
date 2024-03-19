@@ -664,7 +664,7 @@ public class CommandComposer {
 	}
 
 	public static Command getAimAndShootAuto() {
-		return getAimAndShootAuto(2, Constants.IndexerConstants.kKickTime);
+		return getAimAndShootAuto(1, Constants.IndexerConstants.kKickTime);
 	}
 
 	public static Command getAimAndShootAuto(double timeout, double duration) {
@@ -967,37 +967,27 @@ public class CommandComposer {
 
 	public static Command getThreeScoreBlueC4C5() {
 		return sequence(
-				// TODO: test if it helps
-				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
-				// getShootAfterStartingFlywheelCommand(0.25)),
-				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
+				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto(.5, 0.25)),
 				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 1.3, 6, 10, new Pose(-3,
 						-3.2, 180)),
-				getAimWhileMovingAndShootCommand(3.5, 4, 10,
-						new Pose(-4, -2.2, 180)),
-				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 1.2, 6, 10),
-				// TODO: test if it helps
-				// getAimWhileMovingAndShootCommand(3.5, 4, 20,
-				// kBlueCenterNoteFivePose.add(new Pose(-3.3, 0, -20))));
-				getAimWhileMovingAndShootCommand(3.5, 4, 10,
+				getAimWhileMovingAndShootCommand(3.5, 4, 5,
+						new Pose(-2.5, -3, 180)),
+				getPickUpNoteAtCommand(kBlueCenterNoteFivePose, 0.5, 6, 10, new Pose(-3,
+						-3.2, 180)),
+				getAimWhileMovingAndShootCommand(3.5, 3.7, 5,
 						kBlueCenterNoteFivePose.add(new Pose(-2.5, 0, -20))));
 	}
 
 	public static Command getThreeScoreRedC4C5() {
 		return sequence(
-				// TODO: test if it helps
-				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
-				// getShootAfterStartingFlywheelCommand(0.25)),
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto(.5, 0.25)),
 				getPickUpNoteAtCommand(kRedCenterNoteFourPose, 1.3, 6, 10, new Pose(3, -3.2,
 						0)),
-				getAimWhileMovingAndShootCommand(3.5, 4, 10,
-						new Pose(4, -2.2, 0)),
-				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 1.2, 6, 10),
-				// TODO: test if it helps
-				// getAimWhileMovingAndShootCommand(3.5, 4, 20,
-				// kRedCenterNoteFivePose.add(new Pose(3.3, 0, 20))));
-				getAimWhileMovingAndShootCommand(3.5, 4, 10,
+				getAimWhileMovingAndShootCommand(3.5, 4, 5,
+						new Pose(2.5, -3, 0)),
+				getPickUpNoteAtCommand(kRedCenterNoteFivePose, 0.5, 6, 10, new Pose(3, -3.2,
+						0)),
+				getAimWhileMovingAndShootCommand(3.5, 3.7, 5,
 						kRedCenterNoteFivePose.add(new Pose(2.5, 0, 20))));
 	}
 
@@ -1006,13 +996,13 @@ public class CommandComposer {
 				// TODO: test if it helps
 				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
 				// getShootAfterStartingFlywheelCommand(0.25)),
-				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
+				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto(.5, 0.25)),
 				// 2nd note
-				getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 0.6, kBlueSpeakerPosition, 3, 3),
+				getPickUpNoteAndShootAtCommand(kBlueNoteThreePose, 0.6, kBlueSpeakerPosition, 5, 3),
 				// 3rd note
-				getPickUpNoteAndShootAtCommand(kBlueNoteTwoPose, 0.9, kBlueSpeakerPosition, 3, 3),
+				getPickUpNoteAndShootAtCommand(kBlueNoteTwoPose, 0.9, kBlueSpeakerPosition, 5, 3),
 				// 4th note
-				getPickUpNoteAndShootAtCommand(kBlueNoteOnePose, 0.6, kBlueSpeakerPosition, 3, 3));
+				getPickUpNoteAndShootAtCommand(kBlueNoteOnePose, 0.6, kBlueSpeakerPosition, 5, 3));
 	}
 
 	public static Command getFourScoreRed321() {
@@ -1020,7 +1010,7 @@ public class CommandComposer {
 				// TODO: test if it helps
 				// parallel(m_pneumaticsSubsystem.downIntakeCommand(),
 				// getShootAfterStartingFlywheelCommand(0.25)),
-				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto()),
+				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto(.5, 0.25)),
 				// 2nd note
 				getPickUpNoteAndShootAtCommand(kRedNoteThreePose, 0.6, kRedSpeakerPosition, 5, 3),
 				// 3rd note
@@ -1032,16 +1022,17 @@ public class CommandComposer {
 	public static Command getFiveScoreBlue321C1() {
 		return sequence(
 				getFourScoreBlue321(),
-				getPickUpNoteAtCommand(kBlueCenterNoteOnePose, 0.6, 4, 5),
-				getAimWhileMovingAndShootCommand(3, 4, 30, kBlueNoteOnePose));
+				getPickUpNoteAtCommand(kBlueCenterNoteOnePose, 0.2, 4, 2),
+				getAimWhileMovingAndShootCommand(3.5, 2.5, 25,
+						kBlueNoteOnePose.add(new Pose(-3, 0, 0))));
 	}
 
 	public static Command getFiveScoreRed321C1() {
 		return sequence(
 				getFourScoreRed321(),
-				getPickUpNoteAtCommand(kRedCenterNoteOnePose, 0.6, 5, 5),
-				getAimWhileMovingAndShootCommand(3, 5, 10,
-						kRedCenterNoteOnePose.add(new Pose(2, 0, 0))));
+				getPickUpNoteAtCommand(kRedCenterNoteOnePose, 0.2, 4, 2),
+				getAimWhileMovingAndShootCommand(3.5, 2.5, 25,
+						kRedCenterNoteOnePose.add(new Pose(3, 0, 0))));
 	}
 
 	// TODO: review
@@ -1056,7 +1047,8 @@ public class CommandComposer {
 		command.addCommands(
 				// deadline(
 				// sequence(
-				parallel(
+				// parallel(
+				race(
 						DriveCommand.alignTo(pickUpPose, 0.1, 5, driveCommand, m_driveSubsystem,
 								m_limeLightSubsystem),
 						getIntakeWithSensorNoLEDCommand()));
@@ -1069,7 +1061,7 @@ public class CommandComposer {
 		Command command = getAimWhileMovingCommand(maxDistanceToTarget, intermediateTolerance, intermediatePoses);
 		return sequence(
 				// command.withTimeout(timeout),
-				deadline(command.withTimeout(timeout),
+				parallel(command.withTimeout(timeout),
 						CommandComposer.getIntakeWithSensorNoLEDCommand()),
 				getShootCommand(0.25));
 	}
@@ -1081,10 +1073,11 @@ public class CommandComposer {
 		pickUpPose = new Pose2d(pickUpPose.getTranslation(), diff.getAngle());
 		// TODO: check if the following change works and reduces time.
 		return sequence(
-				// parallel(
-				getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
-						intermediatePoses),
-				getAimCommand(() -> diff.getNorm()).withTimeout(1),
+				parallel(
+						getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout, intermediateTolerance,
+								intermediatePoses),
+						getAimCommand(() -> diff.getNorm()).withTimeout(0.5)),
+				getIntakeWithSensorNoLEDCommand().withTimeout(0.725),
 				getShootCommand(0.25));
 		// return sequence(
 		// getPickUpNoteAtCommand(pickUpPose, pickUpDistance, timeout,
