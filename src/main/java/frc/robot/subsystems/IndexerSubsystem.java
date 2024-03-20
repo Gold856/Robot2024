@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
 
@@ -45,8 +44,9 @@ public class IndexerSubsystem extends SubsystemBase {
 	}
 
 	public void periodic() {
-		SmartDashboard.putNumber("Indexer Current", m_indexerMotor.getOutputCurrent());
-		SmartDashboard.putNumber("Indexer Velocity", m_encoder.getVelocity());
-		SmartDashboard.putBoolean("Limit Switch Value", m_proximitySensor.get());
+		// SmartDashboard.putNumber("Indexer Current",
+		// m_indexerMotor.getOutputCurrent());
+		// SmartDashboard.putNumber("Indexer Velocity", m_encoder.getVelocity());
+		// SmartDashboard.putBoolean("Limit Switch Value", m_proximitySensor.get());
 	}
 }

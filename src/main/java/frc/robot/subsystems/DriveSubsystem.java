@@ -148,8 +148,8 @@ public class DriveSubsystem extends SubsystemBase {
 		if (RobotBase.isSimulation()) {
 			updateSimPose(speeds);
 		}
-		SmartDashboard.putNumber("Heading Radians", getHeading().getRadians());
-		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
+		// SmartDashboard.putNumber("Heading Radians", getHeading().getRadians());
+		// SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
@@ -258,8 +258,9 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putNumber("Current Position", getModulePositions()[0].distanceMeters);
-		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
+		// SmartDashboard.putNumber("Current Position",
+		// getModulePositions()[0].distanceMeters);
+		// SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 		if (RobotBase.isReal()) {
 			m_pose = m_odometry.update(getHeading(), getModulePositions());
 			m_posePublisher.set(m_pose);
@@ -267,18 +268,29 @@ public class DriveSubsystem extends SubsystemBase {
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
-		SmartDashboard.putNumber("Drive FR motor temperature", m_frontRight.getDriveTemperature());
-		SmartDashboard.putNumber("Drive BR motor temperature", m_backRight.getDriveTemperature());
-		SmartDashboard.putNumber("Drive BL motor temperature", m_backLeft.getDriveTemperature());
-		SmartDashboard.putNumber("Drive FL motor temperature", m_frontLeft.getDriveTemperature());
-		SmartDashboard.putNumber("Drive FR steer current", m_frontRight.getSteerCurrent());
-		SmartDashboard.putNumber("Drive BR steer current", m_backRight.getSteerCurrent());
-		SmartDashboard.putNumber("Drive BL steer current", m_backLeft.getSteerCurrent());
-		SmartDashboard.putNumber("Drive FL steer current", m_frontLeft.getSteerCurrent());
-		SmartDashboard.putNumber("Back Right Current", m_backRight.getDriveCurrent());
-		SmartDashboard.putNumber("Back Left Current", m_backLeft.getDriveCurrent());
-		SmartDashboard.putNumber("Front Right Current", m_frontRight.getDriveCurrent());
-		SmartDashboard.putNumber("Front Left Current", m_frontLeft.getDriveCurrent());
+		// SmartDashboard.putNumber("Drive FR motor temperature",
+		// m_frontRight.getDriveTemperature());
+		// SmartDashboard.putNumber("Drive BR motor temperature",
+		// m_backRight.getDriveTemperature());
+		// SmartDashboard.putNumber("Drive BL motor temperature",
+		// m_backLeft.getDriveTemperature());
+		// SmartDashboard.putNumber("Drive FL motor temperature",
+		// m_frontLeft.getDriveTemperature());
+		// SmartDashboard.putNumber("Drive FR steer current",
+		// m_frontRight.getSteerCurrent());
+		// SmartDashboard.putNumber("Drive BR steer current",
+		// m_backRight.getSteerCurrent());
+		// SmartDashboard.putNumber("Drive BL steer current",
+		// m_backLeft.getSteerCurrent());
+		// SmartDashboard.putNumber("Drive FL steer current",
+		// m_frontLeft.getSteerCurrent());
+		// SmartDashboard.putNumber("Back Right Current",
+		// m_backRight.getDriveCurrent());
+		// SmartDashboard.putNumber("Back Left Current", m_backLeft.getDriveCurrent());
+		// SmartDashboard.putNumber("Front Right Current",
+		// m_frontRight.getDriveCurrent());
+		// SmartDashboard.putNumber("Front Left Current",
+		// m_frontLeft.getDriveCurrent());
 	}
 
 	/**

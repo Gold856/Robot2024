@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkLimitSwitch;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ClampedController;
 import frc.robot.Constants.AimerConstants;
@@ -44,11 +43,14 @@ public class AimerSubsystem extends SubsystemBase {
 
 	public void periodic() {
 		// If using a setpoint
-		SmartDashboard.putNumber("Aimcoder Value", m_aimCancoder.getAbsolutePosition().getValueAsDouble());
-		SmartDashboard.putNumber("Aimer Height", getAimerHeight());
-		SmartDashboard.putNumber("Aimer 550 Amp Draw", m_neoAimer.getOutputCurrent());
-		SmartDashboard.putNumber("Aimer Neo Speed", m_neoAimer.get());
-		SmartDashboard.putNumber("Aimer 550 Temperature", m_neoAimer.getMotorTemperature());
+		// SmartDashboard.putNumber("Aimcoder Value",
+		// m_aimCancoder.getAbsolutePosition().getValueAsDouble());
+		// SmartDashboard.putNumber("Aimer Height", getAimerHeight());
+		// SmartDashboard.putNumber("Aimer 550 Amp Draw",
+		// m_neoAimer.getOutputCurrent());
+		// SmartDashboard.putNumber("Aimer Neo Speed", m_neoAimer.get());
+		// SmartDashboard.putNumber("Aimer 550 Temperature",
+		// m_neoAimer.getMotorTemperature());
 		if (!m_isManual) {
 			if (m_controller.atSetpoint()) {
 				m_neoAimer.set(0);

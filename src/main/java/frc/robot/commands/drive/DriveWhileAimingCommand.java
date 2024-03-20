@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Targeter;
@@ -204,13 +203,14 @@ public class DriveWhileAimingCommand extends Command {
 			if (timestamp == null || timestamp < System.currentTimeMillis()) {
 				double readiness = m_limeLightSubsystem.confidence()
 						+ (m_aimerSubsystem.atAimerSetpoint() ? 0 : -1);
-				SmartDashboard.putNumber(
-						"pose estimation: drive while aiming ", readiness);
+				// SmartDashboard.putNumber(
+				// "pose estimation: drive while aiming ", readiness);
 				if (readiness > 0.5) {
 					timestamp = System.currentTimeMillis() + 500;
 					m_arduinoSubsystem.setCode(StatusCode.SOLID_BLUE);
 				}
 			}
+			// "pose estimation: drive while aiming ", readiness);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

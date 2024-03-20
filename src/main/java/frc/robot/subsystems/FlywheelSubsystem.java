@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -69,10 +68,12 @@ public class FlywheelSubsystem extends SubsystemBase {
 	}
 
 	public void periodic() {
-		SmartDashboard.putNumber("Flywheel Bottom Velocity", getBottomVelocity());
-		SmartDashboard.putNumber("Flywheel top Velocity", getTopVelocity());
-		SmartDashboard.putNumber("Flywheel Bottom Current", m_neoFlywheelBottom.getOutputCurrent());
-		SmartDashboard.putNumber("Flywheel top Current", m_neoFlywheelTop.getOutputCurrent());
+		// SmartDashboard.putNumber("Flywheel Bottom Velocity", getBottomVelocity());
+		// SmartDashboard.putNumber("Flywheel top Velocity", getTopVelocity());
+		// SmartDashboard.putNumber("Flywheel Bottom Current",
+		// m_neoFlywheelBottom.getOutputCurrent());
+		// SmartDashboard.putNumber("Flywheel top Current",
+		// m_neoFlywheelTop.getOutputCurrent());
 		// essentially the end method of the flywheel velocity setpoint mode
 		if (m_setVelocity == 0 && Math.abs(m_neoEncoderBottom.getVelocity()) > 0.05) {
 			m_neoFlywheelBottom.stopMotor();

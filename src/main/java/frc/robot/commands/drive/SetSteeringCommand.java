@@ -5,7 +5,6 @@
 package frc.robot.commands.drive;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
@@ -51,10 +50,14 @@ public class SetSteeringCommand extends Command {
 		boolean FRWithinTolerance = MathUtil.isNear(m_angle, m_subsystem.getModulePositions()[1].angle.getDegrees(), 1);
 		boolean BLWithinTolerance = MathUtil.isNear(m_angle, m_subsystem.getModulePositions()[2].angle.getDegrees(), 1);
 		boolean BRWithinTolerance = MathUtil.isNear(m_angle, m_subsystem.getModulePositions()[3].angle.getDegrees(), 1);
-		SmartDashboard.putNumber("FL Module Angle", m_subsystem.getModulePositions()[0].angle.getDegrees());
-		SmartDashboard.putNumber("FR Module Angle", m_subsystem.getModulePositions()[1].angle.getDegrees());
-		SmartDashboard.putNumber("BL Module Angle", m_subsystem.getModulePositions()[2].angle.getDegrees());
-		SmartDashboard.putNumber("BR Module Angle", m_subsystem.getModulePositions()[3].angle.getDegrees());
+		// SmartDashboard.putNumber("FL Module Angle",
+		// m_subsystem.getModulePositions()[0].angle.getDegrees());
+		// SmartDashboard.putNumber("FR Module Angle",
+		// m_subsystem.getModulePositions()[1].angle.getDegrees());
+		// SmartDashboard.putNumber("BL Module Angle",
+		// m_subsystem.getModulePositions()[2].angle.getDegrees());
+		// SmartDashboard.putNumber("BR Module Angle",
+		// m_subsystem.getModulePositions()[3].angle.getDegrees());
 		return FLWithinTolerance && FRWithinTolerance && BLWithinTolerance && BRWithinTolerance;
 	}
 }
