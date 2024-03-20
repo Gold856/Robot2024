@@ -235,7 +235,7 @@ public final class Constants {
 		public static final Pose kBlueAmpPose = new Pose(-6.44, 3.75, 90);
 
 		public static final Pose kBlueNoteOnePose = new Pose(-6.0 + 0.55, 2.82 - 0.25 + 0.4, 180 + 25);
-		public static final Pose kBlueNoteTwoPose = new Pose(-6.0 + 0.55 + 0.2, 1.65, 180);
+		public static final Pose kBlueNoteTwoPose = new Pose(-6.0 + 0.55 - 0.2, 1.65, 180);
 		// to avoid collision
 		public static final Pose kBlueNoteThreePose = new Pose(-6.0 + 0.45 - 0.2, 0.0 + 0.45 - 0.3, 180 - 25);
 
