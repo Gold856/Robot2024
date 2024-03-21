@@ -170,18 +170,22 @@ public class RobotContainer {
 	 */
 	private void configureButtonBindings() {
 
-		// --------------------- LED Controls ---------------------------
+		// --------------------- LED Controls -----------------------`----
 		// Should have RainbowPartyFunTime in the last 20 seconds of a match
 		new Trigger(() -> DriverStation.getMatchTime() <= 20)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
 		// LEDs for when you want AMP
-		m_operatorController.povLeft().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_PURPLE));
+		m_operatorController.povLeft().and(m_operatorController.button(Button.kLeftBumper).negate())
+				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_PURPLE));
 		// LEDs for when you want CO-OP
-		m_operatorController.povUp().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
+		m_operatorController.povUp().and(m_operatorController.button(Button.kLeftBumper).negate())
+				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_YELLOW));
 		// LEDs for when you want HP to drop a note
-		m_operatorController.povRight().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
+		m_operatorController.povRight().and(m_operatorController.button(Button.kLeftBumper).negate())
+				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.BLINKING_RED));
 		// DEFAULT Button
-		m_operatorController.povDown().onTrue(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
+		m_operatorController.povDown().and(m_operatorController.button(Button.kLeftBumper).negate())
+				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT));
 		// RainbowPartyFunTime
 		m_operatorController.button(Button.kShare)
 				.onTrue(m_arduinoSubsystem.writeStatus(StatusCode.RAINBOW_PARTY_FUN_TIME));
