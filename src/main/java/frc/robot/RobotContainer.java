@@ -21,6 +21,7 @@ import frc.robot.Constants.ControllerConstants.Button;
 import frc.robot.Targeter.RegressionTargeter;
 import frc.robot.commands.aimshooter.AimHeightCommand;
 import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
+import frc.robot.commands.aimshooter.AimerDriveCommand;
 import frc.robot.commands.climber.ClimberDriveCommand;
 import frc.robot.commands.climber.ClimberPresetCommand;
 import frc.robot.commands.climber.ClimberPresetCommand.ClimberOperation;
@@ -324,9 +325,8 @@ public class RobotContainer {
 		// m_flywheelSubsystem));
 
 		// TESTING TESTING TESTING
-		// m_aimerSubsystem.setDefaultCommand(
-		// new AimerDriveCommand(m_aimerSubsystem, () ->
-		// m_driverController.getRawAxis(Axis.kRightY)));
+		m_driverController.button(Button.kLeftBumper).whileTrue(
+				new AimerDriveCommand(m_aimerSubsystem, () -> m_driverController.getRawAxis(Axis.kRightY)));
 		// m_operatorController.button(Button.kX).onTrue(m_pneumaticsSubsystem.toggleAmpBarCommand());
 
 		// m_operatorController.button(Button.kShare).onTrue(CommandComposer.getBallPathTest(
