@@ -227,7 +227,7 @@ public final class Constants {
 		public static final double kAdjustAmount = 0.05; // Adjust with testing
 		public static final double kP = 5;
 		public static final double kMaxAimerPower = 1;
-		public static final double kMinAimerPower = 0.1;
+		public static final double kMinAimerPower = 0.075;
 	}
 
 	public static final class PoseConstants {
