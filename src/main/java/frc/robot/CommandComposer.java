@@ -9,6 +9,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -19,6 +21,7 @@ import frc.robot.commands.aimshooter.AimHeightCommand.AimHeightOperation;
 import frc.robot.commands.drive.BangBangDriveDistanceCommand;
 import frc.robot.commands.drive.DriveCommand;
 import frc.robot.commands.drive.DriveDistanceCommand;
+import frc.robot.commands.drive.DriveWhileAimingExtendedCommand;
 import frc.robot.commands.drive.PolarDriveCommand;
 import frc.robot.commands.drive.TurnToAngleCommand;
 import frc.robot.commands.flywheel.FlywheelCommand;
@@ -897,7 +900,7 @@ public class CommandComposer {
 	public static Command getThreeScoreBlueC4C5() {
 		return sequence(
 				parallel(m_pneumaticsSubsystem.downIntakeCommand(), getAimAndShootAuto(.5, 0.25)),
-				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 1.3, 6, 15, new Pose(-3,
+				getPickUpNoteAtCommand(kBlueCenterNoteFourPose, 2, 6, 15, new Pose(-3,
 						-3.2, 180)),
 				getAimWhileMovingAndShootCommand(3.5, 4, 15,
 						new Pose(-3, -3, 180)),
@@ -1043,6 +1046,15 @@ public class CommandComposer {
 				new AimHeightCommand(m_aimerSubsystem, m_targeter,
 						AimHeightOperation.CALC_AND_SET,
 						distance));
+	}
+
+	public static Command getDriveWhileAimingToAmpCornerCommand(Supplier<Double> forwardSpeed,
+			Supplier<Double> strafeSpeed) {
+		Supplier<Translation2d> targetSupplier = () -> DriverStation.getAlliance().get() == Alliance.Blue
+				? kBlueAmpCorner
+				: kRedAmpCorner;
+		return new DriveWhileAimingExtendedCommand(forwardSpeed, strafeSpeed, targetSupplier, 5, 0.2, 0.1,
+				m_driveSubsystem, m_aimerSubsystem, m_flywheelSubsystem, m_arduinoSubsystem, m_limeLightSubsystem);
 	}
 
 	public static Command getShootCommand(double duration) {
