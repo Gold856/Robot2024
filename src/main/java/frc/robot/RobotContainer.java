@@ -220,6 +220,19 @@ public class RobotContainer {
 						.andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SETTLE))
 						.alongWith(m_flywheelSubsystem.stopFlywheel())
 						.alongWith(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
+		// TODO: please check if the addition of the following will not cause any
+		// problem. If added, it will enable aimingToAmpCorner
+		// m_driverController.button(Button.kLeftBumper)
+		// .whileTrue(CommandComposer.getDriveWhileAimingToAmpCornerCommand(
+		// () -> m_driverController.getRawAxis(Axis.kLeftY),
+		// () -> m_driverController.getRawAxis(Axis.kLeftX)))
+		// .onFalse(new AimHeightCommand(m_aimerSubsystem, m_targeter,
+		// AimHeightOperation.SET_PRESET_DEFAULT)
+		// .andThen(new AimHeightCommand(m_aimerSubsystem, m_targeter,
+		// AimHeightOperation.SETTLE))
+		// .alongWith(m_flywheelSubsystem.stopFlywheel())
+		// .alongWith(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
+
 		m_driverController.button(Button.kSquare)
 				.whileTrue(m_driveSubsystem.robotOrientedDriveCommand(() -> m_driverController.getRawAxis(Axis.kLeftY),
 						() -> m_driverController.getRawAxis(Axis.kLeftX),
