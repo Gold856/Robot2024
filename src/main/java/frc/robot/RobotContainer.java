@@ -144,6 +144,12 @@ public class RobotContainer {
 		m_autoSelector.addOption("Four Score @red 1, middle 1, and middle 2 RED Auto (Start on Right)",
 				CommandComposer.getFourScoreTwoMiddleTopRedAuto());
 		m_autoSelector.addOption("Just leave", new PolarDriveCommand(m_driveSubsystem, 3, 180));
+		m_autoSelector.addOption("Five Score BLUE Auto @blue 3, 2, 1, and Middle 2 BLUE",
+				CommandComposer.getFiveScoreBlue321C2());
+		m_autoSelector.addOption("Greecy 3 Score center 4 center 5 RED",
+				CommandComposer.getThreeScoreRedC4C5Greece());
+		m_autoSelector.addOption("Greecy 3 Score center 4 center 5 BLUE",
+				CommandComposer.getThreeScoreBlueC4C5Greece());
 		// m_autoSelector.addOption("Get Blocks Auto", CommandComposer.getBlocksAuto());
 		// m_autoSelector.addOption("Get Amp Auto Red",
 		// CommandComposer.getAmpTwoAutoRed());
@@ -204,7 +210,7 @@ public class RobotContainer {
 
 		m_driverController.button(Button.kRightBumper)
 				.whileTrue(new DriveWhileAimingCommand(() -> m_driverController.getRawAxis(Axis.kLeftY),
-						() -> m_driverController.getRawAxis(Axis.kLeftX), 5, 0.2, 0.1, m_driveSubsystem,
+						() -> m_driverController.getRawAxis(Axis.kLeftX), 5, 0.2, 0.5, m_driveSubsystem,
 						m_aimerSubsystem,
 						m_targeter, m_flywheelSubsystem, m_arduinoSubsystem, m_limeLightSubsystem))
 				// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getDriveWhileAimingCommand(

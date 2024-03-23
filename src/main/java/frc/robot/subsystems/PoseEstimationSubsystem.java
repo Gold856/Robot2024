@@ -405,17 +405,21 @@ public class PoseEstimationSubsystem extends LimeLightSubsystem {
 					confidence());
 			var pose = estimatedPose();
 			if (pose != null) // pose data that can be used by AdvantageScope
-				SmartDashboard.putNumberArray("pose estimation: pose estimated",
-						new double[] { pose.getX() + 8.27, pose.getY() + 4.05, pose.getRotation().getRadians() });
-			if (m_botpose != null) {
-				pose = new Pose2d(m_botpose[0], m_botpose[1], Rotation2d.fromDegrees(m_botpose[5]));
-				SmartDashboard.putNumberArray("pose estimation: botpose",
-						new double[] { pose.getX() + 8.27, pose.getY() + 4.05, pose.getRotation().getRadians() });
-			}
-			SmartDashboard.putNumber("pose estimation: rotation angle to the closest speaker (degrees)",
-					angleToClosestSpeaker());
-			SmartDashboard.putNumber("pose estimation: distance to the closest speaker (meters)",
-					distanceToClosestSpeaker());
+				// SmartDashboard.putNumberArray("pose estimation: pose estimated",
+				// new double[] { pose.getX() + 8.27, pose.getY() + 4.05,
+				// pose.getRotation().getRadians() });
+				if (m_botpose != null) {
+					pose = new Pose2d(m_botpose[0], m_botpose[1], Rotation2d.fromDegrees(m_botpose[5]));
+					// SmartDashboard.putNumberArray("pose estimation: botpose",
+					// new double[] { pose.getX() + 8.27, pose.getY() + 4.05,
+					// pose.getRotation().getRadians() });
+				}
+			// SmartDashboard.putNumber("pose estimation: rotation angle to the closest
+			// speaker (degrees)",
+			// angleToClosestSpeaker());
+			// SmartDashboard.putNumber("pose estimation: distance to the closest speaker
+			// (meters)",
+			// distanceToClosestSpeaker());
 			if (DriverStation.getAlliance().isPresent()) {
 				Alliance alliance = DriverStation.getAlliance().get();
 				SmartDashboard.putNumber("pose estimation: rotation angle to " + alliance + " speaker (degrees)",
