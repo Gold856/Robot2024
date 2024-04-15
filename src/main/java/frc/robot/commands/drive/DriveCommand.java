@@ -212,7 +212,8 @@ public class DriveCommand extends Command {
 	}
 
 	/**
-	 * Determines whether or not this {@code DriveCommand} needs to end.
+	 * Determines whether or not this {@code DriveCommand} nee
+	 * ds to end.
 	 * 
 	 * @return {@code true} if this {@code DriveCommand} needs to end;
 	 *         {@code false} otherwise
