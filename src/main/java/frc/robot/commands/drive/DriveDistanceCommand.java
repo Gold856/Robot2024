@@ -2,7 +2,6 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.DriveSubsystem;
@@ -52,11 +51,13 @@ public class DriveDistanceCommand extends Command {
 
 	@Override
 	public void execute() {
-		SmartDashboard.putNumber("err", m_controller.getPositionError());
+		// SmartDashboard.putNumber("err", m_controller.getPositionError());
 		var out = m_controller.calculate(m_driveSubsystem.getPose().getX());
-		SmartDashboard.putNumber("out", out);
-		SmartDashboard.putNumber("Setpoint Position", m_controller.getSetpoint().position);
-		SmartDashboard.putNumber("Setpoint Velocity", m_controller.getSetpoint().velocity);
+		// SmartDashboard.putNumber("out", out);
+		// SmartDashboard.putNumber("Setpoint Position",
+		// m_controller.getSetpoint().position);
+		// SmartDashboard.putNumber("Setpoint Velocity",
+		// m_controller.getSetpoint().velocity);
 		// m_driveSubsystem.setModuleStates(m_targetDirection * out, 0, 0, false);
 		m_driveSubsystem.setModuleStates(out, 0, 0, true);
 	}

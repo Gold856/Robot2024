@@ -16,7 +16,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.RobotController;
 
 /**
  * Contains all the hardware and controllers for a swerve module.
@@ -34,10 +34,11 @@ public class SwerveModule {
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
 		m_PIDController.setIZone(kIz);
 		m_driveEncoder = m_driveMotor.getEncoder();
-		configMotorController(m_driveMotor, kDriveSmartCurrentLimit, kDrivePeakCurrentLimit);
+		configMotorController(m_driveMotor, kDrivePeakCurrentLimit, kDriveSmartCurrentLimit);
 		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
 		m_driveMotor.setOpenLoopRampRate(kRampRate);
+		m_driveMotor.setClosedLoopRampRate(kRampRate);
 	}
 
 	/**
@@ -45,7 +46,7 @@ public class SwerveModule {
 	 * 
 	 * @param motorController The CANSparkMax to configure
 	 */
-	private void configMotorController(CANSparkMax motorController, int smartCurrentLimit, int peakCurrentLimit) {
+	private void configMotorController(CANSparkMax motorController, int peakCurrentLimit, int smartCurrentLimit) {
 		motorController.restoreFactoryDefaults();
 		motorController.setIdleMode(IdleMode.kBrake);
 		motorController.enableVoltageCompensation(12);
@@ -64,6 +65,10 @@ public class SwerveModule {
 
 	public double getSteerCurrent() {
 		return m_steerMotor.getOutputCurrent();
+	}
+
+	public double getDriveCurrent() {
+		return m_driveMotor.getOutputCurrent();
 	}
 
 	/**
@@ -133,8 +138,20 @@ public class SwerveModule {
 	 * @param state The module state
 	 */
 	public void setModuleState(SwerveModuleState state) {
-		m_driveMotor.set(state.speedMetersPerSecond);
-		m_steerMotor.set(m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees()));
+		double power = state.speedMetersPerSecond;
+		double currVoltage = RobotController.getBatteryVoltage();
+		if (currVoltage < 7) {
+			power *= 0.1;
+		} else if (currVoltage < 8) {
+			power *= 0.2;
+		} else if (currVoltage < 9) {
+			power *= 0.4;
+		} else if (currVoltage < 10) {
+			power *= 0.8;
+		}
+		m_driveMotor.set(power);
+		double turnPower = m_PIDController.calculate(getModuleAngle(), state.angle.getDegrees());
+		m_steerMotor.set(turnPower);
 	}
 
 	/**
@@ -143,8 +160,7 @@ public class SwerveModule {
 	 * @param angle
 	 */
 	public void setAngle(double angle) {
-		var out = m_PIDController.calculate(getModuleAngle(), angle);
-		SmartDashboard.putNumber("PID out" + m_driveMotor.getDeviceId(), out);
+		double out = m_PIDController.calculate(getModuleAngle(), angle);
 		m_steerMotor.set(out);
 	}
 
@@ -156,4 +172,10 @@ public class SwerveModule {
 		m_driveMotor.setIdleMode(mode);
 		m_steerMotor.setIdleMode(mode);
 	}
+
+	public void setRampRate(double rampRate) {
+		m_driveMotor.setOpenLoopRampRate(rampRate);
+		m_driveMotor.setClosedLoopRampRate(rampRate);
+	}
+
 }

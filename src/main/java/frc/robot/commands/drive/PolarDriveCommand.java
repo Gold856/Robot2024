@@ -40,7 +40,7 @@ public class PolarDriveCommand extends Command {
 	 * @param angle     The angle to drive relative to the robot (CCW+).
 	 */
 	public PolarDriveCommand(DriveSubsystem subsystem, double amount, double angle) {
-		this(subsystem, amount, angle, 0.01);
+		this(subsystem, amount, angle, 0.05);
 	}
 
 	@Override

@@ -17,20 +17,21 @@ public interface Targeter {
 		public double getAngle(double distanceMeters) {
 			// Calculated using regression from experimentally determined constants
 			// Determined with spreadsheet ____
-			double angle = 1 * distanceMeters + 1; // TODO get regression math
+			double angle = 1.82 * Math.pow(Math.E, -0.708 * (distanceMeters - 0.2 + 0.1)); // TODO: added 10 cm
 			return angle;
 		}
 
 		public double getRPM(double distanceMeters) {
 			// Calculated using regression from experimentally determined constants
 			// Determined with spreadsheet ____
-			double RPM = 1 * distanceMeters * 1; // TODO get regression math
+			double RPM = 1 * distanceMeters * 1;
 			return RPM;
 		}
 
 		public double calcAimerHeightFromDistance(double distanceMeters) {
 			// get actuator height from getAngle method above
 			double aimerHeight = getAngle(distanceMeters) / 360;
+			System.err.print("NONONONONO");
 			return aimerHeight;
 		}
 	}

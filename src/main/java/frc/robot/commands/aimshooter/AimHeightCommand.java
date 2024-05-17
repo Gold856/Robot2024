@@ -6,15 +6,20 @@ package frc.robot.commands.aimshooter;
 
 import static frc.robot.Constants.AimerConstants.*;
 
+import java.util.function.Supplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter;
 import frc.robot.subsystems.AimerSubsystem;
+import frc.robot.subsystems.LimeLightSubsystem;
 
 public class AimHeightCommand extends Command {
 	private AimHeightOperation m_operation;
-	private double m_distanceMeters;
+	// private double m_distanceMeters;
+	private double m_distanceToSpeaker;
 	private AimerSubsystem m_aimerSubsystem;
 	private Targeter m_targeter;
+	private Supplier<Double> m_distanceSupplier;
 
 	public enum AimHeightOperation {
 		CALC_AND_SET, // Calculate Angle at current position (changes)
@@ -22,11 +27,14 @@ public class AimHeightCommand extends Command {
 		PRESET_AMP,
 		SET_LOW,
 		PRESET_SUBWOOFER,
+		PRESET_PASS,
 		HOLD,
 		DOWN_ADJUST, // Fine tune down
 		UP_ADJUST, // Fine tune up
 		SETTLE, // Paired with above in Robot Container
-		STOP // Currently not in use (??)
+		STOP, // Currently not in use (??)
+		SOURCE,
+		PRESET_PODIUM
 	}
 
 	/** Creates a new AimCommand. */
@@ -37,17 +45,44 @@ public class AimHeightCommand extends Command {
 		addRequirements(m_aimerSubsystem);
 	}
 
+	/** Creates a new AimCommand. */
+	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation,
+			LimeLightSubsystem limelightSubsystem) {
+		this(subsystem, targeter, operation, () -> limelightSubsystem.distanceToClosestSpeaker());
+	}
+
+	/** Creates a new AimCommand. */
+	public AimHeightCommand(AimerSubsystem subsystem, Targeter targeter, AimHeightOperation operation,
+			Supplier<Double> distanceSupplier) {
+		m_operation = operation;
+		m_aimerSubsystem = subsystem;
+		m_targeter = targeter;
+		m_distanceSupplier = distanceSupplier;
+		addRequirements(m_aimerSubsystem);
+	}
+
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
 		switch (m_operation) {
-			case CALC_AND_SET:
-				double actuatorHeightSetpoint = m_targeter.calcAimerHeightFromDistance(m_distanceMeters);
-				m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
-				break;
+
 			case SET_PRESET_DEFAULT:
 				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
 				break;
+			case PRESET_SUBWOOFER:
+				m_aimerSubsystem.setAimerHeight(kSubwooferActuatorHeight);
+				break;
+			case PRESET_AMP:
+				m_aimerSubsystem.setAimerHeight(kAmpActuatorHeight);
+				break;
+			case SOURCE:
+				// TODO add source constant
+				m_aimerSubsystem.setAimerHeight(kDefaultActuatorHeight);
+				break;
+			case PRESET_PASS:
+				m_aimerSubsystem.setAimerHeight(kPassActuatorHeight);
+				break;
+			// System.out.println(m_targeter.calcAimerHeightFromDistance(8));
 			case SET_LOW:
 				m_aimerSubsystem.setAimerHeight(0.2);
 				break;
@@ -56,6 +91,18 @@ public class AimHeightCommand extends Command {
 				break;
 			case STOP:
 				m_aimerSubsystem.setAimerHeight(m_aimerSubsystem.getAimerHeight());
+				break;
+			case CALC_AND_SET:
+				// if the distance cannot be figured out, use 3m as the default distance
+				try {
+					m_distanceToSpeaker = m_distanceSupplier.get();
+				} catch (Exception NullPointerException) {
+					m_distanceToSpeaker = 3.0;
+				}
+				double actuatorHeightSetpoint = m_targeter.getAngle(m_distanceToSpeaker);
+				m_aimerSubsystem.setAimerHeight(actuatorHeightSetpoint);
+				// SmartDashboard.putNumber("Caluclated Height in Command",
+				// actuatorHeightSetpoint);
 				break;
 			default:
 				break;
@@ -79,8 +126,6 @@ public class AimHeightCommand extends Command {
 	// Called once the command ends or is interrupted.
 	@Override
 	public void end(boolean interrupted) {
-		if (m_operation == AimHeightOperation.STOP) {
-			m_aimerSubsystem.stopMotor();
-		}
+		m_aimerSubsystem.stopMotor();
 	}
 }
