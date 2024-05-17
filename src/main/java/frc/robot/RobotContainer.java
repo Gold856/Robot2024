@@ -311,7 +311,6 @@ public class RobotContainer {
 						() -> m_operatorController.getRawAxis(Axis.kRightY)));
 
 		// -------------------Aimer Commands-----------------------------------
-
 		// OP CIRCLE - Default Aim
 		m_operatorController.button(Button.kCircle).onTrue(
 				new AimHeightCommand(m_aimerSubsystem, m_targeter, AimHeightOperation.SET_PRESET_DEFAULT)

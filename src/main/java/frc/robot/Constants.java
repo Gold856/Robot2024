@@ -264,7 +264,6 @@ public final class Constants {
 		public static final Pose kRedCenterNoteFourPose = new Pose(0.2 - 0.25, -1.7 + 0.05, -30);
 		public static final Pose kRedCenterNoteFivePose = new Pose(0.2 - 0.2, -3.4 + 0.3, 0 + 15);
 		public static final Pose kRedFeederPose = new Pose(0.0, -2.2, -25);
-
 	}
 
 }
