@@ -113,7 +113,7 @@ public final class Constants {
 		public static final Translation2d kBackRightLocation = new Translation2d(-0.381, -0.381);
 
 		public static final int kDriveSmartCurrentLimit = 45;
-		public static final int kDrivePeakCurrentLimit = kDriveSmartCurrentLimit + 10;
+		public static final int kDrivePeakCurrentLimit = kDriveSmartCurrentLimit + 20;
 		public static final int kSteerSmartCurrentLimit = 60;
 		public static final int kSteerPeakCurrentLimit = kSteerSmartCurrentLimit + 15;
 		// The amount of time to go from 0 to full power in seconds
