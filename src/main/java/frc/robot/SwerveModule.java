@@ -57,7 +57,7 @@ public class SwerveModule {
 		motorController.setIdleMode(IdleMode.kBrake);
 		motorController.enableVoltageCompensation(12);
 		motorController.setSmartCurrentLimit(smartCurrentLimit);
-		motorController.setSecondaryCurrentLimit(peakCurrentLimit);
+		// motorController.setSecondaryCurrentLimit(peakCurrentLimit);
 	}
 
 	/**
