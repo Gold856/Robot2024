@@ -81,7 +81,20 @@ public final class Constants {
 		public static final int kFrontLeftCANCoderPort = 42;
 		public static final int kBackRightCANCoderPort = 22;
 		public static final int kBackLeftCANCoderPort = 32;
+
+		public static final double kvBackLeft = 0.12205;
+		public static final double kaBackLeft = 0.060459;
+
+		public static final double kvBackRight = 0.11962;
+		public static final double kaBackRight = 0.080988;
+
+		public static final double kvFrontLeft = 0.12955;
+		public static final double kaFrontLeft = 0.037693;
+
+		public static final double kvFrontRight = 0.12891;
+		public static final double kaFrontRight = 0.058723;
 		// Swerve PID values
+		public static final double kVelocityP = 1.09;
 		public static final double kP = 0.09;
 		public static final double kI = 0.0;
 		public static final double kD = 0;
@@ -90,7 +103,7 @@ public final class Constants {
 		public static final double kDriveP = 0.7; // up to 1.0?
 		public static final double kDriveI = 0;
 		public static final double kDriveD = 0;
-		public static final double kDriveMaxVelocity = 7; // up to 5?
+		public static final double kDriveMaxVelocity = 999; // up to 5?
 		public static final double kDriveMaxAcceleration = 7; // up to 10?
 
 		public static final double kTurnP = 0.24; // was 0.005 upto 0.2?
@@ -99,16 +112,14 @@ public final class Constants {
 		public static final double kTurnMaxVelocity = 90; // up to 240?
 		public static final double kTurnMaxAcceleration = 90; // up to 360?
 
-		// Speed multiplier to make sure the robot doesn't crash into something when
-		// testing, because crashing into people's shins would be bad
-		public static final double kMaxSpeed = 12;
-		public static final double kMinSpeed = 1;
+		public static final double kMaxDrivetrainVelocity = 999; // m/s
 		public static final double kTeleopMaxVoltage = 12;
 		public static final double kTeleopMaxTurnVoltage = 7.2;
 		public static final double kGearRatio = 6.12;
 		public static final double kWheelDiameter = Units.inchesToMeters(4);
+		public static final double kWheelCircumference = Math.PI * kWheelDiameter;
 
-		public static final double kMotorRotationsPerMeter = (1 / kGearRatio) * (Math.PI * kWheelDiameter);
+		public static final double kMotorRotationsPerMeter = kGearRatio / (Math.PI * kWheelDiameter);
 
 		public static final Translation2d kFrontLeftLocation = new Translation2d(0.381, 0.381);
 		public static final Translation2d kFrontRightLocation = new Translation2d(0.381, -0.381);

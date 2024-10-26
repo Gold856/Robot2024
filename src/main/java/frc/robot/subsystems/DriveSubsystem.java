@@ -6,12 +6,12 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
@@ -43,36 +44,49 @@ public class DriveSubsystem extends SubsystemBase {
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
 	private final SwerveDriveOdometry m_odometry;
 	private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-	private double m_headingOffset = 0;
 	private Rotation2d m_heading = new Rotation2d();
 	private final SysIdRoutine m_sysidRoutine;
+	private final PIDController m_xController = new PIDController(0, 0, 0);
+	private final PIDController m_yController = new PIDController(0, 0, 0);
+	private final PIDController m_headingController = new PIDController(0, 0, 0);
 
 	private final ProtobufPublisher<Pose2d> m_posePublisher;
+	private final StructPublisher<ChassisSpeeds> m_targetChassisSpeedsPublisher;
 	private final StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
+	private final StructArrayPublisher<SwerveModulePosition> m_targetModulePositionPublisher;
 	private final StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
-		var config = new SysIdRoutine.Config(Units.Volts.of(2.5).per(Units.Seconds.of(1)), null,
-				Units.Seconds.of(3));
-		m_sysidRoutine = new SysIdRoutine(config,
-				new SysIdRoutine.Mechanism((volt) -> {
-					SwerveModuleState[] pos = new SwerveModuleState[4];
-					Arrays.fill(pos, new SwerveModuleState(volt.magnitude(), new Rotation2d(Math.PI / 2)));
-					setModuleStates(pos);
-				}, null, this));
 		m_posePublisher = NetworkTableInstance.getDefault().getProtobufTopic("/SmartDashboard/Pose", Pose2d.proto)
 				.publish();
+		m_targetChassisSpeedsPublisher = NetworkTableInstance.getDefault()
+				.getStructTopic("/SmartDashboard/Target Chassis Speeds", ChassisSpeeds.struct).publish();
 		m_targetModuleStatePublisher = NetworkTableInstance.getDefault()
 				.getStructArrayTopic("/SmartDashboard/Target Swerve Modules States", SwerveModuleState.struct)
+				.publish();
+		m_targetModulePositionPublisher = NetworkTableInstance.getDefault()
+				.getStructArrayTopic("/SmartDashboard/Swerve Module Positions", SwerveModulePosition.struct)
 				.publish();
 		m_currentModuleStatePublisher = NetworkTableInstance.getDefault()
 				.getStructArrayTopic("/SmartDashboard/Current Swerve Modules States", SwerveModuleState.struct)
 				.publish();
-		m_frontLeft = new SwerveModule(kFrontLeftCANCoderPort, kFrontLeftDrivePort, kFrontLeftSteerPort);
-		m_frontRight = new SwerveModule(kFrontRightCANCoderPort, kFrontRightDrivePort, kFrontRightSteerPort);
-		m_backLeft = new SwerveModule(kBackLeftCANCoderPort, kBackLeftDrivePort, kBackLeftSteerPort);
-		m_backRight = new SwerveModule(kBackRightCANCoderPort, kBackRightDrivePort, kBackRightSteerPort);
+		m_frontLeft = new SwerveModule(kFrontLeftCANCoderPort, kFrontLeftDrivePort, kFrontLeftSteerPort, kvFrontLeft,
+				kaFrontLeft);
+		m_frontRight = new SwerveModule(kFrontRightCANCoderPort, kFrontRightDrivePort, kFrontRightSteerPort,
+				kvFrontRight, kaFrontRight);
+		m_backLeft = new SwerveModule(kBackLeftCANCoderPort, kBackLeftDrivePort, kBackLeftSteerPort, kvBackLeft,
+				kaBackLeft);
+		m_backRight = new SwerveModule(kBackRightCANCoderPort, kBackRightDrivePort, kBackRightSteerPort, kvBackRight,
+				kaBackRight);
+		var config = new SysIdRoutine.Config(Units.Volts.of(2.5).per(Units.Seconds.of(1)), null, Units.Seconds.of(3));
+		m_sysidRoutine = new SysIdRoutine(config, new SysIdRoutine.Mechanism(volt -> {
+			var state = new SwerveModuleState(volt.magnitude(), new Rotation2d(Math.PI / 2));
+			m_frontLeft.setModuleState(state);
+			m_frontRight.setModuleState(state);
+			m_backLeft.setModuleState(state);
+			m_backRight.setModuleState(state);
+		}, null, this));
 		m_gyro.zeroYaw();
 		resetEncoders();
 		// Wait 100 milliseconds to let all the encoders reset
@@ -85,15 +99,6 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Sets a gyro offset.
-	 * 
-	 * @param angle The angle to offset gyro readings (CCW+).
-	 */
-	public void setHeadingOffset(double angle) {
-		m_headingOffset = angle;
-	}
-
-	/**
 	 * Gets the robot's heading from the gyro.
 	 * 
 	 * @return The heading
@@ -102,7 +107,7 @@ public class DriveSubsystem extends SubsystemBase {
 		if (RobotBase.isSimulation()) {
 			return m_heading;
 		}
-		return Rotation2d.fromDegrees(-m_gyro.getYaw() + m_headingOffset);
+		return m_gyro.getRotation2d();
 	}
 
 	/**
@@ -133,31 +138,11 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	/**
-	 * Calculates the modules states needed for the robot to achieve the target
-	 * chassis speed.
-	 * 
-	 * @param speeds          The target chassis speed
-	 * @param isFieldRelative Whether or not the chassis speeds are field-relative
-	 * @return The module states, in order of FL, FR, BL, BR
-	 */
-	public SwerveModuleState[] calculateModuleStates(ChassisSpeeds speeds, boolean isFieldRelative) {
-		if (isFieldRelative) {
-			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
-		}
-		SmartDashboard.putNumber("Heading Radians", getHeading().getRadians());
-		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
-
-		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxSpeed);
-		return states;
-	}
-
-	/**
 	 * 
 	 * Stops all the motors.
 	 */
 	public void stopDriving() {
-		setModuleStates(calculateModuleStates(new ChassisSpeeds(0, 0, 0), true));
+		drive(0, 0, 0, true);
 	}
 
 	/**
@@ -170,64 +155,65 @@ public class DriveSubsystem extends SubsystemBase {
 				m_backLeft.getModulePosition(), m_backRight.getModulePosition() };
 	}
 
-	/**
-	 * Sets module states for each swerve module.
-	 * 
-	 * @param moduleStates The module states, in order of FL, FR, BL, BR
-	 */
-	public void setModuleStates(SwerveModuleState[] moduleStates) {
+	public SwerveModuleState[] calculateModuleStates(ChassisSpeeds speeds, boolean isFieldRelative,
+			boolean isOpenLoop) {
+		if (isFieldRelative) {
+			speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getHeading());
+		}
+		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(speeds);
+		if (isOpenLoop) {
+			SwerveDriveKinematics.desaturateWheelSpeeds(states, kTeleopMaxVoltage);
+		} else {
+			SwerveDriveKinematics.desaturateWheelSpeeds(states, kMaxDrivetrainVelocity);
+		}
 		// Get the current module angles
 		double[] moduleAngles = { m_frontLeft.getModuleAngle(), m_frontRight.getModuleAngle(),
 				m_backLeft.getModuleAngle(), m_backRight.getModuleAngle() };
-		for (int i = 0; i < moduleStates.length; i++) {
+		for (int i = 0; i < states.length; i++) {
 			// Optimize target module states
-			moduleStates[i] = SwerveModuleState.optimize(moduleStates[i], Rotation2d.fromDegrees(moduleAngles[i]));
+			states[i] = SwerveModuleState.optimize(states[i], Rotation2d.fromDegrees(moduleAngles[i]));
 		}
-		m_targetModuleStatePublisher.set(moduleStates);
-
-		m_frontLeft.setModuleState(moduleStates[0]);
-		m_frontRight.setModuleState(moduleStates[1]);
-		m_backLeft.setModuleState(moduleStates[2]);
-		m_backRight.setModuleState(moduleStates[3]);
+		return states;
 	}
 
 	/**
-	 * Directly sets the module angle. Do not use for general driving.
+	 * Drives the robot.
 	 * 
-	 * @param angle The angle in degrees
+	 * @param speeds          The chassis speeds.
+	 * @param isFieldRelative Whether or not the chassis speeds are field-relative.
+	 * @param isOpenLoop      Whether or not the modules will use open-loop control
+	 *                        (no PID on drive motors).
 	 */
-	public void setModuleAngles(double angle) {
-		m_frontLeft.setAngle(angle);
-		m_frontRight.setAngle(angle);
-		m_backLeft.setAngle(angle);
-		m_backRight.setAngle(angle);
-	}
-
-	public void setModuleStatesDirect(SwerveModuleState moduleState) {
-		m_frontLeft.setModuleState(moduleState);
-		m_frontRight.setModuleState(moduleState);
-		m_backLeft.setModuleState(moduleState);
-		m_backRight.setModuleState(moduleState);
+	public void setModuleStates(SwerveModuleState[] states) {
+		m_targetModuleStatePublisher.set(states);
+		m_frontLeft.setModuleState(states[0]);
+		m_frontRight.setModuleState(states[1]);
+		m_backLeft.setModuleState(states[2]);
+		m_backRight.setModuleState(states[3]);
 	}
 
 	/**
-	 * Sets module states for each swerve module.
+	 * Drives the robot.
 	 * 
 	 * @param speedFwd        The forward speed in voltage
 	 * @param speedSide       The sideways speed in voltage
 	 * @param speedRot        The rotation speed in voltage
 	 * @param isFieldRelative Whether or not the speeds are relative to the field
 	 */
-	public void setModuleStates(double speedFwd, double speedSide, double speedRot, boolean isFieldRelative) {
-		setModuleStates(calculateModuleStates(new ChassisSpeeds(speedFwd, speedSide, speedRot), isFieldRelative));
+	public void drive(double speedFwd, double speedSide, double speedRot, boolean isFieldRelative) {
+		setModuleStates(calculateModuleStates(new ChassisSpeeds(speedFwd, speedSide, speedRot), isFieldRelative, true));
+	}
+
 	}
 
 	@Override
 	public void periodic() {
 		// SmartDashboard.putNumber("Current Position",
 		// getModulePositions()[0].distanceMeters);
-		// SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
+		SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
+		SmartDashboard.putNumber("Heading Radians", getHeading().getRadians());
 		m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
+		m_targetModulePositionPublisher.set(getModulePositions());
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
@@ -253,7 +239,7 @@ public class DriveSubsystem extends SubsystemBase {
 			double strSpeed = MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			strSpeed = -Math.signum(strSpeed) * Math.pow(strSpeed, 2) * kTeleopMaxVoltage;
 
-			setModuleStates(fwdSpeed, strSpeed, rotSpeed, true);
+			drive(fwdSpeed, strSpeed, rotSpeed, true);
 		}).withName("DefaultDriveCommand");
 	}
 
@@ -277,7 +263,7 @@ public class DriveSubsystem extends SubsystemBase {
 			double strSpeed = kTeleopMaxVoltage
 					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			strSpeed = -Math.signum(strSpeed) * (strSpeed * strSpeed) * 12.0;
-			setModuleStates(fwdSpeed, strSpeed, rotSpeed, false);
+			drive(fwdSpeed, strSpeed, rotSpeed, false);
 		}).withName("RobotOrientedDriveCommand");
 	}
 
@@ -290,8 +276,13 @@ public class DriveSubsystem extends SubsystemBase {
 		return runOnce(m_gyro::zeroYaw);
 	}
 
-	public Command offsetGyroCommand(double angle) {
-		return runOnce(() -> setHeadingOffset(angle));
+	public Command resetOdometryCommand(Pose2d pose) {
+		return runOnce(() -> {
+			if (RobotBase.isSimulation()) {
+				m_heading = pose.getRotation();
+			}
+			m_odometry.resetPosition(getHeading(), getModulePositions(), pose);
+		});
 	}
 
 	/**
@@ -316,18 +307,8 @@ public class DriveSubsystem extends SubsystemBase {
 		return run(() -> {
 			m_kinematics.resetHeadings(
 					new Rotation2d[] { new Rotation2d(0), new Rotation2d(0), new Rotation2d(0), new Rotation2d(0) });
-			setModuleStates(0, 0, 0, false);
+			drive(0, 0, 0, false);
 		}).raceWith(Commands.waitSeconds(5));
-	}
-
-	/**
-	 * Creates a command that drives forward for a specified time period.
-	 * 
-	 * @param seconds The amount of time to drive for.
-	 * @return The command.
-	 */
-	public Command driveForTimeCommand(double seconds) {
-		return runEnd(() -> setModuleStates(12, 0, 0, true), this::stopDriving).withTimeout(seconds);
 	}
 
 	/**
