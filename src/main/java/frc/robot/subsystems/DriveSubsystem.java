@@ -10,6 +10,10 @@ import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import choreo.Choreo;
+import choreo.auto.AutoFactory;
+import choreo.auto.AutoFactory.AutoBindings;
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -204,6 +208,26 @@ public class DriveSubsystem extends SubsystemBase {
 		setModuleStates(calculateModuleStates(new ChassisSpeeds(speedFwd, speedSide, speedRot), isFieldRelative, true));
 	}
 
+	public void followTrajectory(Pose2d pose, SwerveSample sample) {
+		var vx = m_xController.calculate(pose.getX(), sample.x) + sample.vx;
+		var vy = m_yController.calculate(pose.getY(), sample.y) + sample.vy;
+		var omega = m_headingController.calculate(pose.getRotation().getRadians(), sample.heading) + sample.omega;
+		var speeds = new ChassisSpeeds(vx, vy, omega);
+		var moduleSpeeds = calculateModuleStates(speeds, true, false);
+		var moduleAccels = calculateModuleStates(new ChassisSpeeds(sample.ax, sample.ay, sample.alpha), true, false);
+		var states = new SwerveModuleState[4];
+		m_targetChassisSpeedsPublisher.set(speeds);
+		states[0] = m_frontLeft.setModuleStateClosedLoop(moduleSpeeds[0], moduleAccels[0].speedMetersPerSecond);
+		states[1] = m_frontRight.setModuleStateClosedLoop(moduleSpeeds[1], moduleAccels[1].speedMetersPerSecond);
+		states[2] = m_backLeft.setModuleStateClosedLoop(moduleSpeeds[2], moduleAccels[2].speedMetersPerSecond);
+		states[3] = m_backRight.setModuleStateClosedLoop(moduleSpeeds[3], moduleAccels[3].speedMetersPerSecond);
+		m_targetModuleStatePublisher.set(states);
+		m_heading = new Rotation2d(omega * 0.02).plus(m_heading);
+	}
+
+	public AutoFactory autoFactory() {
+		return Choreo.createAutoFactory(this, this::getPose, this::followTrajectory,
+				() -> false, new AutoBindings());
 	}
 
 	@Override

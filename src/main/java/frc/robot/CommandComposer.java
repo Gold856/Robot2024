@@ -2,10 +2,12 @@ package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Targeter.RegressionTargeter;
 import frc.robot.commands.indexer.IndexWithSensorCommand;
 import frc.robot.subsystems.AimerSubsystem;
+import frc.robot.subsystems.AimerSubsystem.AimHeightOperation;
 import frc.robot.subsystems.ArduinoSubsystem;
 import frc.robot.subsystems.ArduinoSubsystem.StatusCode;
 import frc.robot.subsystems.DriveSubsystem;
@@ -46,6 +48,37 @@ public class CommandComposer {
 		m_flywheelSubsystem = flywheelSubsystem;
 		m_intakeSubsystem = intakeSubsystem;
 		m_limeLightSubsystem = limeLightSubsystem;
+	}
+
+	public static Command getThreeScoreAuto() {
+		final var factory = m_driveSubsystem.autoFactory();
+
+		final var speakerToLeftNote = factory.trajectory("Better 3 score auto", 0, factory.voidLoop());
+		final var leftNoteToLaunch = factory.trajectoryCommand("Better 3 score auto", 1);
+		final var launchToRightNote = factory.trajectoryCommand("Better 3 score auto", 2);
+		final var rightNoteToLaunch = factory.trajectoryCommand("Better 3 score auto", 3);
+		return sequence(
+				parallel(
+						sequence(
+								m_driveSubsystem.resetOdometryCommand(
+										speakerToLeftNote.getInitialPose().orElse(new Pose2d())),
+								speakerToLeftNote.cmd()),
+						m_pneumaticsSubsystem.downIntakeCommand(),
+						m_intakeSubsystem.forwardIntakeCommand()),
+				m_intakeSubsystem.stopIntakeCommand(),
+				parallel(
+						leftNoteToLaunch,
+						// TODO: Figure out good height
+						m_aimerSubsystem.aimHeightCommand(AimHeightOperation.PRESET_PODIUM, m_targeter),
+						// TODO: Figure out good speed
+						m_flywheelSubsystem.spinCommand(8000, 8000)),
+				sequence(
+						new IndexWithSensorCommand(m_indexerSubsystem, 0.5),
+						launchToRightNote),
+				m_intakeSubsystem.forwardIntakeCommand(),
+				rightNoteToLaunch,
+				m_intakeSubsystem.stopIntakeCommand(),
+				new IndexWithSensorCommand(m_indexerSubsystem, 0.5)); // Already set up aimer and flywheel
 	}
 
 	public static Command getIntakeWithSensorCommand() {
