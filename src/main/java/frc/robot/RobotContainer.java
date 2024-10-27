@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
 import frc.robot.Constants.ControllerConstants.Axis;
 import frc.robot.Constants.ControllerConstants.Button;
@@ -87,6 +88,10 @@ public class RobotContainer {
 		// TurnToAngleCommand(m_driveSubsystem, 90.0, 0.5, true));
 		// m_autoSelector.addOption("Bang Bang Drive 2 Meters",
 		// new BangBangDriveDistanceCommand(m_driveSubsystem, 2, 0.01));
+		m_autoSelector.addOption("Sysid Dynamic Forward", m_driveSubsystem.sysidDynamic(Direction.kForward));
+		m_autoSelector.addOption("Sysid Dynamic Backward", m_driveSubsystem.sysidDynamic(Direction.kReverse));
+		m_autoSelector.addOption("Sysid Quasistatic Forward", m_driveSubsystem.sysidQuasistatic(Direction.kForward));
+		m_autoSelector.addOption("Sysid Quasistatic Backward", m_driveSubsystem.sysidQuasistatic(Direction.kReverse));
 		m_autoSelector.addOption("Polar Drive Two Meters", new PolarDriveCommand(m_driveSubsystem, 2, 180));
 		m_autoSelector.addOption("Shoot and Leave Auto", CommandComposer.getShootAndLeaveAuto());
 		m_autoSelector.addOption("Middle Two Score", CommandComposer.getTwoScoreMiddleAuto());
