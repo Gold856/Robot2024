@@ -82,6 +82,7 @@ public final class Constants {
 		public static final int kBackRightCANCoderPort = 22;
 		public static final int kBackLeftCANCoderPort = 32;
 
+		// TODO: ALL OF THESE ARE WRONG
 		public static final double kvBackLeft = 0.12205;
 		public static final double kaBackLeft = 0.060459;
 
@@ -131,7 +132,7 @@ public final class Constants {
 		public static final int kSteerSmartCurrentLimit = 60;
 		public static final int kSteerPeakCurrentLimit = kSteerSmartCurrentLimit + 15;
 		// The amount of time to go from 0 to full power in seconds
-		public static final double kRampRate = .1; // .1
+		public static final double kRampRate = .2; // .1
 		public static final TalonFXConfiguration kDriveConfig = new TalonFXConfiguration();
 		static {
 			kDriveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;

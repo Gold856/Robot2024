@@ -63,13 +63,14 @@ public class CommandComposer {
 								m_driveSubsystem.resetOdometryCommand(
 										speakerToLeftNote.getInitialPose().orElse(new Pose2d())),
 								speakerToLeftNote.cmd()),
-						m_pneumaticsSubsystem.downIntakeCommand(),
+						// m_pneumaticsSubsystem.downIntakeCommand(),
 						m_intakeSubsystem.forwardIntakeCommand()),
 				m_intakeSubsystem.stopIntakeCommand(),
 				parallel(
 						leftNoteToLaunch,
 						// TODO: Figure out good height
-						m_aimerSubsystem.aimHeightCommand(AimHeightOperation.PRESET_PODIUM, m_targeter),
+						m_aimerSubsystem.aimHeightCommand(AimHeightOperation.PRESET_PODIUM,
+								m_targeter),
 						// TODO: Figure out good speed
 						m_flywheelSubsystem.spinCommand(8000, 8000)),
 				sequence(
@@ -79,6 +80,13 @@ public class CommandComposer {
 				rightNoteToLaunch,
 				m_intakeSubsystem.stopIntakeCommand(),
 				new IndexWithSensorCommand(m_indexerSubsystem, 0.5)); // Already set up aimer and flywheel
+		// return sequence(
+		// m_driveSubsystem.resetOdometryCommand(speakerToLeftNote.getInitialPose().orElse(new
+		// Pose2d())),
+		// speakerToLeftNote.cmd(),
+		// leftNoteToLaunch,
+		// launchToRightNote,
+		// rightNoteToLaunch);
 	}
 
 	public static Command getIntakeWithSensorCommand() {
