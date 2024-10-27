@@ -6,12 +6,11 @@ package frc.robot;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -20,10 +19,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Contains all the hardware and controllers for a swerve module.
@@ -32,8 +29,9 @@ public class SwerveModule {
 	private final PIDController m_steerController = new PIDController(kP, kI, kD);
 	private final PIDController m_driveVelocityController = new PIDController(0, 0, 0);
 	private final CANcoder m_CANCoder;
-	private final TalonFX m_driveMotor;
+	private final CANSparkMax m_driveMotor;
 	private final CANSparkMax m_steerMotor;
+	private final RelativeEncoder m_driveEncoder;
 	private final DCMotorSim m_driveMotorModel;
 	private final SimpleMotorFeedforward m_feedforward;
 	private final DCMotorSim m_steerMotorModel = new DCMotorSim(DCMotor.getNEO(1), 6, 0.00025);
@@ -42,13 +40,16 @@ public class SwerveModule {
 		m_driveMotorModel = new DCMotorSim(
 				LinearSystemId.createDCMotorSystem(kv / (2 * Math.PI), ka / (2 * Math.PI)),
 				DCMotor.getKrakenX60(1), 1);
-		m_feedforward = new SimpleMotorFeedforward(0, kv  * kMotorRotationsPerMeter,
-				ka  * kMotorRotationsPerMeter);
+		m_feedforward = new SimpleMotorFeedforward(0, kv * kMotorRotationsPerMeter,
+				ka * kMotorRotationsPerMeter);
 		m_CANCoder = new CANcoder(CANport);
-		m_driveMotor = new TalonFX(drivePort);
+		m_driveMotor = new CANSparkMax(drivePort, MotorType.kBrushless);
 		m_steerMotor = new CANSparkMax(steerPort, MotorType.kBrushless);
+		m_driveEncoder = m_driveMotor.getEncoder();
+		m_driveEncoder.setAverageDepth(4);
+		m_driveEncoder.setMeasurementPeriod(16);
 		m_steerController.setIZone(kIz);
-		m_driveMotor.getConfigurator().apply(kDriveConfig);
+		configMotorController(m_driveMotor, kDriveSmartCurrentLimit, kDrivePeakCurrentLimit);
 		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_steerController.enableContinuousInput(0, 360);
 	}
@@ -64,6 +65,8 @@ public class SwerveModule {
 		motorController.enableVoltageCompensation(12);
 		motorController.setSmartCurrentLimit(smartCurrentLimit);
 		motorController.setSecondaryCurrentLimit(peakCurrentLimit);
+		motorController.setOpenLoopRampRate(0.1);
+		motorController.setClosedLoopRampRate(0.1);
 	}
 
 	/**
@@ -72,7 +75,7 @@ public class SwerveModule {
 	 * @return The position
 	 */
 	public double getDriveEncoderPosition() {
-		return m_driveMotor.getPosition().getValueAsDouble() / kMotorRotationsPerMeter;
+		return m_driveEncoder.getPosition() / kMotorRotationsPerMeter;
 	}
 
 	public double getSteerCurrent() {
@@ -80,14 +83,14 @@ public class SwerveModule {
 	}
 
 	public double getDriveCurrent() {
-		return m_driveMotor.getSupplyCurrent().getValueAsDouble();
+		return m_driveMotor.getOutputCurrent();
 	}
 
 	/**
 	 * Resets drive encoder to zero.
 	 */
 	public void resetDriveEncoder() {
-		m_driveMotor.setPosition(0);
+		m_driveEncoder.setPosition(0);
 	}
 
 	/**
@@ -96,7 +99,7 @@ public class SwerveModule {
 	 * @return The motor speed in voltage
 	 */
 	public double getDriveVoltage() {
-		return m_driveMotor.getMotorVoltage().getValueAsDouble();
+		return m_driveMotor.getAppliedOutput() * 12;
 	}
 
 	/**
@@ -105,7 +108,7 @@ public class SwerveModule {
 	 * @return The temperature in degrees celcius
 	 */
 	public double getDriveTemperature() {
-		return m_driveMotor.getDeviceTemp().getValueAsDouble();
+		return m_driveMotor.getMotorTemperature();
 	}
 
 	/**
@@ -169,31 +172,15 @@ public class SwerveModule {
 	public SwerveModuleState setModuleStateClosedLoop(SwerveModuleState state, double accel) {
 		var rotPerSec = state.speedMetersPerSecond;
 		var ff = m_feedforward.calculate(rotPerSec, accel);
-		var voltage = m_driveVelocityController.calculate(m_driveMotor.getVelocity().getValueAsDouble(), rotPerSec)
+		var voltage = m_driveVelocityController.calculate(m_driveEncoder.getVelocity(), rotPerSec)
 				+ ff;
-		SmartDashboard.putNumber("rotPerSec", rotPerSec);
-		SmartDashboard.putNumber("ff", ff);
-		m_driveMotor.setControl(new VoltageOut(voltage));
 		double turnVoltage = m_steerController.calculate(getModuleAngle(), state.angle.getDegrees());
+		m_driveMotor.setVoltage(voltage);
 		m_steerMotor.setVoltage(turnVoltage);
 		updateSim(voltage, turnVoltage);
 		return new SwerveModuleState(voltage, state.angle);
 	}
 
 	private void updateSim(double driveVoltage, double steerVoltage) {
-		if (RobotBase.isSimulation()) {
-			var driveMotorSimState = m_driveMotor.getSimState();
-			m_driveMotorModel.setInputVoltage(driveVoltage);
-			m_driveMotorModel.update(0.02);
-			SmartDashboard.putNumber("Model Vel " + m_driveMotor.getDeviceID(),
-					m_driveMotorModel.getAngularVelocityRadPerSec() / (2 * Math.PI) / kMotorRotationsPerMeter);
-			driveMotorSimState.setRawRotorPosition(m_driveMotorModel.getAngularPositionRotations());
-			driveMotorSimState.setRotorVelocity(m_driveMotorModel.getAngularVelocityRPM() / 60.0);
-			var encoderSimState = m_CANCoder.getSimState();
-			m_steerMotorModel.setInputVoltage(steerVoltage);
-			m_steerMotorModel.update(0.02);
-			encoderSimState.setRawPosition(m_steerMotorModel.getAngularPositionRotations());
-			encoderSimState.setVelocity(m_steerMotorModel.getAngularVelocityRPM());
-		}
 	}
 }
