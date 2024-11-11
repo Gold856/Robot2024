@@ -45,6 +45,7 @@ import frc.robot.subsystems.LimeLightSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.PoseEstimationSubsystem;
 import frc.robot.subsystems.SimpleVisionSubsystem;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -58,7 +59,8 @@ public class RobotContainer {
 			ControllerConstants.kDriverControllerPort);
 	private final CommandGenericHID m_operatorController = new CommandGenericHID(
 			ControllerConstants.kOperatorControllerPort);
-	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
+	private final Vision m_vision = new Vision();
+	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem(m_vision);
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
 	private final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
 	private final PneumaticsSubsystem m_pneumaticsSubsystem = new PneumaticsSubsystem();

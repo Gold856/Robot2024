@@ -12,16 +12,17 @@ import java.util.function.Supplier;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
@@ -41,18 +42,21 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
 			kFrontLeftLocation, kFrontRightLocation, kBackLeftLocation, kBackRightLocation);
-	private final SwerveDriveOdometry m_odometry;
+	private final SwerveDrivePoseEstimator m_odometry;
 	private final AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+	private final Vision m_vision;
 	private double m_headingOffset = 0;
 	private Rotation2d m_heading = new Rotation2d();
 	private final SysIdRoutine m_sysidRoutine;
-
+	private final DriveSim m_driveSim;
 	private final ProtobufPublisher<Pose2d> m_posePublisher;
+	private final StructPublisher<Pose2d> m_visionPosePublisher;
 	private final StructArrayPublisher<SwerveModuleState> m_targetModuleStatePublisher;
 	private final StructArrayPublisher<SwerveModuleState> m_currentModuleStatePublisher;
 
 	/** Creates a new DriveSubsystem. */
-	public DriveSubsystem() {
+	public DriveSubsystem(Vision vision) {
+		m_vision = vision;
 		var config = new SysIdRoutine.Config(Units.Volts.of(2.5).per(Units.Seconds.of(1)), null,
 				Units.Seconds.of(3));
 		m_sysidRoutine = new SysIdRoutine(config,
@@ -62,6 +66,9 @@ public class DriveSubsystem extends SubsystemBase {
 					setModuleStates(pos);
 				}, null, this));
 		m_posePublisher = NetworkTableInstance.getDefault().getProtobufTopic("/SmartDashboard/Pose", Pose2d.proto)
+				.publish();
+		m_visionPosePublisher = NetworkTableInstance.getDefault()
+				.getStructTopic("/SmartDashboard/Vision Pose", Pose2d.struct)
 				.publish();
 		m_targetModuleStatePublisher = NetworkTableInstance.getDefault()
 				.getStructArrayTopic("/SmartDashboard/Target Swerve Modules States", SwerveModuleState.struct)
@@ -81,7 +88,12 @@ public class DriveSubsystem extends SubsystemBase {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		m_odometry = new SwerveDriveOdometry(m_kinematics, getHeading(), getModulePositions());
+		m_odometry = new SwerveDrivePoseEstimator(m_kinematics, getHeading(), getModulePositions(), new Pose2d());
+		if (RobotBase.isSimulation()) {
+			m_driveSim = new DriveSim(m_kinematics, m_heading, getModulePositions());
+		} else {
+			m_driveSim = null;
+		}
 	}
 
 	/**
@@ -129,7 +141,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @return The pose of the robot.
 	 */
 	public Pose2d getPose() {
-		return m_odometry.getPoseMeters();
+		return m_odometry.getEstimatedPosition();
 	}
 
 	/**
@@ -220,17 +232,21 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public void setModuleStates(double speedFwd, double speedSide, double speedRot, boolean isFieldRelative) {
 		setModuleStates(calculateModuleStates(new ChassisSpeeds(speedFwd, speedSide, speedRot), isFieldRelative));
+		m_heading = new Rotation2d(speedRot * 0.02).plus(m_heading);
 	}
 
 	@Override
 	public void periodic() {
-		// SmartDashboard.putNumber("Current Position",
-		// getModulePositions()[0].distanceMeters);
-		// SmartDashboard.putNumber("Heading Degrees", getHeading().getDegrees());
 		m_posePublisher.set(m_odometry.update(getHeading(), getModulePositions()));
 		SwerveModuleState[] states = { m_frontLeft.getModuleState(), m_frontRight.getModuleState(),
 				m_backLeft.getModuleState(), m_backRight.getModuleState() };
 		m_currentModuleStatePublisher.set(states);
+	}
+
+	@Override
+	public void simulationPeriodic() {
+		m_driveSim.updateSimPose(m_heading, getModulePositions());
+		m_vision.updateVisionSim(m_driveSim.getSimPose());
 	}
 
 	/**
