@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.ControllerConstants;
@@ -52,9 +52,9 @@ import frc.robot.subsystems.SimpleVisionSubsystem;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-	private final CommandGenericHID m_driverController = new CommandGenericHID(
+	private final CommandPS4Controller m_driverController = new CommandPS4Controller(
 			ControllerConstants.kDriverControllerPort);
-	private final CommandGenericHID m_operatorController = new CommandGenericHID(
+	private final CommandPS4Controller m_operatorController = new CommandPS4Controller(
 			ControllerConstants.kOperatorControllerPort);
 	private final DriveSubsystem m_driveSubsystem = new DriveSubsystem();
 	private final ArduinoSubsystem m_arduinoSubsystem = new ArduinoSubsystem();
@@ -126,10 +126,10 @@ public class RobotContainer {
 		// --------------------Drive Controls---------------------------------
 		// D - Drive
 		m_driveSubsystem.setDefaultCommand(m_driveSubsystem.driveCommand(
-				() -> m_driverController.getRawAxis(Axis.kLeftY),
-				() -> m_driverController.getRawAxis(Axis.kLeftX),
-				() -> m_driverController.getRawAxis(Axis.kRightTrigger),
-				() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
+				m_driverController::getLeftY,
+				m_driverController::getLeftX,
+				() -> (m_driverController.getR2Axis() - m_driverController.getL2Axis()) * 0.5,
+				m_driverController.getHID()::getSquareButton));
 		m_driverController.button(Button.kOptions).onTrue(m_driveSubsystem.resetHeadingCommand());
 		// D RIGHT BUMPER - Aim and Shoot
 		// m_driverController.button(Button.kRightBumper).whileTrue(CommandComposer.getAimAndShootCommand())
@@ -145,12 +145,6 @@ public class RobotContainer {
 		// AimHeightOperation.SETTLE))
 		// .alongWith(m_flywheelSubsystem.stopFlywheel())
 		// .alongWith(m_arduinoSubsystem.writeStatus(StatusCode.DEFAULT)));
-
-		m_driverController.button(Button.kSquare)
-				.whileTrue(m_driveSubsystem.robotOrientedDriveCommand(() -> m_driverController.getRawAxis(Axis.kLeftY),
-						() -> m_driverController.getRawAxis(Axis.kLeftX),
-						() -> m_driverController.getRawAxis(Axis.kRightTrigger),
-						() -> m_driverController.getRawAxis(Axis.kLeftTrigger)));
 
 		// -------------------Indexer Controls---------------------------------
 		// CIRCLE AND RIGHT BUMPER - Shoot without turning off flywheel

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -28,11 +29,9 @@ import edu.wpi.first.networktables.ProtobufPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ControllerConstants;
@@ -108,17 +107,7 @@ public class DriveSubsystem extends SubsystemBase {
 	 * @return The heading
 	 */
 	public Rotation2d getHeading() {
-		if (RobotBase.isSimulation()) {
-			return m_heading;
-		}
 		return m_gyro.getRotation2d();
-	}
-
-	/**
-	 * Resets gyro heading to zero.
-	 */
-	public void resetHeading() {
-		m_gyro.reset();
 	}
 
 	/**
@@ -139,14 +128,6 @@ public class DriveSubsystem extends SubsystemBase {
 	 */
 	public Pose2d getPose() {
 		return m_odometry.getPoseMeters();
-	}
-
-	/**
-	 * 
-	 * Stops all the motors.
-	 */
-	public void stopDriving() {
-		drive(0, 0, 0, true);
 	}
 
 	/**
@@ -246,15 +227,22 @@ public class DriveSubsystem extends SubsystemBase {
 	/**
 	 * Creates a command to drive the robot with joystick input.
 	 *
+	 * @param forwardSpeed    Forward speed supplier. Positive values make the robot
+	 *                        go forward (+X direction).
+	 * @param strafeSpeed     Strafe speed supplier. Positive values make the robot
+	 *                        go to the left (+Y direction).
+	 * @param rotation        Rotation speed supplier. Positive values make the
+	 *                        robot rotate CCW.
+	 * @param isFieldRelative Supplier for determining if driving should be field
+	 *                        relative.
 	 * @return A command to drive the robot.
 	 */
 	public Command driveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
-			Supplier<Double> rotationRight, Supplier<Double> rotationLeft) {
+			Supplier<Double> rotation, BooleanSupplier isFieldRelative) {
 		return run(() -> {
 			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
 			// input so slight movements don't move the robot
-			double rotSpeed = MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
-					ControllerConstants.kDeadzone);
+			double rotSpeed = MathUtil.applyDeadband(rotation.get(), ControllerConstants.kDeadzone);
 			rotSpeed = -Math.signum(rotSpeed) * Math.pow(rotSpeed, 2) * kTeleopMaxTurnVoltage;
 
 			double fwdSpeed = MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
@@ -263,32 +251,8 @@ public class DriveSubsystem extends SubsystemBase {
 			double strSpeed = MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
 			strSpeed = -Math.signum(strSpeed) * Math.pow(strSpeed, 2) * kTeleopMaxVoltage;
 
-			drive(fwdSpeed, strSpeed, rotSpeed, true);
+			drive(fwdSpeed, strSpeed, rotSpeed, isFieldRelative.getAsBoolean());
 		}).withName("DefaultDriveCommand");
-	}
-
-	/**
-	 * Creates a command to drive the robot with joystick input in robot oriented
-	 * controls.
-	 * 
-	 * @return A command to drive the robot.
-	 */
-	public Command robotOrientedDriveCommand(Supplier<Double> forwardSpeed, Supplier<Double> strafeSpeed,
-			Supplier<Double> rotationRight, Supplier<Double> rotationLeft) {
-		return run(() -> {
-			// Get the forward, strafe, and rotation speed, using a deadband on the joystick
-			// input so slight movements don't move the robot
-			double rotSpeed = kTeleopMaxTurnVoltage * MathUtil.applyDeadband((rotationRight.get() - rotationLeft.get()),
-					ControllerConstants.kDeadzone);
-			rotSpeed = Math.signum(rotSpeed) * (rotSpeed * rotSpeed) * 12.0;
-			double fwdSpeed = kTeleopMaxVoltage
-					* MathUtil.applyDeadband(forwardSpeed.get(), ControllerConstants.kDeadzone);
-			fwdSpeed = -Math.signum(fwdSpeed) * (fwdSpeed * fwdSpeed) * 12.0;
-			double strSpeed = kTeleopMaxVoltage
-					* MathUtil.applyDeadband(strafeSpeed.get(), ControllerConstants.kDeadzone);
-			strSpeed = -Math.signum(strSpeed) * (strSpeed * strSpeed) * 12.0;
-			drive(fwdSpeed, strSpeed, rotSpeed, false);
-		}).withName("RobotOrientedDriveCommand");
 	}
 
 	/**
@@ -301,38 +265,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public Command resetOdometryCommand(Pose2d pose) {
-		return runOnce(() -> {
-			if (RobotBase.isSimulation()) {
-				m_heading = pose.getRotation();
-			}
-			m_odometry.resetPosition(getHeading(), getModulePositions(), pose);
-		});
-	}
-
-	/**
-	 * Creates a command to reset the drive encoders to zero.
-	 * 
-	 * @return A command to reset the drive encoders.
-	 */
-	public Command resetEncodersCommand() {
-		return runOnce(() -> {
-			resetEncoders();
-			m_odometry.resetPosition(getHeading(), getModulePositions(), new Pose2d());
-		});
-	}
-
-	/**
-	 * Creates a command to align the swerve modules to zero degrees relative to the
-	 * robot.
-	 * 
-	 * @return A command to align the swerve modules.
-	 */
-	public Command alignModulesToZeroComamnd() {
-		return run(() -> {
-			m_kinematics.resetHeadings(
-					new Rotation2d[] { new Rotation2d(0), new Rotation2d(0), new Rotation2d(0), new Rotation2d(0) });
-			drive(0, 0, 0, false);
-		}).raceWith(Commands.waitSeconds(5));
+		return runOnce(() -> m_odometry.resetPosition(getHeading(), getModulePositions(), pose));
 	}
 
 	/**

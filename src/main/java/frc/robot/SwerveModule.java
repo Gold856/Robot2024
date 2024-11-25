@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
@@ -182,5 +183,15 @@ public class SwerveModule {
 	}
 
 	private void updateSim(double driveVoltage, double steerVoltage) {
+		if (RobotBase.isSimulation()) {
+			m_driveMotorModel.setInputVoltage(driveVoltage);
+			m_driveMotorModel.update(0.02);
+			m_driveEncoder.setPosition(m_driveMotorModel.getAngularPositionRotations());
+			var encoderSimState = m_CANCoder.getSimState();
+			m_steerMotorModel.setInputVoltage(steerVoltage);
+			m_steerMotorModel.update(0.02);
+			encoderSimState.setRawPosition(m_steerMotorModel.getAngularPositionRotations());
+			encoderSimState.setVelocity(m_steerMotorModel.getAngularVelocityRPM());
+		}
 	}
 }
