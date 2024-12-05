@@ -20,9 +20,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Vision extends SubsystemBase {
+public class Vision {
 	private final PhotonCamera m_camera = new PhotonCamera("camera");
 	private final PhotonCameraSim m_cameraSim;
 	private final VisionSystemSim m_visionSystemSim;
