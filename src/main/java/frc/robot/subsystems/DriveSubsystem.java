@@ -54,8 +54,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	/** Creates a new DriveSubsystem. */
 	public DriveSubsystem() {
-		var config = new SysIdRoutine.Config(Units.Volts.of(1.5).per(Units.Seconds.of(1)), Units.Volts.of(12),
-				Units.Seconds.of(2), state -> SignalLogger.writeString("state", state.toString()));
+		var config = new SysIdRoutine.Config(Units.Volts.of(1.5).per(Units.Seconds.of(1)), Units.Volts.of(7),
+				Units.Seconds.of(3), state -> SignalLogger.writeString("state", state.toString()));
 		m_sysidRoutine = new SysIdRoutine(config,
 				new SysIdRoutine.Mechanism((volt) -> {
 					SwerveModuleState[] pos = new SwerveModuleState[4];

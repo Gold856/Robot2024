@@ -124,7 +124,7 @@ public final class Constants {
 		public static final TalonFXConfiguration kDriveConfig = new TalonFXConfiguration();
 		static {
 			kDriveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-			kDriveConfig.CurrentLimits.StatorCurrentLimit = 45;
+			kDriveConfig.CurrentLimits.StatorCurrentLimit = 75;
 			kDriveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 			// kDriveConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = kRampRate;
 			// kDriveConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = kRampRate;
