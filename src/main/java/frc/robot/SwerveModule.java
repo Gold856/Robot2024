@@ -6,6 +6,7 @@ package frc.robot;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -41,6 +42,7 @@ public class SwerveModule {
 		m_driveMotor.getConfigurator().apply(kDriveConfig);
 		configMotorController(m_steerMotor, kSteerSmartCurrentLimit, kSteerPeakCurrentLimit);
 		m_PIDController.enableContinuousInput(0, 360);
+		BaseStatusSignal.setUpdateFrequencyForAll(100, m_driveMotor.getSupplyCurrent());
 	}
 
 	/**

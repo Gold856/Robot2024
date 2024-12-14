@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -171,6 +173,7 @@ public class RobotContainer {
 		// m_autoSelector.addOption("Ninja Star Command", new
 		// NinjaStarCommand(m_driveSubsystem, 2, -2, 45));
 		SmartDashboard.putData(m_autoSelector);
+		SignalLogger.start();
 		configureButtonBindings();
 	}
 
