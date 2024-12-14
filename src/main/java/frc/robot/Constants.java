@@ -126,8 +126,8 @@ public final class Constants {
 			kDriveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 			kDriveConfig.CurrentLimits.StatorCurrentLimit = 45;
 			kDriveConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-			kDriveConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = kRampRate;
-			kDriveConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = kRampRate;
+			// kDriveConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = kRampRate;
+			// kDriveConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = kRampRate;
 		}
 	}
 
